@@ -1,4 +1,5 @@
 from openai import OpenAI
+import json
 
 import pandas as pd
 
@@ -14,34 +15,14 @@ chats_df = chats_df.head(2)
 models_pricing_data = pd.read_csv("csv/models_pricing.csv")   
 models_pricing_df = pd.DataFrame(models_pricing_data)
 
-# Define agent thinking workflows
-agent_thinking_workflows = {
-    "grade_prompt": [
-        {
-            "source": "messages",
-            "prompt_chains": [
-                {"instructions": "Your role is to grade this message between 0 and 20. Return only a number between 0 and 20, with no additional text. Grade higher scores for more efficient prompts.", "prompt": "The message is: {source[content]}"}
-            ]
-        }
-    ],
-    "explain_grade": [
-        {
-            "source": "messages",
-            "prompt_chains": [
-                {"instructions": "Your role is to explain the grade of the prompt. You should give activable reasons for the grade and advises to prompt better.", "prompt": "The message is: {source[content]} and the grade is: {source[grade_prompt]}"}
-            ]
-        }
-    ],
-    #"find_skills_in_message": [
-    #    {
-    #        "source": "messages",
-    #        "prompt_chains": [
-    #            {"instructions": "Your role is to sum up this prompt with a focus on what the user wants to achieve.", "prompt": "The prompt is: {source[content]}"},
-    #            {"instructions": "Analyze the discussion and return a comma-separated list of relevant professional skills (e.g. coding, marketing, data analysis). Return only the skills list, no other text.", "prompt": "The discussion sum up is: {previous_output}"}
-    #        ]
-    #    }
-    #]
-}
+# Load the prompt configurations from a JSON file
+with open("prompt_config.json", "r") as file:
+    agent_thinking_workflows = json.load(file)
+
+# Function to read text from a file
+def read_text_file(file_path):
+    with open(file_path, 'r') as file:
+        return file.read().strip()
 
 # Function to calculate message statistics
 def calculate_message_stats(df):
@@ -73,23 +54,18 @@ def process_thinking_workflows(df, workflows):
                 for index, row in df.iterrows():
                     previous_output = None
                     for chain in step['prompt_chains']:
+                        instructions = read_text_file(chain['instructions_file'])
+                        prompt = read_text_file(chain['prompt']).format(source=row, previous_output=previous_output)
                         print("\nprevious_output: ", previous_output)
-                        previous_output = execute_prompt_chain(client, chain, row, previous_output)
+                        previous_output = execute_prompt_chain(client, instructions, prompt, previous_output)
                         print("\n -------->new_output: ", previous_output)
                         print("\n\n")
                     df.at[index, workflow_name] = previous_output
     return df
 
 # Function to execute a prompt chain
-def execute_prompt_chain(client, chain, input_data, previous_output):
-    print(f"\n========execute_prompt_chain :\ninput_data: {input_data}")
-    # Determine if input_data is a Series or a string
-    if isinstance(input_data, pd.Series):
-        prompt = chain['prompt'].format(source=input_data, previous_output=previous_output)
-    else:
-        prompt = chain['prompt'].format(column=input_data, previous_output=previous_output)
-    
-    instructions = chain['instructions']
+def execute_prompt_chain(client, instructions, prompt, previous_output):
+    print(f"\n========execute_prompt_chain :\ninput_data: {prompt}")
     print(f"\nprompt:{prompt}\n instructions:{instructions}\n\n")
 
     try:
@@ -112,7 +88,7 @@ print("messages_df: ", messages_df)
 final_aggregated_thinking = {
     "assistant_grade_mean": {
         "source": "messages",
-        "column": "grade_prompt",
+        "column": "grade_prompt_output",
         "type": "classic",
         "operation": "mean"
     },

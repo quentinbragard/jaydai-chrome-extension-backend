@@ -1,0 +1,24 @@
+{
+    "grade_prompt": [
+        {
+            "source": "messages",
+            "prompt_chains": [
+                {
+                    "instructions_file": "prompts/grade_prompt_instructions.txt",
+                    "prompt": "Le prompt à évaluer est: {source[content]}"
+                }
+            ]
+        }
+    ],
+    "explain_grade": [
+        {
+            "source": "messages",
+            "prompt_chains": [
+                {
+                    "instructions_file": "prompts/explain_grade_instructions.txt",
+                    "prompt": "Les notes obtenues à l'évaluation du prompt sont: {source[grade_prompt]}"
+                }
+            ]
+        }
+    ]
+} 
