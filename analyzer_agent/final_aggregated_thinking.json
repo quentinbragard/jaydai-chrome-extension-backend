@@ -1,14 +1,53 @@
 {
-    "assistant_grade_mean": {
-        "source": "messages",
+    "global_messages_avg_grade": {
+        "type": "classic",
         "column": "grade_prompt_output",
-        "type": "custom",
-        "operation": "mean_grade"
+        "operation": "custom",
+        "custom_function": "mean_grade"
+    },
+    "max_grade": {
+        "type": "classic",
+        "column": "grade_prompt_output",
+        "operation": "custom",
+        "custom_function": "max_grade"
+    },
+    "min_grade": {
+        "type": "classic",
+        "column": "grade_prompt_output",
+        "operation": "custom",
+        "custom_function": "min_grade"
+    },
+    "total_number_of_messages": {
+        "type": "classic",
+        "column": "message_id",
+        "operation": "count"
+    },
+    "total_number_of_user_messages": {
+        "type": "classic",
+        "column": "message_id",
+        "operation": "count",
+        "filter": {"role": "user"}
+    },
+    "total_number_of_assistant_messages": {
+        "type": "classic",
+        "column": "message_id",
+        "operation": "count",
+        "filter": {"role": "assistant"}
+    },
+    "total_cost": {
+        "type": "classic",
+        "column": "cost",
+        "operation": "sum"
+    },
+    "total_energy_consumption": {
+        "type": "classic",
+        "column": "energy_consumption",
+        "operation": "sum"
     },
     "assistant_grade_explanation": {
+        "type": "ai_based",
         "source": "messages",
         "column": "explain_grade_output",
-        "type": "ai_based",
         "prompt_chains": [
             {
                 "instructions_file": "analyzer_agent/prompts/agg_grade_explanation_instructions.txt",
