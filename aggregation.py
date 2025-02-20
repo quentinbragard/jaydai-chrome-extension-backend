@@ -25,16 +25,9 @@ def aggregate_final_insights(df, aggregated_thinking):
     for user_id, user_df in df.groupby('user_id'):
         user_stats[user_id] = {}
         for stat_name, config in aggregated_thinking.items():
-            print("\n\n++++++++++++aggregating", stat_name)
-            print("++++++++++++config", config)
-            print("++++++++++++user_df", user_df)
-            print("++++++++++++user_id", user_id)
+
             if config['type'] == 'classic':
-                print(f"user_df = {user_df}")
                 column_data = pd.to_numeric(user_df[config['column']], errors='coerce').tolist()
-                print(f"user_df : {user_df}\n")
-                print(f"config['column'] : {config['column']}\n")
-                print(f"user_df[config['column']] : {user_df[config['column']]}\n")
                 if config['operation'] == 'mean':
                     user_stats[user_id][stat_name] = pd.Series(column_data).mean()
                 # Add more operations as needed
@@ -42,16 +35,14 @@ def aggregate_final_insights(df, aggregated_thinking):
                 user_stats[user_id][stat_name] = calculate_mean_grade(user_df, config['column'])
             else:
                 column_data = user_df[config['column']].tolist()
-                print("!!!!!!!!!!!!!!!!!!!!column_data", column_data)
+                print(f"Column data: {user_df[config['column']]}")
+                print(f"Column data: {user_df[config['column']].tolist()}")
                 column_data_str = ', '.join(map(str, column_data))
+                print(f"Column data: {column_data_str}")
                 if config['type'] == 'ai_based':
                     previous_output = None
-                    print("---------------------config", config)
                     for chain in config['prompt_chains']:
-                        instructions = chain['instructions']
                         prompt = chain['prompt'].format(column=column_data_str, previous_output=previous_output)
-                        print("!!!!!!!!!!!!!!!!!!!!!!!instructions", instructions)
-                        print("!!!!!!!!!!!!!!!!!!!!!!!prompt", prompt)
-                        previous_output = execute_prompt_chain(client, instructions, prompt, previous_output)
+                        previous_output = execute_prompt_chain(client, chain, prompt, previous_output)
                     user_stats[user_id][stat_name] = previous_output
     return pd.DataFrame.from_dict(user_stats, orient='index') 

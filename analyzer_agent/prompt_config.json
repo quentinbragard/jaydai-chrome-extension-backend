@@ -5,7 +5,8 @@
             "prompt_chains": [
                 {
                     "instructions_file": "analyzer_agent/prompts/grade_prompt_instructions.txt",
-                    "prompt": "Le prompt à évaluer est: {source[content]}"
+                    "prompt": "Le prompt à évaluer est: {source[content]}",
+                    "model": "gpt-4o-mini"
                 }
             ]
         }
@@ -16,7 +17,10 @@
             "prompt_chains": [
                 {
                     "instructions_file": "analyzer_agent/prompts/explain_grade_instructions.txt",
-                    "prompt": "Les notes obtenues à l'évaluation du prompt sont: {source[grade_prompt_output]}"
+                    "prompt": "La note globale attribuée est: {source[grade_prompt_output]}",
+                    "model": "gpt-4o-mini",
+                    "tools": [{ "type": "file_search" }],
+                    "docs": ["docs/grade_prompt_mean.txt"]
                 }
             ]
         }

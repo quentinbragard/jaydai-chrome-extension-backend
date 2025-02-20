@@ -1,0 +1,45 @@
+Compare 2 prompte feature
+=========================
+
+Voici une analyse comparative de deux prompts, chacun évalué sur plusieurs critères importants :
+
+### Prompt 1
+- **Clarté**:
+  - *Explication*: La clarté du prompt est excellente, permettant une compréhension immédiate des attentes.
+  
+- **Contexte**:
+  - *Explication*: Le contexte est bon, mais pourrait être amélioré en fournissant davantage de détails pour renforcer la pertinence des réponses.
+  
+- **Précision**:
+  - *Explication*: La précision est adéquate, cependant des spécifications supplémentaires sur certains points seraient bénéfiques.
+  
+- **Principes d'ingénierie du prompt**:
+  - *Explication*: Les principes d'ingénierie du prompt sont respectés, bien qu'une structure plus rigoureuse pourrait optimiser les résultats.
+  
+- **Efficacité**:
+  - *Explication*: L'efficacité est élevée, permettant des réponses rapides et pertinentes sans des détours inutiles.
+  
+- **Explication globale**:
+  - *Explication*: Dans l'ensemble, le prompt présente de bonnes caractéristiques, avec des domaines d'amélioration concernant le contexte et la précision.
+
+### Prompt 2
+- **Clarté**:
+  - *Explication*: La clarté du prompt est acceptable mais pourrait être améliorée en rendant les instructions plus explicites. Il serait bénéfique de reformuler certaines phrases pour éviter toute ambiguïté.
+  
+- **Contexte**:
+  - *Explication*: Le contexte est insuffisant, ce qui limite la compréhension complète du sujet. Un contexte plus détaillé aiderait à mieux situer la demande.
+  
+- **Précision**:
+  - *Explication*: La précision est faible, ce qui peut entraîner des réponses inexactes ou hors-sujet. Il serait utile de spécifier davantage les attentes et les détails requis.
+  
+- **Principes d'ingénierie du prompt**:
+  - *Explication*: Les principes d'ingénierie de prompt ne sont pas bien respectés, ce qui peut affecter l'efficacité du résultat. Une structuration plus réfléchie permettrait d'améliorer le score.
+  
+- **Efficacité**:
+  - *Explication*: L'efficacité est moyenne, indiquant que le prompt pourrait générer des réponses plus rapidement avec des ajustements. Simplifier certaines parties pourrait optimiser le processus.
+  
+- **Explication globale**:
+  - *Explication*: Globalement, le prompt nécessite des améliorations dans presque tous les critères pour être plus efficace et obtenir des réponses plus pertinentes.
+
+### Conclusion
+La comparaison entre les deux prompts révèle que le premier est nettement plus performant dans presque tous les aspects, y compris la clarté, la précision et l'efficacité. Le second prompt, en revanche, souffre de faiblesses significatives dans ces domaines, indiquant un besoin urgent d'améliorations pour améliorer la qualité des réponses reçues."

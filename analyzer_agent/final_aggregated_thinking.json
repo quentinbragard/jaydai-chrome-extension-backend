@@ -11,8 +11,9 @@
         "type": "ai_based",
         "prompt_chains": [
             {
-                "instructions": "With all the explanations provided, explain the mean grade. Example output: 'You have often given precise instructions to the assistant which is good but you could have added more context sometimes'",
-                "prompt": "Grades explanations: {column}"
+                "instructions_file": "analyzer_agent/prompts/agg_grade_explanation_instructions.txt",
+                "prompt": "Grades explanations: {column}",
+                "model": "gpt-4o-mini"
             }
         ]
     }
