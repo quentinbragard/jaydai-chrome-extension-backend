@@ -1,0 +1,19 @@
+{
+    "assistant_grade_mean": {
+        "source": "messages",
+        "column": "grade_prompt_output",
+        "type": "custom",
+        "operation": "mean_grade"
+    },
+    "assistant_grade_explanation": {
+        "source": "messages",
+        "column": "explain_grade_output",
+        "type": "ai_based",
+        "prompt_chains": [
+            {
+                "instructions": "With all the explanations provided, explain the mean grade. Example output: 'You have often given precise instructions to the assistant which is good but you could have added more context sometimes'",
+                "prompt": "Grades explanations: {column}"
+            }
+        ]
+    }
+} 

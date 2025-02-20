@@ -1,4 +1,7 @@
 import pandas as pd
+from config import load_agent_thinking_workflows, load_final_aggregated_thinking
+from workflow import process_thinking_workflows
+from aggregation import aggregate_final_insights
 
 def main():
     # Load the CSV files
@@ -14,14 +17,6 @@ def main():
 
     # Process workflows
     messages_df = process_thinking_workflows(messages_df, agent_thinking_workflows)
-
-    # Debugging: Check if the column exists and has data
-    print("DataFrame before aggregation:\n", messages_df.head())
-    print("Columns in messages_df:", messages_df.columns)
-    if 'grade_prompt_output' in messages_df.columns:
-        print("Data in grade_prompt_output column:", messages_df['grade_prompt_output'].head())
-    else:
-        print("Column 'grade_prompt_output' not found in messages_df")
 
     # Aggregate final insights
     user_stats_df = aggregate_final_insights(messages_df, final_aggregated_thinking)
