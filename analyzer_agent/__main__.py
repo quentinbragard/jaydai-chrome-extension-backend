@@ -3,14 +3,15 @@ from config import load_agent_thinking_workflows, load_final_aggregated_thinking
 from workflow import process_thinking_workflows
 from aggregation import aggregate_final_insights
 from stats import calculate_message_stats
+from agent import create_agent
 
 def main():
     # Load the CSV files
     messages_df = pd.read_csv("csv/messages.csv")
     chats_df = pd.read_csv("csv/chats.csv")
 
-    messages_df = messages_df.head(2)
-    chats_df = chats_df.head(2)
+    #messages_df = messages_df.head(5)
+    #chats_df = chats_df.head(5)
 
     # Load configurations
     agent_thinking_workflows = load_agent_thinking_workflows("analyzer_agent/prompt_config.json")
@@ -18,10 +19,13 @@ def main():
 
     # Process workflows
     messages_df = calculate_message_stats(messages_df)
-    messages_df = process_thinking_workflows(messages_df, agent_thinking_workflows)
-
+    messages_df.to_csv("csv/messages_stats.csv", index=False)
+    client, assistant = create_agent()
+    messages_df = process_thinking_workflows(client, assistant, messages_df, agent_thinking_workflows)
+    messages_df.to_csv("csv/messages_stats_with_workflows.csv", index=False)
     # Aggregate final insights
-    user_stats_df = aggregate_final_insights(messages_df, final_aggregated_thinking)
+    print("Aggregating final insights...")
+    user_stats_df = aggregate_final_insights(client, assistant, messages_df, final_aggregated_thinking)
 
     # Ensure user_id is the index
     user_stats_df.index.name = 'user_id'

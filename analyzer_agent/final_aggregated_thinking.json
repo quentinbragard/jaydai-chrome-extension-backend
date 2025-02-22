@@ -26,13 +26,19 @@
         "type": "classic",
         "column": "message_id",
         "operation": "count",
-        "filter": {"role": "user"}
+        "filter": {
+            "filter_column": "role",
+            "filter_value": "user"
+        }
     },
     "total_number_of_assistant_messages": {
         "type": "classic",
         "column": "message_id",
         "operation": "count",
-        "filter": {"role": "assistant"}
+        "filter": {
+            "filter_column": "role",
+            "filter_value": "assistant"
+        }
     },
     "total_cost": {
         "type": "classic",
@@ -47,6 +53,10 @@
     "assistant_grade_explanation": {
         "type": "ai_based",
         "source": "messages",
+        "filter": {
+            "filter_column": "role",
+            "filter_value": "user"
+        },
         "column": "explain_grade_output",
         "prompt_chains": [
             {

@@ -2,6 +2,10 @@
     "grade_prompt": [
         {
             "source": "messages",
+            "filter": {
+                "filter_column": "role",
+                "filter_value": "user"
+            },
             "prompt_chains": [
                 {
                     "instructions_file": "analyzer_agent/prompts/grade_prompt_instructions.txt",
@@ -14,6 +18,10 @@
     "explain_grade": [
         {
             "source": "messages",
+            "filter": {
+                "filter_column": "role",
+                "filter_value": "user"
+            },
             "prompt_chains": [
                 {
                     "instructions_file": "analyzer_agent/prompts/explain_grade_instructions.txt",
