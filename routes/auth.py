@@ -4,6 +4,7 @@ import requests
 from supabase import create_client, Client
 import dotenv
 import os
+from utils.notification_service import check_user_notifications
 
 dotenv.load_dotenv()
 
@@ -25,27 +26,26 @@ class RefreshTokenData(BaseModel):
 @router.post("/sign_in")
 async def sign_in(sign_in_data: SignInData):
     """Authenticate user via email & password."""
-    #try:
-    response = supabase.auth.sign_in_with_password({
-        "email": sign_in_data.email,
-        "password": sign_in_data.password
-    })
+    try:
+        response = supabase.auth.sign_in_with_password({
+            "email": sign_in_data.email,
+            "password": sign_in_data.password
+        })
 
-    from datetime import datetime, timedelta
+        # Check for notifications after successful login
+        await check_user_notifications(response.user.id)
 
-
-
-    return {
-        "success": True,
-        "user": response.user,
-        "session": {
-            "access_token": response.session.access_token,
-            "refresh_token": response.session.refresh_token,  # Include refresh token
-            "expires_at": response.session.expires_at  # Add expiry timestamp
+        return {
+            "success": True,
+            "user": response.user,
+            "session": {
+                "access_token": response.session.access_token,
+                "refresh_token": response.session.refresh_token,
+                "expires_at": response.session.expires_at
+            }
         }
-    }
-    #except Exception as e:
-   #     raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 @router.post("/google")
 async def google_auth(auth_data: GoogleAuthData):
@@ -60,12 +60,15 @@ async def google_auth(auth_data: GoogleAuthData):
             "token": auth_data.id_token
         })
         
+        # Check for notifications after successful login
+        await check_user_notifications(response.user.id)
+        
         return {
             "success": True,
             "user": response.user,
             "session": {
                 "access_token": response.session.access_token,
-                "refresh_token": response.session.refresh_token,  # Include refresh token
+                "refresh_token": response.session.refresh_token,
                 "expires_at": response.session.expires_at
             }
         }
@@ -85,6 +88,20 @@ async def refresh_token(refresh_data: RefreshTokenData):
                 "refresh_token": response.session.refresh_token,
                 "expires_at": response.session.expires_at
             }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+@router.get("/me")
+async def get_current_user(user_id: str = Depends(supabase.auth.get_user)):
+    """Get the current authenticated user."""
+    try:
+        # Check for notifications on user session validation
+        await check_user_notifications(user_id)
+        
+        return {
+            "success": True,
+            "user_id": user_id
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
