@@ -25,45 +25,71 @@ class NotificationCreate(NotificationBase):
     user_id: str
 
 class NotificationResponse(NotificationBase):
-    id: str
+    id: int
     created_at: datetime
     read_at: Optional[datetime] = None
 
 @router.get("/")
 async def get_notifications(user_id: str = Depends(supabase_helpers.get_user_from_session_token)) -> List[NotificationResponse]:
     """Get all notifications for a user."""
-    #try:
-    # Properly handle the query to avoid timestamp issues
-    response = supabase.table("notifications") \
-        .select("*") \
-        .eq("user_id", user_id) \
-        .order("created_at", desc=True) \
-        .execute()
-    
-    # Ensure read_at is properly handled as None/null
-    for notification in response.data:
-        if notification.get('read_at') == "None":
-            notification['read_at'] = None
-            
-    return response.data
-    #except Exception as e:
-    #    raise HTTPException(status_code=500, detail=f"Error retrieving notifications: {str(e)}")
+    print("Getting notifications for user:", user_id)
+    try:
+        # Properly handle the query to avoid timestamp issues
+        response = supabase.table("notifications") \
+            .select("*") \
+            .eq("user_id", user_id) \
+            .order("created_at", desc=True) \
+            .execute()
+        print("Notifications:", response.data)
+        
+        # Ensure read_at is properly handled as None/null
+        for notification in response.data:
+            if notification.get('read_at') == "None":
+                notification['read_at'] = None
+                
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving notifications: {str(e)}")
 
 @router.get("/unread")
 async def get_unread_notifications(user_id: str = Depends(supabase_helpers.get_user_from_session_token)) -> List[NotificationResponse]:
     """Get unread notifications for a user."""
-    #try:
+    try:
         # Use is_ for checking null values
-    response = supabase.table("notifications") \
-        .select("*") \
-        .eq("user_id", user_id) \
-        .is_("read_at", "null") \
-        .order("created_at", desc=True) \
-        .execute()
-    return response.data
-    #except Exception as e:
-    #    raise HTTPException(status_code=500, detail=f"Error retrieving unread notifications: {str(e)}")
+        response = supabase.table("notifications") \
+            .select("*") \
+            .eq("user_id", user_id) \
+            .is_("read_at", "null") \
+            .order("created_at", desc=True) \
+            .execute()
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving unread notifications: {str(e)}")
 
+@router.get("/count")
+async def get_notification_count(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    """Get notification counts (total and unread)."""
+    try:
+        # Get total count
+        total_response = supabase.table("notifications") \
+            .select("id", count="exact") \
+            .eq("user_id", user_id) \
+            .execute()
+        
+        # Get unread count - using is_ for null check
+        unread_response = supabase.table("notifications") \
+            .select("id", count="exact") \
+            .eq("user_id", user_id) \
+            .is_("read_at", "null") \
+            .execute()
+        
+        # Use the count from Supabase if available, or fallback to length of data array
+        total_count = total_response.count if hasattr(total_response, 'count') else len(total_response.data)
+        unread_count = unread_response.count if hasattr(unread_response, 'count') else len(unread_response.data)
+        
+        return {"total": total_count, "unread": unread_count}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving notification counts: {str(e)}")
 @router.post("/create")
 async def create_notification(notification: NotificationCreate) -> NotificationResponse:
     """Create a notification (admin endpoint)."""
@@ -142,27 +168,3 @@ async def mark_all_notifications_read(user_id: str = Depends(supabase_helpers.ge
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error marking all notifications as read: {str(e)}")
 
-@router.get("/count")
-async def get_notification_count(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Get notification counts (total and unread)."""
-    #try:
-    # Get total count
-    total_response = supabase.table("notifications") \
-        .select("id", count="exact") \
-        .eq("user_id", user_id) \
-        .execute()
-    
-    # Get unread count - using is_ for null check
-    unread_response = supabase.table("notifications") \
-        .select("id", count="exact") \
-        .eq("user_id", user_id) \
-        .is_("read_at", "null") \
-        .execute()
-    
-    # Use the count from Supabase if available, or fallback to length of data array
-    total_count = total_response.count if hasattr(total_response, 'count') else len(total_response.data)
-    unread_count = unread_response.count if hasattr(unread_response, 'count') else len(unread_response.data)
-    
-    return {"total": total_count, "unread": unread_count}
-    #except Exception as e:
-    #    raise HTTPException(status_code=500, detail=f"Error retrieving notification counts: {str(e)}")
