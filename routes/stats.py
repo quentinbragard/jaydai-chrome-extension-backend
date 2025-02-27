@@ -95,7 +95,7 @@ def calculate_energy_usage(messages_df):
 async def get_prompt_templates(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     """Get user's saved prompt templates."""
     try:
-        response = supabase.table("prompt_templates").select("*").eq("user_id", user_id).order("usage_count", desc=True).limit(10).execute()
+        response = supabase.table("prompt_templates").select("*").eq("user_id", user_id).limit(10).execute()
         
         return {
             "success": True,

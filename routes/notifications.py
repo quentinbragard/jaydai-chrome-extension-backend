@@ -7,6 +7,7 @@ from utils import supabase_helpers
 import dotenv
 import os
 import uuid
+from utils.notification_service import check_user_notifications
 
 dotenv.load_dotenv()
 
@@ -34,13 +35,15 @@ async def get_notifications(user_id: str = Depends(supabase_helpers.get_user_fro
     """Get all notifications for a user."""
     print("Getting notifications for user:", user_id)
     try:
+        # Check for required notifications first
+        await check_user_notifications(user_id)
+        
         # Properly handle the query to avoid timestamp issues
         response = supabase.table("notifications") \
             .select("*") \
             .eq("user_id", user_id) \
             .order("created_at", desc=True) \
             .execute()
-        print("Notifications:", response.data)
         
         # Ensure read_at is properly handled as None/null
         for notification in response.data:
