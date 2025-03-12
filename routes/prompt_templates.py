@@ -84,7 +84,6 @@ async def get_user_templates(
                             'level': i
                         })
         
-        print({"templates": templates, "folders": unique_folders, "templates_by_folder": folders})
         return {
             "success": True,
             "templates": templates,
@@ -99,7 +98,6 @@ async def get_official_templates(
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """Get official prompt templates that can be used as a basis."""
-    print("####################")
     try:
         response = supabase.table("official_prompt_templates").select("*").order("folder", desc=False).execute()
         
@@ -123,7 +121,6 @@ async def get_official_templates(
         
         # Convert to a sorted list
         folders_list = sorted(list(folders))
-        print(folders_list)
         
         return {
             "success": True,
@@ -151,7 +148,6 @@ async def get_all_templates(
             .select("*") \
             .execute()
             
-        print({"user_templates_response": user_templates_response.data, "official_templates_response": official_templates_response.data})
         
         return {
             "success": True,
