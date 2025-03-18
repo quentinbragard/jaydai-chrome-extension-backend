@@ -22,6 +22,7 @@ class MessageData(BaseModel):
     provider_chat_id: str
     model: str = "unknown"  # Default model to "unknown"
     created_at: Optional[float] = None  # Make created_at optional
+    parent_message_id: Optional[str] = None
 
 class ChatData(BaseModel):
     provider_chat_id: str
@@ -46,37 +47,45 @@ class CombinedBatchRequest(BaseModel):
 
 @router.post("/message")
 async def save_message(message: MessageData, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Save a chat message."""
-    try:
-        created_at = None
-        if message.created_at:
-            try:
-                # Convert Unix timestamp to ISO format
-                created_at = datetime.fromtimestamp(message.created_at / 1000 if message.created_at > 1e10 else message.created_at, tz=timezone.utc).isoformat()
-            except Exception as e:
-                print(f"Error converting timestamp {message.created_at}: {str(e)}")
-                # Use current time as fallback
-                created_at = datetime.now(tz=timezone.utc).isoformat()
-        else:
-            # If no timestamp provided, use current time
+    """Save a chat message with parent message ID support."""
+    print("message", message)
+    #try:
+    created_at = None
+    if message.created_at:
+        try:
+            # Handle both seconds and milliseconds timestamps
+            # If timestamp is very large (milliseconds), convert to seconds
+            timestamp_in_seconds = message.created_at / 1000 if message.created_at > 1e10 else message.created_at
+            created_at = datetime.fromtimestamp(timestamp_in_seconds, tz=timezone.utc).isoformat()
+        except Exception as e:
+            print(f"Error converting timestamp {message.created_at}: {str(e)}")
+            # Use current time as fallback
             created_at = datetime.now(tz=timezone.utc).isoformat()
-            
-        # Insert message with validated data
-        response = supabase.table("messages").insert({
-            "user_id": user_id,
-            "message_id": message.message_id,
-            "content": message.content,
-            "role": message.role,
-            "rank": message.rank,
-            "provider_chat_id": message.provider_chat_id,
-            "model": message.model,
-            "created_at": created_at
-        }).execute()
+    else:
+        # If no timestamp provided, use current time
+        created_at = datetime.now(tz=timezone.utc).isoformat()
         
-        return {"success": True, "data": response.data}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Message save error: {str(e)}")
-
+    # Prepare data to insert
+    message_data = {
+        "user_id": user_id,
+        "message_id": message.message_id,
+        "content": message.content,
+        "role": message.role,
+        "provider_chat_id": message.provider_chat_id,
+        "model": message.model,
+        "created_at": created_at
+    }
+    
+    # Add parent_message_id if provided
+    if message.parent_message_id:
+        message_data["parent_message_id"] = message.parent_message_id
+        
+    # Insert message with validated data
+    response = supabase.table("messages").insert(message_data).execute()
+    
+    return {"success": True, "data": response.data}
+    #except Exception as e:
+    #    raise HTTPException(status_code=500, detail=f"Message save error: {str(e)}")
 @router.post("/chat")
 async def save_chat(chat: ChatData, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     """Save a chat session."""
@@ -147,7 +156,7 @@ async def save_user_metadata(metadata: UserMetadataData, user_id: str = Depends(
 
 @router.post("/batch/message")
 async def save_batch_messages(batch_data: BatchMessagesRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Save multiple messages in a single batch operation."""
+    """Save multiple messages in a single batch operation with parent message ID support."""
     try:
         if not batch_data.messages:
             return {"success": True, "message": "No messages to save", "count": 0}
@@ -179,8 +188,9 @@ async def save_batch_messages(batch_data: BatchMessagesRequest, user_id: str = D
             created_at = None
             if message.created_at:
                 try:
-                    # Convert Unix timestamp to ISO format
-                    created_at = datetime.fromtimestamp(message.created_at / 1000 if message.created_at > 1e10 else message.created_at, tz=timezone.utc).isoformat()
+                    # Convert timestamp to ISO format, handling both seconds and milliseconds
+                    timestamp_in_seconds = message.created_at / 1000 if message.created_at > 1e10 else message.created_at
+                    created_at = datetime.fromtimestamp(timestamp_in_seconds, tz=timezone.utc).isoformat()
                 except Exception as e:
                     # Use current time as fallback
                     created_at = datetime.now(tz=timezone.utc).isoformat()
@@ -188,16 +198,22 @@ async def save_batch_messages(batch_data: BatchMessagesRequest, user_id: str = D
                 # If no timestamp provided, use current time
                 created_at = datetime.now(tz=timezone.utc).isoformat()
                 
-            messages_to_insert.append({
+            # Prepare message data
+            message_data = {
                 "user_id": user_id,
                 "message_id": message.message_id,
                 "content": message.content,
                 "role": message.role,
-                "rank": message.rank,
                 "provider_chat_id": message.provider_chat_id,
                 "model": message.model,
                 "created_at": created_at
-            })
+            }
+            
+            # Add parent_message_id if provided
+            if hasattr(message, 'parent_message_id') and message.parent_message_id:
+                message_data["parent_message_id"] = message.parent_message_id
+                
+            messages_to_insert.append(message_data)
         
         results = []
         if messages_to_insert:

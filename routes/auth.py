@@ -5,7 +5,8 @@ from supabase import create_client, Client
 import dotenv
 import os
 from utils.notification_service import check_user_notifications
-
+from typing import Optional
+from datetime import datetime, timezone
 dotenv.load_dotenv()
 
 # Initialize Supabase client
@@ -22,7 +23,63 @@ class GoogleAuthData(BaseModel):
 
 class RefreshTokenData(BaseModel):
     refresh_token: str
+    
+class SignUpData(BaseModel):
+    email: str
+    password: str
+    name: Optional[str] = None
+    
 
+async def initialize_user_metadata(user_id: str):
+    """Initialize a new user's metadata with default pinned folders."""
+    try:
+        # Check if metadata already exists
+        existing = supabase.table("users_metadata").select("id") \
+            .eq("user_id", user_id) \
+            .execute()
+            
+        if not existing.data:
+            # Create new metadata with folder ID 1 pinned by default
+            supabase.table("users_metadata").insert({
+                "user_id": user_id,
+                "pinned_official_folder_ids": [1],  # Starter pack folder
+                "preferences_metadata": {
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "onboarding_completed": False
+                }
+            }).execute()
+            
+        return True
+    except Exception as e:
+        print(f"Error initializing user metadata: {str(e)}")
+        return False
+    
+    
+@router.post("/sign_up")
+async def sign_up(sign_up_data: SignUpData):
+    """Sign up a new user."""
+    try:
+        # Create the user in Supabase
+        response = supabase.auth.sign_up({
+            "email": sign_up_data.email,
+            "password": sign_up_data.password,
+            "options": {
+                "data": {
+                    "name": sign_up_data.name
+                }
+            }
+        })
+        
+        # Initialize user metadata with default pinned folders
+        if response.user:
+            await initialize_user_metadata(response.user.id)
+        
+        return {
+            "success": True,
+            "message": "Sign up successful. Please check your email to verify your account."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error during sign up: {str(e)}")
 @router.post("/sign_in")
 async def sign_in(sign_in_data: SignInData):
     """Authenticate user via email & password."""

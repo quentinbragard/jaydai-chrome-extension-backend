@@ -10,7 +10,7 @@ from typing import List, Optional
 dotenv.load_dotenv()
 
 # Initialize Supabase client
-supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_API_KEY"))
+supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 router = APIRouter(prefix="/prompt-templates", tags=["Prompt Templates"])
@@ -43,7 +43,7 @@ async def get_user_templates(
 ):
     """Get user's prompt templates organized by folders."""
     try:
-        response = supabase.table("user_prompt_templates").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
+        response = supabase.table("prompt_templates").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
         
         templates = response.data
         folders = {}
@@ -134,30 +134,153 @@ async def get_official_templates(
 async def get_all_templates(
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
-    """Get both user and official prompt templates."""
+    """Get templates organized by folders (official, organization, and user)."""
     try:
-        # Fetch user's templates
-        user_templates_response = supabase.table("user_prompt_templates") \
-            .select("*") \
-            .eq("user_id", user_id) \
-            .order("created_at", desc=True) \
-            .execute()
+        # Get user metadata to check for organization_id and pinned folders
+        user_metadata = supabase.table("users_metadata").select("*").eq("user_id", user_id).single().execute()
         
-        # Fetch official templates
-        official_templates_response = supabase.table("official_prompt_templates") \
-            .select("*") \
-            .execute()
-            
+        organization_id = None
+        if user_metadata.data and 'organization_id' in user_metadata.data:
+            organization_id = user_metadata.data['organization_id']
+        
+        # Get pinned folders
+        pinned_folders = []
+        if user_metadata.data and 'pinned_official_folder_ids' in user_metadata.data:
+            pinned_folders = user_metadata.data['pinned_official_folder_ids'] or []
+        
+        # 1. Fetch all folders
+        # Official folders
+        official_folders_response = supabase.table("official_folders").select("*").execute()
+        official_folders = official_folders_response.data or []
+        
+        # User folders for this user
+        user_folders_response = supabase.table("user_folders").select("*").eq("user_id", user_id).execute()
+        user_folders = user_folders_response.data or []
+        
+        # Organization folders if applicable
+        org_folders = []
+        if organization_id:
+            org_folders_response = supabase.table("organization_folders").select("*").eq("organization_id", organization_id).execute()
+            org_folders = org_folders_response.data or []
+        
+        # 2. Fetch templates for each folder
+        # For official folders
+        official_templates = []
+        for folder in official_folders:
+            folder['is_pinned'] = folder['id'] in pinned_folders
+            templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).execute()
+            folder['templates'] = templates_response.data or []
+            official_templates.extend(templates_response.data or [])
+        
+        # For user folders
+        user_templates = []
+        for folder in user_folders:
+            templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).execute()
+            folder['templates'] = templates_response.data or []
+            user_templates.extend(templates_response.data or [])
+        
+        # For organization folders
+        org_templates = []
+        for folder in org_folders:
+            templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).execute()
+            folder['templates'] = templates_response.data or []
+            org_templates.extend(templates_response.data or [])
+        
+        print({
+            "success": True,
+            "userTemplates": user_templates,
+            "officialTemplates": official_templates,
+            "organizationTemplates": org_templates,
+            "officialFolders": official_folders,
+            "userFolders": user_folders,
+            "organizationFolders": org_folders,
+            "pinnedFolders": pinned_folders
+        })
         
         return {
             "success": True,
-            "userTemplates": user_templates_response.data or [],
-            "officialTemplates": official_templates_response.data or []
+            "userTemplates": user_templates,
+            "officialTemplates": official_templates,
+            "organizationTemplates": org_templates,
+            "officialFolders": official_folders,
+            "userFolders": user_folders,
+            "organizationFolders": org_folders,
+            "pinnedFolders": pinned_folders
         }
     except Exception as e:
         print(f"Error retrieving templates: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
+    
+    
+@router.post("/pin-folder/{folder_id}")
+async def pin_folder(
+    folder_id: int,
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Pin an official folder for a user."""
+    try:
+        # Get current user metadata
+        user_metadata = supabase.table("users_metadata").select("*").eq("user_id", user_id).single().execute()
+        
+        if not user_metadata.data:
+            # Create user metadata if it doesn't exist
+            pinned_folders = [folder_id]
+            supabase.table("users_metadata").insert({
+                "user_id": user_id,
+                "pinned_official_folder_ids": pinned_folders
+            }).execute()
+        else:
+            # Update existing pinned folders
+            pinned_folders = user_metadata.data.get('pinned_official_folder_ids') or []
+            if folder_id not in pinned_folders:
+                pinned_folders.append(folder_id)
+                
+            # Update metadata
+            supabase.table("users_metadata").update({
+                "pinned_official_folder_ids": pinned_folders
+            }).eq("user_id", user_id).execute()
+        
+        return {
+            "success": True,
+            "pinned_folders": pinned_folders
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error pinning folder: {str(e)}")
 
+@router.post("/unpin-folder/{folder_id}")
+async def unpin_folder(
+    folder_id: int,
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Unpin an official folder for a user."""
+    try:
+        # Get current user metadata
+        user_metadata = supabase.table("users_metadata").select("*").eq("user_id", user_id).single().execute()
+        
+        if not user_metadata.data:
+            return {
+                "success": True,
+                "pinned_folders": []
+            }
+        
+        # Update existing pinned folders
+        pinned_folders = user_metadata.data.get('pinned_official_folder_ids') or []
+        if folder_id in pinned_folders:
+            pinned_folders.remove(folder_id)
+            
+        # Update metadata
+        supabase.table("users_metadata").update({
+            "pinned_official_folder_ids": pinned_folders
+        }).eq("user_id", user_id).execute()
+        
+        return {
+            "success": True,
+            "pinned_folders": pinned_folders
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error unpinning folder: {str(e)}")
+    
+     
 @router.post("/template")
 async def create_template(
     template: TemplateCreate,
@@ -184,7 +307,7 @@ async def create_template(
                     description = official.data.get('description')
         
         # Insert new template
-        response = supabase.table("user_prompt_templates").insert({
+        response = supabase.table("prompt_templates").insert({
             "user_id": user_id,
             "name": name,
             "content": content,
@@ -210,7 +333,7 @@ async def update_template(
     """Update an existing template."""
     try:
         # Verify template belongs to user
-        verify = supabase.table("user_prompt_templates").select("id").eq("id", template_id).eq("user_id", user_id).execute()
+        verify = supabase.table("prompt_templates").select("id").eq("id", template_id).eq("user_id", user_id).execute()
         
         if not verify.data:
             raise HTTPException(status_code=404, detail="Template not found or doesn't belong to user")
@@ -226,7 +349,7 @@ async def update_template(
         if template.folder is not None:
             update_data["folder"] = template.folder
         
-        response = supabase.table("user_prompt_templates").update(update_data).eq("id", template_id).execute()
+        response = supabase.table("prompt_templates").update(update_data).eq("id", template_id).execute()
         
         return {
             "success": True,
@@ -245,13 +368,13 @@ async def delete_template(
     """Delete a template."""
     try:
         # Verify template belongs to user
-        verify = supabase.table("user_prompt_templates").select("id").eq("id", template_id).eq("user_id", user_id).execute()
+        verify = supabase.table("prompt_templates").select("id").eq("id", template_id).eq("user_id", user_id).execute()
         
         if not verify.data:
             raise HTTPException(status_code=404, detail="Template not found or doesn't belong to user")
         
         # Delete template
-        supabase.table("user_prompt_templates").delete().eq("id", template_id).execute()
+        supabase.table("prompt_templates").delete().eq("id", template_id).execute()
         
         return {
             "success": True,
