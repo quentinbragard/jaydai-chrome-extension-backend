@@ -10,7 +10,7 @@ from typing import List, Optional, Dict, Any
 dotenv.load_dotenv()
 
 # Initialize Supabase client
-supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_API_KEY"))
+supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
 router = APIRouter(prefix="/save", tags=["Save"])
 
@@ -129,7 +129,7 @@ async def save_user_metadata(metadata: UserMetadataData, user_id: str = Depends(
     
     # Prepare data with validation and defaults
     update_data = {
-        "email": metadata.email,
+        "additional_email": metadata.email,
     }
     
     # Only include fields that are not None
@@ -138,9 +138,8 @@ async def save_user_metadata(metadata: UserMetadataData, user_id: str = Depends(
     if metadata.phone_number is not None:
         update_data["phone_number"] = metadata.phone_number
     if metadata.org_name is not None:
-        update_data["org_name"] = metadata.org_name
-    if metadata.picture is not None:
-        update_data["picture"] = metadata.picture
+        update_data["additional_organization"] = metadata.org_name
+
         
     if existing.data:
         # Update existing metadata

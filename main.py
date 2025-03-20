@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, save, stats, prompt_generator, prompt_templates, notifications
+from routes import auth, save, stats, notifications, prompts, user
 
 app = FastAPI()
 
@@ -16,9 +16,9 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(save.router)
 app.include_router(stats.router)
-app.include_router(prompt_generator.router)
-app.include_router(prompt_templates.router)
+app.include_router(prompts.router)
 app.include_router(notifications.router)
+app.include_router(user.router)
 
 @app.get("/")
 async def root():
