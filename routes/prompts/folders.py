@@ -39,8 +39,7 @@ async def get_folders(
     """
     try:
         # Use session_user_id if user_id is not provided
-        user_id = user_id or session_user_id
-        
+        user_id = user_id or session_user_id        
         if type == "user":
             return await get_user_folders(user_id)
         elif type == "official":
@@ -59,9 +58,10 @@ async def get_user_folders(user_id: str):
     try:
         # Get user's folders
         response = supabase.table("user_folders").select("*").eq("user_id", user_id).execute()
+        user_folder_ids = [folder['id'] for folder in response.data]
         
         # Get templates to count how many are in each folder
-        templates_response = supabase.table("prompt_templates").select("*").eq("user_id", user_id).execute()
+        templates_response = supabase.table("prompt_templates").select("*").in_("folder_id", user_folder_ids).execute()
         templates = templates_response.data or []
         
         # Count templates per folder
@@ -81,7 +81,7 @@ async def get_user_folders(user_id: str):
             "folders": folders
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving user folders: {str(e)}")
+       raise HTTPException(status_code=500, detail=f"Error retrieving user folders: {str(e)}")
 
 async def get_official_folders(user_id: str):
     """Get official folders."""
