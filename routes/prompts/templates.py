@@ -251,13 +251,20 @@ async def get_all_templates(user_id: str):
         
         return {
             "success": True,
-            "userTemplates": user_templates,
-            "officialTemplates": official_templates,
-            "organizationTemplates": org_templates,
-            "officialFolders": official_folders,
-            "userFolders": user_folders,
-            "organizationFolders": org_folders,
-            "pinnedFolders": pinned_folders
+            "pinnedFolders": {
+                "userTemplates": {
+                    "templates": user_templates,
+                    "folders": user_folders
+                },
+                "officialTemplates": {
+                    "templates": official_templates,
+                    "folders": official_folders
+                },
+                "organizationTemplates": {
+                    "templates": org_templates,
+                    "folders": org_folders
+                }
+            }
         }
     except Exception as e:
         print(f"Error retrieving templates: {str(e)}")

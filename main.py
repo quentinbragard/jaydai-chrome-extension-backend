@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, save, stats, notifications, prompts, user
+from routes import auth, save, stats, notifications, prompt, user
 
 app = FastAPI()
 
@@ -16,7 +16,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(save.router)
 app.include_router(stats.router)
-app.include_router(prompts.router)
+app.include_router(prompt.router)
 app.include_router(notifications.router)
 app.include_router(user.router)
 

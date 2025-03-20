@@ -27,8 +27,7 @@ class FolderUpdate(FolderBase):
 @router.get("/")
 async def get_folders(
     type: Optional[str] = None,
-    user_id: Optional[str] = None,
-    session_user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """
     Get folders with optional filtering by type.
@@ -37,9 +36,7 @@ async def get_folders(
     - type: Optional filter by folder type ('user', 'official', or 'organization')
     - user_id: Optional user ID to filter folders
     """
-    try:
-        # Use session_user_id if user_id is not provided
-        user_id = user_id or session_user_id        
+    try:    
         if type == "user":
             return await get_user_folders(user_id)
         elif type == "official":
@@ -103,8 +100,7 @@ async def get_official_folders(user_id: str):
         
         return {
             "success": True,
-            "folders": folders,
-            "pinned_folder_ids": pinned_folder_ids
+            "folders": folders
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving official folders: {str(e)}")
@@ -123,7 +119,6 @@ async def get_organization_folders(user_id: str):
             return {
                 "success": True,
                 "folders": [],
-                "pinned_folder_ids": []
             }
         
         pinned_folder_ids = []
@@ -140,8 +135,7 @@ async def get_organization_folders(user_id: str):
         
         return {
             "success": True,
-            "folders": folders,
-            "pinned_folder_ids": pinned_folder_ids
+            "folders": folders
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving organization folders: {str(e)}")
