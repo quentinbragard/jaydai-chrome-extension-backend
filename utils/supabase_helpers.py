@@ -14,14 +14,21 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_API_KEY)
 
 def get_user_from_session_token(authorization: str = Header(None)):
     """Extract user ID from Supabase JWT token."""
+    print("authorization==========", type(authorization))
+    print("authorization==========", authorization)
     if not authorization or not authorization.startswith("Bearer "):
+        print("Missing or invalid Authorization Header")
         raise HTTPException(status_code=403, detail="Missing or invalid Authorization Header")
 
     token = authorization.split(" ")[1]
+    print("token==========", type(token))
     try:
         user_info = supabase.auth.get_user(token)
+        print("user_info==========", user_info)
         if not user_info or not user_info.user:
+            print("Invalid token")
             raise HTTPException(status_code=403, detail="Invalid token")
         return user_info.user.id
     except Exception as e:
+        print("Error validating token:", str(e))
         raise HTTPException(status_code=500, detail=f"Error validating token: {str(e)}")
