@@ -11,16 +11,17 @@ dotenv.load_dotenv()
 # Initialize Supabase client
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
-router = APIRouter(prefix="/templates", tags=["Templates"])
+router = APIRouter(tags=["Templates"])
 
 class TemplateBase(BaseModel):
     content: str
-    name: str
-    description: Optional[str] = None
+    title: str
+    tags: Optional[List[str]] = None
+    locale: Optional[str] = None
     folder: Optional[str] = None
 
 class TemplateCreate(TemplateBase):
-    based_on_official_id: Optional[int] = None
+    pass
 
 class TemplateUpdate(TemplateBase):
     pass
@@ -233,7 +234,7 @@ async def get_all_templates(user_id: str):
             folder['is_pinned'] = folder['id'] in pinned_folders
             templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).execute()
             folder['templates'] = templates_response.data or []
-            official_templates.extend(templates_response.data or [])
+            official_templates.extend(templates_response.data or [])  # Fix: added closing bracket
         
         # For user folders
         user_templates = []
@@ -269,7 +270,8 @@ async def get_all_templates(user_id: str):
     except Exception as e:
         print(f"Error retrieving templates: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
-
+    
+    
 @router.post("/")
 async def create_template(
     template: TemplateCreate,
@@ -279,31 +281,20 @@ async def create_template(
     try:
         # If based on an official template, retrieve it first
         content = template.content
-        name = template.name
-        description = template.description
+        title = template.title
+        tags = template.tags
+        locale = template.locale
         
-        if template.based_on_official_id:
-            official = supabase.table("official_prompt_templates").select("*").eq("id", template.based_on_official_id).single().execute()
-            if official.data:
-                # Use official template content if not provided by user
-                if not content:
-                    content = official.data.get('content')
-                # Use official template name if not provided by user
-                if not name:
-                    name = f"Copy of {official.data.get('name')}"
-                # Use official template description if not provided by user
-                if not description:
-                    description = official.data.get('description')
+
         
         # Insert new template
         response = supabase.table("prompt_templates").insert({
-            "user_id": user_id,
-            "name": name,
+            "type": "user",
+            "folder_id": template.folder,
+            "title": title,
             "content": content,
-            "description": description,
-            "folder": template.folder,
-            "based_on_official_id": template.based_on_official_id,
-            "usage_count": 0
+            "tags": tags,
+            "locale": locale
         }).execute()
         
         return {
@@ -329,14 +320,16 @@ async def update_template(
         
         # Update fields
         update_data = {}
-        if template.name is not None:
-            update_data["name"] = template.name
+        if template.title is not None:
+            update_data["title"] = template.title
         if template.content is not None:
             update_data["content"] = template.content
-        if template.description is not None:
-            update_data["description"] = template.description
+        if template.tags is not None:
+            update_data["tags"] = template.tags
+        if template.locale is not None:
+            update_data["locale"] = template.locale
         if template.folder is not None:
-            update_data["folder"] = template.folder
+            update_data["folder_id"] = template.folder
         
         response = supabase.table("prompt_templates").update(update_data).eq("id", template_id).execute()
         
