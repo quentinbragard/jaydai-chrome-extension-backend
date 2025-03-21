@@ -290,7 +290,7 @@ async def create_template(
         # Insert new template
         response = supabase.table("prompt_templates").insert({
             "type": "user",
-            "folder_id": template.folder,
+            "folder_id": template.folder_id,
             "title": title,
             "content": content,
             "tags": tags,
