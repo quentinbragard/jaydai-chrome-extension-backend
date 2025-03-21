@@ -5,6 +5,8 @@ from utils import supabase_helpers
 import dotenv
 import os
 from typing import List, Optional
+from enum import Enum
+
 
 dotenv.load_dotenv()
 
@@ -23,6 +25,11 @@ class FolderCreate(FolderBase):
 
 class FolderUpdate(FolderBase):
     pass
+
+class PromptType(str, Enum):
+    official = "official"
+    user = "user"
+    organization = "organization"
 
 @router.get("/")
 async def get_folders(
@@ -372,3 +379,44 @@ async def update_pinned_folders(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error updating pinned folders: {str(e)}")
+
+@router.get("/template-folders")
+async def get_template_folders(
+    type: PromptType,
+    folder_ids: Optional[str] = None,  # Accept a comma-separated string
+    empty: bool = False,
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Get template folders by type with proper error handling"""
+    print("=================================")
+    try:
+        # Parse folder_ids from comma-separated string to list of integers
+        folder_id_list = []
+        if folder_ids:
+            try:
+                folder_id_list = [int(id_str) for id_str in folder_ids.split(',') if id_str.strip()]
+                print(f"Parsed folder IDs: {folder_id_list} from {folder_ids}")
+            except ValueError as e:
+                raise HTTPException(status_code=400, detail=f"Invalid folder ID format: {str(e)}")
+        
+        print(f"Get template folders request: type={type}, folder_ids={folder_id_list}, empty={empty}")
+        
+        if type == PromptType.official:
+            # When no folder_ids are provided, return all folders for browsing
+            if not folder_id_list:
+                return await get_all_official_template_folders(empty)
+            else:
+                return await get_official_template_folders(folder_id_list, empty)
+        elif type == PromptType.organization:
+            # When no folder_ids are provided, return all folders for browsing
+            if not folder_id_list:
+                return await get_all_organization_template_folders(empty)
+            else:
+                return await get_organization_template_folders(folder_id_list, empty)
+        elif type == PromptType.user:
+            return await get_user_template_folders(user_id, empty)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid prompt type")
+    except Exception as e:
+        print(f"Error retrieving template folders: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving template folders: {str(e)}")
