@@ -7,7 +7,7 @@ import uuid
 dotenv.load_dotenv()
 
 # Initialize Supabase client
-supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_API_KEY"))
+supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
 class NotificationService:
     """Service for creating and managing system notifications."""

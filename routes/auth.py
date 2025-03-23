@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 dotenv.load_dotenv()
 
 # Initialize Supabase client
+
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])

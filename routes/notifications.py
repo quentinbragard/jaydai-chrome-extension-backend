@@ -12,7 +12,7 @@ from utils.notification_service import check_user_notifications
 dotenv.load_dotenv()
 
 # Initialize Supabase client
-supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_API_KEY"))
+supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
 router = APIRouter(prefix="/notifications", tags=["Notifications"])
 

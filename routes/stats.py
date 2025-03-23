@@ -1,118 +1,226 @@
 from fastapi import APIRouter, Depends, HTTPException
-from supabase import create_client, Client
-from utils import supabase_helpers
+from datetime import datetime, timedelta
 import dotenv
 import os
-import pandas as pd
-from datetime import datetime, timedelta
-
-dotenv.load_dotenv()
+from supabase import create_client, Client
+from typing import Dict, List, Optional, Any
+from utils.supabase_helpers import get_user_from_session_token
 
 # Initialize Supabase client
-supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_API_KEY"))
+dotenv.load_dotenv()
+supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
-router = APIRouter(prefix="/stats", tags=["Stats"])
+router = APIRouter(
+    prefix="/stats",
+    tags=["stats"],
+    responses={404: {"description": "Not found"}},
+)
+
+# Energy cost constants (in joules per token)
+ENERGY_COST_PER_INPUT_TOKEN = 0.0003  # Example value, adjust based on actual model efficiency
+ENERGY_COST_PER_OUTPUT_TOKEN = 0.0006  # Output tokens typically cost more energy
 
 @router.get("/user")
-async def get_user_stats(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Get user statistics for today's ChatGPT usage."""
+async def get_user_stats(user_id: str = Depends(get_user_from_session_token)):
+    """Get all stats for the current user"""
     try:
-        # Get today's date range
-        today = datetime.now().date()
-        start_datetime = datetime.combine(today, datetime.min.time())
-        end_datetime = datetime.combine(today, datetime.max.time())
+        # Get current date and date 7 days ago
+        current_date = datetime.now()
+        last_week_date = current_date - timedelta(days=7)
         
-        # Query messages for today
-        response = supabase.table("messages").select("*").eq("user_id", user_id).gte("created_at", start_datetime.isoformat()).lte("created_at", end_datetime.isoformat()).execute()
+        # Format dates for SQL queries
+        current_date_str = current_date.strftime('%Y-%m-%d')
+        last_week_date_str = last_week_date.strftime('%Y-%m-%d')
         
-        if not response.data:
-            return {
-                "total_prompts": 0,
-                "average_score": None,  # Will be calculated in future implementation
-                "energy_usage": 0.0,    # Placeholder for energy calculation
-                "messages_by_model": {}
-            }
+        # Get total conversations
+        conversations_response = supabase.table("conversations").select("id").eq("user_id", user_id).execute()
+        total_chats = len(conversations_response.data)
         
-        # Convert to DataFrame for easier analysis
-        messages_df = pd.DataFrame(response.data)
+        # Get conversations from last 7 days
+        recent_conversations_response = supabase.table("conversations") \
+            .select("id, created_at") \
+            .eq("user_id", user_id) \
+            .gte("created_at", last_week_date_str) \
+            .execute()
+        recent_chats = len(recent_conversations_response.data)
         
-        # Count user messages (prompts)
-        user_messages = messages_df[messages_df["role"] == "user"]
-        total_prompts = len(user_messages)
+        # Get all messages
+        messages_response = supabase.table("messages").select("id, conversation_id, role, input_tokens, output_tokens, created_at") \
+            .eq("user_id", user_id).execute()
         
-        # Calculate average thinking time (as a proxy for complexity)
-        thinking_times = messages_df[messages_df["role"] == "assistant"]["thinking_time"].dropna()
-        avg_thinking_time = thinking_times.mean() if not thinking_times.empty else 0
+        total_messages = len(messages_response.data)
         
-        # Calculate rough energy usage based on model and response length
-        # This is a simplified placeholder - you'll want to refine this algorithm
-        energy_usage = calculate_energy_usage(messages_df)
+        # Calculate messages per conversation
+        conversation_message_counts = {}
+        for message in messages_response.data:
+            conv_id = message.get("conversation_id")
+            if conv_id:
+                conversation_message_counts[conv_id] = conversation_message_counts.get(conv_id, 0) + 1
         
-        # Group messages by model
-        if "model" in messages_df.columns:
-            models_count = messages_df.groupby("model").size().to_dict()
-        else:
-            models_count = {}
+        avg_messages_per_chat = round(total_messages / total_chats, 2) if total_chats > 0 else 0
         
-        # Placeholder for efficiency score (to be implemented)
-        # In a real implementation, you'd have a scoring algorithm
-        avg_score = 15.0  # Placeholder score out of 20
+        # Calculate recent token usage (last 7 days)
+        recent_messages = [m for m in messages_response.data if m.get("created_at") and m.get("created_at") >= last_week_date_str]
         
+        recent_input_tokens = sum(m.get("input_tokens", 0) for m in recent_messages) or 0
+        recent_output_tokens = sum(m.get("output_tokens", 0) for m in recent_messages) or 0
+        recent_total_tokens = recent_input_tokens + recent_output_tokens
+        
+        # Calculate all-time token usage
+        all_time_input_tokens = sum(m.get("input_tokens", 0) for m in messages_response.data) or 0
+        all_time_output_tokens = sum(m.get("output_tokens", 0) for m in messages_response.data) or 0
+        all_time_total_tokens = all_time_input_tokens + all_time_output_tokens
+        
+        # Calculate energy usage (convert to kWh)
+        recent_energy = (recent_input_tokens * ENERGY_COST_PER_INPUT_TOKEN + 
+                        recent_output_tokens * ENERGY_COST_PER_OUTPUT_TOKEN) / 3_600_000  # convert J to kWh
+        all_time_energy = (all_time_input_tokens * ENERGY_COST_PER_INPUT_TOKEN + 
+                          all_time_output_tokens * ENERGY_COST_PER_OUTPUT_TOKEN) / 3_600_000
+        
+        # Calculate average response time
+        thinking_times = []
+        for msg in messages_response.data:
+            if msg.get("thinking_time"):
+                thinking_times.append(msg.get("thinking_time"))
+        
+        avg_thinking_time = sum(thinking_times) / len(thinking_times) if thinking_times else 0
+        total_thinking_time = sum(thinking_times)
+        
+        # Calculate message counts per day for the last 7 days
+        messages_per_day = {}
+        for i in range(7):
+            date = (current_date - timedelta(days=i)).strftime('%Y-%m-%d')
+            messages_per_day[date] = 0
+        
+        for message in messages_response.data:
+            created_at = message.get("created_at")
+            if created_at:
+                date = created_at.split('T')[0]  # Extract YYYY-MM-DD
+                if date in messages_per_day:
+                    messages_per_day[date] += 1
+        
+        # Calculate user efficiency score (combination of factors)
+        # Higher score is better - based on:
+        # 1. Optimal messages per conversation (not too few, not too many)
+        # 2. Token efficiency (ratio of output to input)
+        # 3. Response time optimization
+        
+        messages_per_chat_score = min(100, max(0, 100 - abs(avg_messages_per_chat - 5) * 10))  # Optimal is around 5 messages
+        token_efficiency = (all_time_output_tokens / all_time_input_tokens * 50) if all_time_input_tokens else 50
+        response_time_score = min(100, max(0, 100 - (avg_thinking_time / 3) * 10))  # Lower thinking time is better
+        
+        efficiency_score = int((messages_per_chat_score + token_efficiency + response_time_score) / 3)
+        
+        # Calculate model usage breakdown
+        model_usage = {}
+        for message in messages_response.data:
+            model = message.get("model", "unknown")
+            if model:
+                if model not in model_usage:
+                    model_usage[model] = {
+                        "count": 0,
+                        "input_tokens": 0,
+                        "output_tokens": 0
+                    }
+                model_usage[model]["count"] += 1
+                model_usage[model]["input_tokens"] += message.get("input_tokens", 0)
+                model_usage[model]["output_tokens"] += message.get("output_tokens", 0)
+        
+        # Return compiled stats
         return {
-            "total_prompts": total_prompts,
-            "average_score": avg_score,
-            "energy_usage": energy_usage,
-            "messages_by_model": models_count
+            "total_chats": total_chats,
+            "recent_chats": recent_chats,
+            "total_messages": total_messages,
+            "avg_messages_per_chat": avg_messages_per_chat,
+            "messages_per_day": messages_per_day,
+            "token_usage": {
+                "recent": recent_total_tokens,
+                "recent_input": recent_input_tokens,
+                "recent_output": recent_output_tokens,
+                "total": all_time_total_tokens,
+                "total_input": all_time_input_tokens,
+                "total_output": all_time_output_tokens
+            },
+            "energy_usage": {
+                "recent": round(recent_energy, 6),
+                "total": round(all_time_energy, 6),
+                "per_message": round(all_time_energy / total_messages, 6) if total_messages else 0
+            },
+            "thinking_time": {
+                "average": round(avg_thinking_time, 2),
+                "total": round(total_thinking_time, 2)
+            },
+            "efficiency": efficiency_score,
+            "model_usage": model_usage
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving stats: {str(e)}")
+        print(f"Error getting user stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting user stats: {str(e)}")
 
-def calculate_energy_usage(messages_df):
-    """
-    Calculate estimated energy usage based on message count, model, and thinking time.
-    This is a simplified placeholder - real implementation would use more sophisticated calculations.
-    """
-    # Constants for energy calculation (these would be based on research/measurements)
-    BASE_COST_PER_MESSAGE = 0.001  # kWh
-    THINKING_TIME_FACTOR = 0.0005  # kWh per second of thinking
-    
-    # Start with base cost for all messages
-    total_energy = len(messages_df) * BASE_COST_PER_MESSAGE
-    
-    # Add cost based on thinking time
-    assistant_messages = messages_df[messages_df["role"] == "assistant"]
-    if "thinking_time" in assistant_messages.columns:
-        thinking_time_sum = assistant_messages["thinking_time"].sum()
-        thinking_energy = thinking_time_sum * THINKING_TIME_FACTOR
-        total_energy += thinking_energy
-    
-    # In a real implementation, you would add model-specific factors
-    # For example, GPT-4 might use more energy than GPT-3.5
-    
-    return round(total_energy, 3)
-
-@router.get("/templates")
-async def get_prompt_templates(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Get user's saved prompt templates."""
+@router.get("/conversations/weekly")
+async def get_weekly_conversation_stats(user_id: str = Depends(get_user_from_session_token)):
+    """Get weekly conversation statistics"""
     try:
-        response = supabase.table("prompt_templates").select("*").eq("user_id", user_id).limit(10).execute()
+        # Get current date and date 28 days ago (4 weeks)
+        current_date = datetime.now()
+        four_weeks_ago = current_date - timedelta(days=28)
         
+        # Format dates for SQL queries
+        four_weeks_ago_str = four_weeks_ago.strftime('%Y-%m-%d')
+        
+        # Get conversations from last 4 weeks
+        conversations_response = supabase.table("conversations") \
+            .select("id, created_at") \
+            .eq("user_id", user_id) \
+            .gte("created_at", four_weeks_ago_str) \
+            .execute()
+        
+        # Group conversations by week
+        weekly_counts = [0, 0, 0, 0]  # 4 weeks
+        
+        for conv in conversations_response.data:
+            created_at = datetime.fromisoformat(conv.get("created_at").replace('Z', '+00:00'))
+            days_ago = (current_date - created_at).days
+            week_index = min(3, days_ago // 7)  # Ensure it fits in our 4 weeks
+            weekly_counts[week_index] += 1
+        
+        # Return weekly breakdown
         return {
-            "success": True,
-            "templates": response.data
+            "weekly_conversations": list(reversed(weekly_counts)),  # Most recent week first
+            "total": sum(weekly_counts)
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
+        print(f"Error getting weekly conversation stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting weekly stats: {str(e)}")
 
-@router.get("/notifications")
-async def get_notifications(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Get user notifications."""
+@router.get("/messages/distribution")
+async def get_message_distribution(user_id: str = Depends(get_user_from_session_token)):
+    """Get distribution of messages by role (user vs AI)"""
     try:
-        response = supabase.table("notifications").select("*").eq("user_id", user_id).eq("read_at", None).order("created_at", desc=True).limit(5).execute()
+        messages_response = supabase.table("messages") \
+            .select("id, role") \
+            .eq("user_id", user_id) \
+            .execute()
+        
+        user_messages = 0
+        ai_messages = 0
+        
+        for msg in messages_response.data:
+            role = msg.get("role", "")
+            if role == "user":
+                user_messages += 1
+            elif role == "assistant":
+                ai_messages += 1
+        
+        total_messages = user_messages + ai_messages
         
         return {
-            "success": True,
-            "notifications": response.data
+            "user_messages": user_messages,
+            "ai_messages": ai_messages,
+            "total": total_messages,
+            "user_percentage": round((user_messages / total_messages) * 100, 1) if total_messages else 0,
+            "ai_percentage": round((ai_messages / total_messages) * 100, 1) if total_messages else 0
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving notifications: {str(e)}")
+        print(f"Error getting message distribution: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting message distribution: {str(e)}")

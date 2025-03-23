@@ -7,10 +7,10 @@ dotenv.load_dotenv()
 
 # Read Supabase URL and API Key from .env file
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 # Initialize Supabase client
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_API_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
 def get_user_from_session_token(authorization: str = Header(None)):
     """Extract user ID from Supabase JWT token."""
