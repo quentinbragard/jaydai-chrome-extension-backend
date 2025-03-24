@@ -1,20 +1,30 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.10-slim
+# Use multi-stage build to reduce image size
+FROM python:3.10-slim AS builder
 
-# Set the working directory in the container
+# Install dependencies in a virtual environment
 WORKDIR /app
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy the requirements file into the container
 COPY requirements.txt .
-
-# Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire project into the container
+# Production stage
+FROM python:3.10-slim
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
 COPY . .
 
-# Expose the port that the app runs on
-EXPOSE 8000
+# Run as non-root user for security
+RUN useradd -m appuser
+USER appuser
 
-# Command to run the application
+# Configure health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8000/ || exit 1
+
+# Run the application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

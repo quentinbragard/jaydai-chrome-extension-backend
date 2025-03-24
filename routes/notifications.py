@@ -16,11 +16,16 @@ supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_
 
 router = APIRouter(prefix="/notifications", tags=["Notifications"])
 
+class NotificationMetadata(BaseModel):
+    action_type: str
+    action_title_key: str
+    action_url: str
+
 class NotificationBase(BaseModel):
     type: str
     title: str
     body: str
-    action_button: Optional[str] = None
+    metadata: Optional[NotificationMetadata] = None
 
 class NotificationCreate(NotificationBase):
     user_id: str
@@ -103,8 +108,8 @@ async def create_notification(notification: NotificationCreate) -> NotificationR
             "type": notification.type,
             "title": notification.title,
             "body": notification.body,
-            # Only include action_button if it's not None
-            **({"action_button": notification.action_button} if notification.action_button else {})
+            # Only include metadata if it's not None
+            **({"metadata": notification.metadata} if notification.metadata else {})
         }
         
         response = supabase.table("notifications").insert(data).execute()
@@ -171,3 +176,29 @@ async def mark_all_notifications_read(user_id: str = Depends(supabase_helpers.ge
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error marking all notifications as read: {str(e)}")
 
+
+@router.delete("/{notification_id}")
+async def delete_notification(notification_id: str, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    """Delete a notification."""
+    try:
+        # Verify the notification belongs to the user
+        verification = supabase.table("notifications") \
+            .select("id") \
+            .eq("id", notification_id) \
+            .eq("user_id", user_id) \
+            .execute()
+        
+        if not verification.data:
+            raise HTTPException(status_code=404, detail="Notification not found or doesn't belong to user")
+        
+        # Delete the notification
+        response = supabase.table("notifications") \
+            .delete() \
+            .eq("id", notification_id) \
+            .execute()
+        
+        return {"success": True, "notification_id": notification_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting notification: {str(e)}")

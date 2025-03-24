@@ -37,7 +37,7 @@ class NotificationService:
                     "type": "welcome_first_conversation",
                     "title": "Analyze Your First Conversation",
                     "body": "Start your AI analytics journey by sending your first message to ChatGPT or loading a past conversation.",
-                    "action_button": "Start Conversation"
+                    "metadata": "Start Conversation"
                 }
                 
                 # Insert notification
@@ -50,7 +50,7 @@ class NotificationService:
             return False
     
     @staticmethod
-    async def create_notification(user_id: str, notification_type: str, title: str, body: str, action_button: str = None):
+    async def create_notification(user_id: str, notification_type: str, title: str, body: str, metadata: str = None):
         """Create a notification for a user."""
         try:
             notification = {
@@ -58,7 +58,7 @@ class NotificationService:
                 "type": notification_type,
                 "title": title,
                 "body": body,
-                "action_button": action_button
+                "metadata": metadata
             }
             
             response = supabase.table("notifications").insert(notification).execute()
@@ -74,24 +74,24 @@ class NotificationService:
             "prompt_length": {
                 "title": "Prompt Length Insight",
                 "body": insight_text,
-                "action_button": "View Details"
+                "metadata": "View Details"
             },
             "response_time": {
                 "title": "Response Time Insight",
                 "body": insight_text,
-                "action_button": "View Details"
+                "metadata": "View Details"
             },
             "conversation_quality": {
                 "title": "Conversation Quality Insight",
                 "body": insight_text,
-                "action_button": "View Details"
+                "metadata": "View Details"
             }
         }
         
         insight = insights.get(insight_type, {
             "title": "New Insight Available",
             "body": insight_text,
-            "action_button": "View Details"
+            "metadata": "View Details"
         })
         
         return await NotificationService.create_notification(
@@ -99,7 +99,7 @@ class NotificationService:
             notification_type=f"insight_{insight_type}",
             title=insight["title"],
             body=insight["body"],
-            action_button=insight["action_button"]
+            metadata=insight["metadata"]
         )
 
 # Helper functions to use in API routes
