@@ -16,9 +16,10 @@ router = APIRouter(tags=["Templates"])
 class TemplateBase(BaseModel):
     content: str
     title: str
+    type: str
     tags: Optional[List[str]] = None
     locale: Optional[str] = None
-    folder: Optional[str] = None
+    folder_id: Optional[int] = None
 
 class TemplateCreate(TemplateBase):
     pass
@@ -279,22 +280,17 @@ async def create_template(
 ):
     """Create a new template, optionally based on an official template."""
     try:
-        # If based on an official template, retrieve it first
-        content = template.content
-        title = template.title
-        tags = template.tags
-        locale = template.locale
-        
+
 
         
         # Insert new template
         response = supabase.table("prompt_templates").insert({
             "type": "user",
             "folder_id": template.folder_id,
-            "title": title,
-            "content": content,
-            "tags": tags,
-            "locale": locale
+            "title": template.title,
+            "content": template.content,
+            "tags": template.tags,
+            "locale": template.locale
         }).execute()
         
         return {
