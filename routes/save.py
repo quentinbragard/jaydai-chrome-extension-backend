@@ -15,17 +15,16 @@ supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_
 router = APIRouter(prefix="/save", tags=["Save"])
 
 class MessageData(BaseModel):
-    message_id: str
+    message_provider_id: str
     content: str
     role: str
-    rank: int = 0  # Default rank to 0
-    provider_chat_id: str
+    chat_provider_id: str
     model: str = "unknown"  # Default model to "unknown"
     created_at: Optional[float] = None  # Make created_at optional
-    parent_message_id: Optional[str] = None
+    parent_message_provider_id: Optional[str] = None
 
 class ChatData(BaseModel):
-    provider_chat_id: str
+    chat_provider_id: str
     title: str
     provider_name: str = "ChatGPT"  # Default provider to ChatGPT
 
@@ -68,17 +67,17 @@ async def save_message(message: MessageData, user_id: str = Depends(supabase_hel
     # Prepare data to insert
     message_data = {
         "user_id": user_id,
-        "message_id": message.message_id,
+        "message_provider_id": message.message_provider_id,
         "content": message.content,
         "role": message.role,
-        "provider_chat_id": message.provider_chat_id,
+        "chat_provider_id": message.chat_provider_id,
         "model": message.model,
         "created_at": created_at
     }
     
-    # Add parent_message_id if provided
-    if message.parent_message_id:
-        message_data["parent_message_id"] = message.parent_message_id
+    # Add parent_message_provider_id if provided
+    if message.parent_message_provider_id:
+        message_data["parent_message_provider_id"] = message.parent_message_provider_id
         
     # Insert message with validated data
     response = supabase.table("messages").insert(message_data).execute()
@@ -93,7 +92,7 @@ async def save_chat(chat: ChatData, user_id: str = Depends(supabase_helpers.get_
         # Check if chat already exists
         existing = supabase.table("chats").select("id") \
             .eq("user_id", user_id) \
-            .eq("provider_chat_id", chat.provider_chat_id) \
+            .eq("chat_provider_id", chat.chat_provider_id) \
             .execute()
             
         if existing.data:
@@ -102,13 +101,13 @@ async def save_chat(chat: ChatData, user_id: str = Depends(supabase_helpers.get_
                 "title": chat.title,
                 "provider_name": chat.provider_name,
             }).eq("user_id", user_id) \
-              .eq("provider_chat_id", chat.provider_chat_id) \
+              .eq("chat_provider_id", chat.chat_provider_id) \
               .execute()
         else:
             # Create new chat
             response = supabase.table("chats").insert({
                 "user_id": user_id,
-                "provider_chat_id": chat.provider_chat_id,
+                "chat_provider_id": chat.chat_provider_id,
                 "title": chat.title,
                 "provider_name": chat.provider_name,
             }).execute()
@@ -156,79 +155,80 @@ async def save_user_metadata(metadata: UserMetadataData, user_id: str = Depends(
 @router.post("/batch/message")
 async def save_batch_messages(batch_data: BatchMessagesRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     """Save multiple messages in a single batch operation with parent message ID support."""
-    try:
-        if not batch_data.messages:
-            return {"success": True, "message": "No messages to save", "count": 0}
+    print("batch_data", batch_data)
+    #try:
+    if not batch_data.messages:
+        return {"success": True, "message": "No messages to save", "count": 0}
+        
+    # Check which message IDs already exist
+    message_ids = [msg.message_provider_id for msg in batch_data.messages]
+    existing_messages = {}
+    
+    if message_ids:
+        existing_query = supabase.table("messages").select("message_provider_id") \
+            .eq("user_id", user_id) \
+            .in_("message_provider_id", message_ids) \
+            .execute()
+        
+        if existing_query.data:
+            for msg in existing_query.data:
+                existing_messages[msg['message_provider_id']] = True
+    
+    # Filter out messages that already exist
+    messages_to_insert = []
+    skipped_messages = 0
+    
+    for message in batch_data.messages:
+        if message.message_provider_id in existing_messages:
+            skipped_messages += 1
+            continue
             
-        # Check which message IDs already exist
-        message_ids = [msg.message_id for msg in batch_data.messages]
-        existing_messages = {}
-        
-        if message_ids:
-            existing_query = supabase.table("messages").select("message_id") \
-                .eq("user_id", user_id) \
-                .in_("message_id", message_ids) \
-                .execute()
-            
-            if existing_query.data:
-                for msg in existing_query.data:
-                    existing_messages[msg['message_id']] = True
-        
-        # Filter out messages that already exist
-        messages_to_insert = []
-        skipped_messages = 0
-        
-        for message in batch_data.messages:
-            if message.message_id in existing_messages:
-                skipped_messages += 1
-                continue
-                
-            # Handle timestamp conversion
-            created_at = None
-            if message.created_at:
-                try:
-                    # Convert timestamp to ISO format, handling both seconds and milliseconds
-                    timestamp_in_seconds = message.created_at / 1000 if message.created_at > 1e10 else message.created_at
-                    created_at = datetime.fromtimestamp(timestamp_in_seconds, tz=timezone.utc).isoformat()
-                except Exception as e:
-                    # Use current time as fallback
-                    created_at = datetime.now(tz=timezone.utc).isoformat()
-            else:
-                # If no timestamp provided, use current time
+        # Handle timestamp conversion
+        created_at = None
+        if message.created_at:
+            try:
+                # Convert timestamp to ISO format, handling both seconds and milliseconds
+                timestamp_in_seconds = message.created_at / 1000 if message.created_at > 1e10 else message.created_at
+                created_at = datetime.fromtimestamp(timestamp_in_seconds, tz=timezone.utc).isoformat()
+            except Exception as e:
+                # Use current time as fallback
                 created_at = datetime.now(tz=timezone.utc).isoformat()
-                
-            # Prepare message data
-            message_data = {
-                "user_id": user_id,
-                "message_id": message.message_id,
-                "content": message.content,
-                "role": message.role,
-                "provider_chat_id": message.provider_chat_id,
-                "model": message.model,
-                "created_at": created_at
-            }
+        else:
+            # If no timestamp provided, use current time
+            created_at = datetime.now(tz=timezone.utc).isoformat()
             
-            # Add parent_message_id if provided
-            if hasattr(message, 'parent_message_id') and message.parent_message_id:
-                message_data["parent_message_id"] = message.parent_message_id
-                
-            messages_to_insert.append(message_data)
-        
-        results = []
-        if messages_to_insert:
-            response = supabase.table("messages").insert(messages_to_insert).execute()
-            results = response.data
-        
-        return {
-            "success": True,
-            "message": f"Saved {len(messages_to_insert)} messages, skipped {skipped_messages} existing messages",
-            "saved_count": len(messages_to_insert),
-            "skipped_count": skipped_messages,
-            "total_count": len(batch_data.messages),
-            "data": results
+        # Prepare message data
+        message_data = {
+            "user_id": user_id,
+            "message_provider_id": message.message_provider_id,
+            "content": message.content,
+            "role": message.role,
+            "chat_provider_id": message.chat_provider_id,
+            "model": message.model,
+            "created_at": created_at
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Message batch save error: {str(e)}")
+        
+        # Add parent_message_provider_id if provided
+        if hasattr(message, 'parent_message_provider_id') and message.parent_message_provider_id:
+            message_data["parent_message_provider_id"] = message.parent_message_provider_id
+            
+        messages_to_insert.append(message_data)
+    
+    results = []
+    if messages_to_insert:
+        response = supabase.table("messages").insert(messages_to_insert).execute()
+        results = response.data
+    
+    return {
+        "success": True,
+        "message": f"Saved {len(messages_to_insert)} messages, skipped {skipped_messages} existing messages",
+        "saved_count": len(messages_to_insert),
+        "skipped_count": skipped_messages,
+        "total_count": len(batch_data.messages),
+        "data": results
+    }
+    #except Exception as e:
+    #    raise HTTPException(status_code=500, detail=f"Message batch save error: {str(e)}")
 
 @router.post("/batch/chat")
 async def save_batch_chats(batch_data: BatchChatsRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
@@ -238,38 +238,38 @@ async def save_batch_chats(batch_data: BatchChatsRequest, user_id: str = Depends
             return {"success": True, "message": "No chats to save", "count": 0}
             
         # Extract chat IDs to check for existing ones
-        provider_chat_ids = [chat.provider_chat_id for chat in batch_data.chats]
+        chat_provider_ids = [chat.chat_provider_id for chat in batch_data.chats]
         existing_chats = {}
         
-        if provider_chat_ids:
-            existing_query = supabase.table("chats").select("provider_chat_id") \
+        if chat_provider_ids:
+            existing_query = supabase.table("chats").select("chat_provider_id") \
                 .eq("user_id", user_id) \
-                .in_("provider_chat_id", provider_chat_ids) \
+                .in_("chat_provider_id", chat_provider_ids) \
                 .execute()
             
             if existing_query.data:
                 for chat in existing_query.data:
-                    existing_chats[chat['provider_chat_id']] = True
+                    existing_chats[chat['chat_provider_id']] = True
         
         # Process updates and inserts
         chats_to_insert = []
         updated_chats = 0
         
         for chat in batch_data.chats:
-            if chat.provider_chat_id in existing_chats:
+            if chat.chat_provider_id in existing_chats:
                 # Update existing chat
                 supabase.table("chats").update({
                     "title": chat.title,
                     "provider_name": chat.provider_name
                 }).eq("user_id", user_id) \
-                  .eq("provider_chat_id", chat.provider_chat_id) \
+                  .eq("chat_provider_id", chat.chat_provider_id) \
                   .execute()
                 updated_chats += 1
             else:
                 # Prepare for batch insert
                 chats_to_insert.append({
                     "user_id": user_id,
-                    "provider_chat_id": chat.provider_chat_id,
+                    "chat_provider_id": chat.chat_provider_id,
                     "title": chat.title,
                     "provider_name": chat.provider_name
                 })

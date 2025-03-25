@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import requests
 from supabase import create_client, Client
@@ -29,6 +30,29 @@ class SignUpData(BaseModel):
     email: str
     password: str
     name: Optional[str] = None
+    
+
+@router.get("/confirm")
+async def confirm_email(token: str, type: str = "signup"):
+    """
+    Confirm email address and redirect to ChatGPT or app UI.
+    """
+    try:
+        # Use Supabase's verify_otp method to confirm the email with the token
+        response = supabase.auth.verify_otp({
+            "token": token,
+            "type": type,
+        })
+
+        if response.user:
+            # You can choose to redirect to a specific page on your extension or app
+            return RedirectResponse("https://chat.openai.com")
+        else:
+            raise HTTPException(status_code=400, detail="Invalid or expired confirmation token")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to confirm email: {str(e)}")
+
     
     
 @router.post("/sign_up")
