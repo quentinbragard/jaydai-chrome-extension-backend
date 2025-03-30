@@ -19,7 +19,6 @@ exceptiongroup==1.2.2
 fastapi==0.115.8
 fastapi_cors==0.0.6
 frozenlist==1.5.0
-google-auth==2.38.0
 gotrue==2.11.4
 h11==0.14.0
 h2==4.2.0

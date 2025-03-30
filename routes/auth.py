@@ -7,12 +7,16 @@ import dotenv
 import os
 from utils.notification_service import check_user_notifications
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import datetime, timedelta
+import uuid
+
+
 dotenv.load_dotenv()
 
 # Initialize Supabase client
 
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -20,7 +24,7 @@ class SignInData(BaseModel):
     email: str
     password: str
 
-class GoogleAuthData(BaseModel):
+class GoogleAuthRequest(BaseModel):
     id_token: str
 
 class RefreshTokenData(BaseModel):
@@ -145,25 +149,40 @@ async def sign_in(sign_in_data: SignInData):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
-@router.post("/google")
-async def google_auth(auth_data: GoogleAuthData):
-    """Authenticate via Google."""
-    try:
-        google_user = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={auth_data.id_token}").json()
-        if "email" not in google_user:
-            raise HTTPException(status_code=403, detail="Invalid Google ID token")
 
-        response = supabase.auth.sign_in_with_id_token({
-            "provider": "google",
-            "token": auth_data.id_token
+@router.post("/sign_in_with_google")
+async def sign_in(google_sign_in_data: GoogleAuthRequest):
+    """Authenticate user via email & password."""
+    try:
+        response = supabase.auth.signInWithIdToken({
+            "provider": 'google',
+            "token": google_sign_in_data.id_token,
         })
-        
+
         # Check for notifications after successful login
         await check_user_notifications(response.user.id)
-        
+
+        # Get user metadata
+        metadata_response = supabase.table("users_metadata") \
+            .select("*") \
+            .eq("user_id", response.user.id) \
+            .single() \
+            .execute()
+
+        metadata = metadata_response.data if metadata_response.data else {
+            "name": None,
+            "additional_email": None,
+            "phone_number": None,
+            "additional_organization": None,
+            "pinned_official_folder_ids": [],
+            "pinned_organization_folder_ids": []
+        }
+
+        user_with_metadata = {**response.user.__dict__, "metadata": metadata}
+
         return {
             "success": True,
-            "user": response.user,
+            "user": user_with_metadata,
             "session": {
                 "access_token": response.session.access_token,
                 "refresh_token": response.session.refresh_token,
@@ -171,7 +190,9 @@ async def google_auth(auth_data: GoogleAuthData):
             }
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing Google authentication: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
 
 @router.post("/refresh_token")
 async def refresh_token(refresh_data: RefreshTokenData):
