@@ -37,6 +37,10 @@ jobs:
           pip install pytest pytest-cov
           
       - name: Run tests
+        env:
+          # Provide dummy values for testing
+          SUPABASE_URL: "https://example.supabase.co"
+          SUPABASE_SERVICE_ROLE_KEY: "dummy_key_for_testing"
         run: |
           # Set PYTHONPATH to include project root directory
           PYTHONPATH=$PWD pytest tests/ --cov=./ --cov-report=xml
