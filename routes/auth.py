@@ -9,6 +9,7 @@ from utils.notification_service import check_user_notifications
 from typing import Optional
 from datetime import datetime, timedelta
 import uuid
+import jwt
 
 
 dotenv.load_dotenv()
@@ -217,6 +218,7 @@ LINKEDIN_EMAIL_URL = "https://api.linkedin.com/v2/emailAddress?q=members&project
 @router.post("/sign_in_with_linkedin")
 async def sign_in_with_linkedin(linkedin_auth_data: LinkedInAuthRequest):
     """Authenticate user via LinkedIn OAuth."""
+    print("linkedin_auth_data", linkedin_auth_data)
     try:
         # Step 1: Exchange authorization code for access token
         token_data = {
@@ -229,40 +231,30 @@ async def sign_in_with_linkedin(linkedin_auth_data: LinkedInAuthRequest):
         
         token_response = requests.post(LINKEDIN_TOKEN_URL, data=token_data)
         token_result = token_response.json()
+        print("token_result", token_result)
         
         if "access_token" not in token_result:
             raise HTTPException(status_code=400, detail="Invalid LinkedIn code")
         
         access_token = token_result["access_token"]
+        id_token = token_result.get("id_token")
         
-        # Step 2: Get user profile information
-        headers = {
-            "Authorization": f"Bearer {access_token}"
-        }
+        decoded_token = jwt.decode(id_token, options={"verify_signature": False})
         
-        profile_response = requests.get(LINKEDIN_USER_INFO_URL, headers=headers)
-        profile_data = profile_response.json()
-        
-        # Step 3: Get user email
-        email_response = requests.get(LINKEDIN_EMAIL_URL, headers=headers)
-        email_data = email_response.json()
-        
-        # Extract data from responses
-        user_id = profile_data.get("id")
-        first_name = profile_data.get("localizedFirstName", "")
-        last_name = profile_data.get("localizedLastName", "")
+        # Extract user details from decoded token
+        email = decoded_token.get("email")
+        first_name = decoded_token.get("given_name", "")
+        last_name = decoded_token.get("family_name", "")
         name = f"{first_name} {last_name}".strip()
+        user_id = decoded_token.get("sub")
         
-        # Extract email from LinkedIn response
-        email = None
-        if email_data and "elements" in email_data:
-            for element in email_data["elements"]:
-                if "handle~" in element and "emailAddress" in element["handle~"]:
-                    email = element["handle~"]["emailAddress"]
-                    break
+        print("email", email)
+        print("name", name)
+        print("user_id", user_id)
         
         if not email:
             raise HTTPException(status_code=400, detail="Could not retrieve email from LinkedIn")
+        
         
         # Check if user already exists in Supabase
         existing_user = None
@@ -276,13 +268,14 @@ async def sign_in_with_linkedin(linkedin_auth_data: LinkedInAuthRequest):
                 existing_user = supabase.auth.get_user(user_id)
             else:
                 # Try finding by email
-                existing_user = supabase.auth.get_user_by_email(email)
+                existing_user = supabase.table("users_metadata").select("user_id").eq("email", email).execute()
         except Exception as e:
             # User not found, will create new user
             pass
         
         # If user exists, sign them in
         if existing_user and hasattr(existing_user, 'id'):
+            print("EXISTING USER ==================")
             # Generate a sign-in link
             sign_in_response = supabase.auth.sign_in_with_email_and_password(email, "<secure-random-password>")
             
@@ -306,9 +299,12 @@ async def sign_in_with_linkedin(linkedin_auth_data: LinkedInAuthRequest):
         import secrets
         import string
         
+        print("NOT EXISTING USER ==================")
+        
         # Generate a secure random password
         random_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(20))
-        
+
+        print("random_password", random_password)
         # Create user in Supabase Auth
         sign_up_response = supabase.auth.sign_up({
             "email": email,
@@ -319,6 +315,8 @@ async def sign_in_with_linkedin(linkedin_auth_data: LinkedInAuthRequest):
                 }
             }
         })
+        
+        print("sign_up_response", sign_up_response)
         
         if not sign_up_response.user:
             raise HTTPException(status_code=500, detail="Failed to create user account")

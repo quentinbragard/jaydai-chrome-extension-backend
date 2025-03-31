@@ -216,7 +216,11 @@ enabled = true
 client_id = "env(GOOGLE_CLIENT_ID)"
 secret = "env(GOOGLE_CLIENT_SECRET)"
 redirect_uri = "http://127.0.0.1:54321/auth/v1/callback"
-# Optional: if you're using a Chrome extension, you might want to add the extension's redirect URI
+
+[auth.external.linkedin_oidc]
+enabled = true
+client_id = "78cubqz042p0ia"
+secret = "cdt5OcciIgkrlE5P"
 
 # This helps with local development
 skip_nonce_check = true
