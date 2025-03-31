@@ -152,47 +152,54 @@ async def sign_in(sign_in_data: SignInData):
 
 @router.post("/sign_in_with_google")
 async def sign_in(google_sign_in_data: GoogleAuthRequest):
-    """Authenticate user via email & password."""
-    try:
-        response = supabase.auth.signInWithIdToken({
-            "provider": 'google',
-            "token": google_sign_in_data.id_token,
-        })
+    """Authenticate user via Google OAuth."""
+    print("google_sign_in_data", google_sign_in_data)
+    #try:
+    # Exchange authorization code for tokens
+    response = supabase.auth.sign_in_with_id_token(
+    {
+        "provider": "google", 
+        "token": google_sign_in_data.id_token,
+    }
+)
+    
+    print("response", response)
+    
+   
 
-        # Check for notifications after successful login
-        await check_user_notifications(response.user.id)
+    # Check for notifications after successful login
+    await check_user_notifications(response.user.id)
 
-        # Get user metadata
-        metadata_response = supabase.table("users_metadata") \
-            .select("*") \
-            .eq("user_id", response.user.id) \
-            .single() \
-            .execute()
+    # Get user metadata
+    metadata_response = supabase.table("users_metadata") \
+        .select("*") \
+        .eq("user_id", response.user.id) \
+        .single() \
+        .execute()
 
-        metadata = metadata_response.data if metadata_response.data else {
-            "name": None,
-            "additional_email": None,
-            "phone_number": None,
-            "additional_organization": None,
-            "pinned_official_folder_ids": [],
-            "pinned_organization_folder_ids": []
+    metadata = metadata_response.data if metadata_response.data else {
+        "name": None,
+        "additional_email": None,
+        "phone_number": None,
+        "additional_organization": None,
+        "pinned_official_folder_ids": [],
+        "pinned_organization_folder_ids": []
+    }
+
+    user_with_metadata = {**response.user.__dict__, "metadata": metadata}
+
+    return {
+        "success": True,
+        "user": user_with_metadata,
+        "session": {
+            "access_token": response.session.access_token,
+            "refresh_token": response.session.refresh_token,
+            "expires_at": response.session.expires_at
         }
-
-        user_with_metadata = {**response.user.__dict__, "metadata": metadata}
-
-        return {
-            "success": True,
-            "user": user_with_metadata,
-            "session": {
-                "access_token": response.session.access_token,
-                "refresh_token": response.session.refresh_token,
-                "expires_at": response.session.expires_at
-            }
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-
+    }
+    #except Exception as e:
+    #    # Uncomment the error handling if needed
+    #    raise HTTPException(status_code=500, detail=f"Google Sign-In error: {str(e)}")
 
 @router.post("/refresh_token")
 async def refresh_token(refresh_data: RefreshTokenData):
