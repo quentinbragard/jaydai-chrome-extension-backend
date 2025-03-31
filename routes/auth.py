@@ -200,6 +200,181 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
     #except Exception as e:
     #    # Uncomment the error handling if needed
     #    raise HTTPException(status_code=500, detail=f"Google Sign-In error: {str(e)}")
+    
+
+# LinkedIn auth request model
+class LinkedInAuthRequest(BaseModel):
+    code: str
+    redirect_uri: str
+
+# LinkedIn API constants
+LINKEDIN_CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID")
+LINKEDIN_CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET")
+LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
+LINKEDIN_USER_INFO_URL = "https://api.linkedin.com/v2/me"
+LINKEDIN_EMAIL_URL = "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))"
+
+@router.post("/sign_in_with_linkedin")
+async def sign_in_with_linkedin(linkedin_auth_data: LinkedInAuthRequest):
+    """Authenticate user via LinkedIn OAuth."""
+    try:
+        # Step 1: Exchange authorization code for access token
+        token_data = {
+            "grant_type": "authorization_code",
+            "code": linkedin_auth_data.code,
+            "redirect_uri": linkedin_auth_data.redirect_uri,
+            "client_id": LINKEDIN_CLIENT_ID,
+            "client_secret": LINKEDIN_CLIENT_SECRET
+        }
+        
+        token_response = requests.post(LINKEDIN_TOKEN_URL, data=token_data)
+        token_result = token_response.json()
+        
+        if "access_token" not in token_result:
+            raise HTTPException(status_code=400, detail="Invalid LinkedIn code")
+        
+        access_token = token_result["access_token"]
+        
+        # Step 2: Get user profile information
+        headers = {
+            "Authorization": f"Bearer {access_token}"
+        }
+        
+        profile_response = requests.get(LINKEDIN_USER_INFO_URL, headers=headers)
+        profile_data = profile_response.json()
+        
+        # Step 3: Get user email
+        email_response = requests.get(LINKEDIN_EMAIL_URL, headers=headers)
+        email_data = email_response.json()
+        
+        # Extract data from responses
+        user_id = profile_data.get("id")
+        first_name = profile_data.get("localizedFirstName", "")
+        last_name = profile_data.get("localizedLastName", "")
+        name = f"{first_name} {last_name}".strip()
+        
+        # Extract email from LinkedIn response
+        email = None
+        if email_data and "elements" in email_data:
+            for element in email_data["elements"]:
+                if "handle~" in element and "emailAddress" in element["handle~"]:
+                    email = element["handle~"]["emailAddress"]
+                    break
+        
+        if not email:
+            raise HTTPException(status_code=400, detail="Could not retrieve email from LinkedIn")
+        
+        # Check if user already exists in Supabase
+        existing_user = None
+        try:
+            # Search by LinkedIn ID first in user metadata
+            metadata_response = supabase.table("users_metadata").select("user_id").eq("linkedin_id", user_id).execute()
+            
+            if metadata_response.data:
+                # If found, get the user
+                user_id = metadata_response.data[0]["user_id"]
+                existing_user = supabase.auth.get_user(user_id)
+            else:
+                # Try finding by email
+                existing_user = supabase.auth.get_user_by_email(email)
+        except Exception as e:
+            # User not found, will create new user
+            pass
+        
+        # If user exists, sign them in
+        if existing_user and hasattr(existing_user, 'id'):
+            # Generate a sign-in link
+            sign_in_response = supabase.auth.sign_in_with_email_and_password(email, "<secure-random-password>")
+            
+            # Return the session and user info
+            user_with_metadata = get_user_with_metadata(sign_in_response.user.id)
+            
+            # Check for notifications after successful login
+            await check_user_notifications(sign_in_response.user.id)
+            
+            return {
+                "success": True,
+                "user": user_with_metadata,
+                "session": {
+                    "access_token": sign_in_response.session.access_token,
+                    "refresh_token": sign_in_response.session.refresh_token,
+                    "expires_at": sign_in_response.session.expires_at
+                }
+            }
+        
+        # Create new user with random password
+        import secrets
+        import string
+        
+        # Generate a secure random password
+        random_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(20))
+        
+        # Create user in Supabase Auth
+        sign_up_response = supabase.auth.sign_up({
+            "email": email,
+            "password": random_password,
+            "options": {
+                "data": {
+                    "name": name
+                }
+            }
+        })
+        
+        if not sign_up_response.user:
+            raise HTTPException(status_code=500, detail="Failed to create user account")
+        
+        # Create metadata with LinkedIn info
+        metadata_response = supabase.table("users_metadata").insert({
+            "user_id": sign_up_response.user.id,
+            "name": name,
+            "additional_email": email,
+            "linkedin_id": user_id,
+            "pinned_official_folder_ids": [1],  # Default starter pack folder
+            "pinned_organization_folder_ids": []
+        }).execute()
+        
+        metadata = metadata_response.data[0] if metadata_response.data else None
+        user_with_metadata = {**sign_up_response.user.__dict__, "metadata": metadata}
+        
+        return {
+            "success": True,
+            "message": "Account created with LinkedIn",
+            "user": user_with_metadata,
+            "session": {
+                "access_token": sign_up_response.session.access_token,
+                "refresh_token": sign_up_response.session.refresh_token,
+                "expires_at": sign_up_response.session.expires_at
+            }
+        }
+        
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"LinkedIn Sign-In error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"LinkedIn Sign-In error: {str(e)}")
+
+# Helper function to get user with metadata
+def get_user_with_metadata(user_id):
+    user = supabase.auth.get_user(user_id)
+    
+    # Get user metadata
+    metadata_response = supabase.table("users_metadata") \
+        .select("*") \
+        .eq("user_id", user_id) \
+        .single() \
+        .execute()
+
+    metadata = metadata_response.data if metadata_response.data else {
+        "name": None,
+        "additional_email": None,
+        "phone_number": None,
+        "additional_organization": None,
+        "pinned_official_folder_ids": [],
+        "pinned_organization_folder_ids": []
+    }
+
+    return {**user.__dict__, "metadata": metadata}
+
 
 @router.post("/refresh_token")
 async def refresh_token(refresh_data: RefreshTokenData):
