@@ -1,0 +1,2359 @@
+---
+insertId: qni7mfd1juy
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Service
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/ingress: all
+        run.googleapis.com/ingress-status: all
+        run.googleapis.com/operation-id: 3a5401a3-fbbc-4105-8151-879d7ced34a4
+        run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+        serving.knative.dev/creator: quentin@jayd.ai
+        serving.knative.dev/lastModifier: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:47:49.275224Z'
+      generation: 6
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+      name: api-dev
+      namespace: '32108269805'
+      resourceVersion: AAYxn6ZUOcI
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+      uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+    spec:
+      template:
+        metadata:
+          annotations:
+            autoscaling.knative.dev/maxScale: '10'
+            run.googleapis.com/client-name: gcloud
+            run.googleapis.com/client-version: 441.0.0
+          labels:
+            run.googleapis.com/startupProbeType: Default
+          name: api-dev-00006-qir
+        spec:
+          containerConcurrency: 80
+          containers:
+          - env:
+            - name: SUPABASE_URL
+              value: https://vetoswvwgsebhxetqppa.supabase.co
+            - name: SUPABASE_SERVICE_ROLE_KEY
+              value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZldG9zd3Z3Z3NlYmh4ZXRxcHBhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MjIyNzY3NCwiZXhwIjoyMDU3ODAzNjc0fQ.5fGU2fDHd1HDEPpWe3NIuc_BjHabL0dQLdu6LqVIgpE
+            image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+            ports:
+            - containerPort: 8000
+              name: http1
+            resources:
+              limits:
+                cpu: '1'
+                memory: 512Mi
+            startupProbe:
+              failureThreshold: 1
+              periodSeconds: 240
+              tcpSocket:
+                port: 8000
+              timeoutSeconds: 240
+          serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+          timeoutSeconds: 300
+      traffic:
+      - latestRevision: true
+        percent: 100
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T09:00:20.330746Z'
+        message: |-
+          Revision 'api-dev-00006-qir' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00006-qir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00006-qir%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T09:00:19.110325Z'
+        message: Provisioning imported containers completed in 3.64s. Checking container
+          health.
+        status: 'True'
+        type: ConfigurationsReady
+      - lastTransitionTime: '2025-03-31T09:00:20.330746Z'
+        message: |-
+          Revision 'api-dev-00006-qir' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00006-qir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00006-qir%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: RoutesReady
+      latestCreatedRevisionName: api-dev-00006-qir
+      observedGeneration: 6
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Service api-dev with message: Revision 'api-dev-00006-qir' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00006-qir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00006-qir%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T09:00:21.232859898Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T09:00:20.377154Z'
+---
+insertId: ezojjed1mv8
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/revisions/api-dev-00006-qir
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Revision
+    apiVersion: serving.knative.dev/v1
+    kind: Revision
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/operation-id: 3a5401a3-fbbc-4105-8151-879d7ced34a4
+        serving.knative.dev/creator: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T09:00:14.916459Z'
+      generation: 1
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+        run.googleapis.com/startupProbeType: Default
+        serving.knative.dev/configuration: api-dev
+        serving.knative.dev/configurationGeneration: '6'
+        serving.knative.dev/route: api-dev
+        serving.knative.dev/service: api-dev
+        serving.knative.dev/serviceUid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      name: api-dev-00006-qir
+      namespace: '32108269805'
+      ownerReferences:
+      - apiVersion: serving.knative.dev/v1
+        blockOwnerDeletion: true
+        controller: true
+        kind: Configuration
+        name: api-dev
+        uid: 1bcf1d36-de66-487a-a567-897fe38421ac
+      resourceVersion: AAYxn6ZTRZs
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/revisions/api-dev-00006-qir
+      uid: 068bed23-3722-45ba-946a-10597bbc6b1d
+    spec:
+      containerConcurrency: 80
+      containers:
+      - env:
+        - name: SUPABASE_URL
+          value: https://vetoswvwgsebhxetqppa.supabase.co
+        - name: SUPABASE_SERVICE_ROLE_KEY
+          value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZldG9zd3Z3Z3NlYmh4ZXRxcHBhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MjIyNzY3NCwiZXhwIjoyMDU3ODAzNjc0fQ.5fGU2fDHd1HDEPpWe3NIuc_BjHabL0dQLdu6LqVIgpE
+        image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+        ports:
+        - containerPort: 8000
+          name: http1
+        resources:
+          limits:
+            cpu: '1'
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8000
+          timeoutSeconds: 240
+      serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T09:00:20.300187Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00006-qir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00006-qir%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T09:00:20.300187Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00006-qir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00006-qir%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: ContainerHealthy
+      - lastTransitionTime: '2025-03-31T09:00:15.436420Z'
+        message: Container image import completed.
+        status: 'True'
+        type: ContainerReady
+      - lastTransitionTime: '2025-03-31T09:00:19.074939Z'
+        message: Provisioning imported containers completed in 3.64s. Checking container
+          health.
+        status: 'True'
+        type: ResourcesAvailable
+      - lastTransitionTime: '2025-03-31T09:00:19.074939Z'
+        message: System will retry after 0:00:00 from lastTransitionTime for attempt
+          0.
+        reason: ImmediateRetry
+        severity: Info
+        status: 'True'
+        type: Retry
+      containerStatuses:
+      - imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+      imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+      logUrl: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00006-qir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00006-qir%22
+      observedGeneration: 1
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Revision api-dev-00006-qir with message: The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00006-qir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00006-qir%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T09:00:20.774335911Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00006-qir
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T09:00:20.310053Z'
+---
+insertId: 67ea59a40004901d5bc0cf19
+labels:
+  instanceId: 00afae80430c1153e7592f01feeb5fe58693a6b5768531131be98fb15a8e742fbaa548a78a5950e843232bc57c3d748ded06eb9299c2e91308523a883dbfb499fef224cbf654fbf23cdf877ce1
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T09:00:20.584707967Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00006-qir
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+textPayload: |-
+  Default STARTUP TCP probe failed 1 time consecutively for container "archimind-backend-dev-1" on port 8000. The instance was not started.
+  Connection failed with status CANCELLED.
+timestamp: '2025-03-31T09:00:20.299037Z'
+---
+insertId: 67ea59a40003cb8f60771362
+labels:
+  instanceId: 00afae80430c1153e7592f01feeb5fe58693a6b5768531131be98fb15a8e742fbaa548a78a5950e843232bc57c3d748ded06eb9299c2e91308523a883dbfb499fef224cbf654fbf23cdf877ce1
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T09:00:20.481326802Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00006-qir
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: "Error: Invalid value for '--port': '${PORT:-8000}' is not a valid integer."
+timestamp: '2025-03-31T09:00:20.248719Z'
+---
+insertId: 67ea59a40003cb3d397f1ce1
+labels:
+  container_name: archimind-backend-dev-1
+  instanceId: 00afae80430c1153e7592f01feeb5fe58693a6b5768531131be98fb15a8e742fbaa548a78a5950e843232bc57c3d748ded06eb9299c2e91308523a883dbfb499fef224cbf654fbf23cdf877ce1
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T09:00:20.252829048Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00006-qir
+    service_name: api-dev
+  type: cloud_run_revision
+severity: WARNING
+textPayload: Container called exit(2).
+timestamp: '2025-03-31T09:00:20.248626934Z'
+---
+insertId: 67ea59a40002399580af6433
+labels:
+  instanceId: 00afae80430c1153e7592f01feeb5fe58693a6b5768531131be98fb15a8e742fbaa548a78a5950e843232bc57c3d748ded06eb9299c2e91308523a883dbfb499fef224cbf654fbf23cdf877ce1
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T09:00:20.148418894Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00006-qir
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: Try 'uvicorn --help' for help.
+timestamp: '2025-03-31T09:00:20.145813Z'
+---
+insertId: 67ea59a40002397eecd32e0c
+labels:
+  instanceId: 00afae80430c1153e7592f01feeb5fe58693a6b5768531131be98fb15a8e742fbaa548a78a5950e843232bc57c3d748ded06eb9299c2e91308523a883dbfb499fef224cbf654fbf23cdf877ce1
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T09:00:20.148418894Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00006-qir
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: 'Usage: uvicorn [OPTIONS] APP'
+timestamp: '2025-03-31T09:00:20.145790Z'
+---
+insertId: 1g7kebld182a
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Factivity
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  authenticationInfo:
+    principalEmail: quentin@jayd.ai
+    principalSubject: user:quentin@jayd.ai
+  authorizationInfo:
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes: {}
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes:
+      name: namespaces/neat-library-433414-r7/services/api-dev
+      service: run.googleapis.com/
+      type: run.googleapis.com/Service
+  methodName: google.cloud.run.v1.Services.ReplaceService
+  request:
+    '@type': type.googleapis.com/google.cloud.run.v1.ReplaceServiceRequest
+    name: namespaces/neat-library-433414-r7/services/api-dev
+    service:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      metadata:
+        annotations:
+          run.googleapis.com/client-name: gcloud
+          run.googleapis.com/client-version: 441.0.0
+          run.googleapis.com/ingress: all
+          run.googleapis.com/ingress-status: all
+          run.googleapis.com/operation-id: e4cb43fa-e447-45ec-8172-a00076707ad3
+          run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+          serving.knative.dev/creator: quentin@jayd.ai
+          serving.knative.dev/lastModifier: quentin@jayd.ai
+        creationTimestamp: '2025-03-31T08:47:49.275224Z'
+        generation: 5
+        labels:
+          cloud.googleapis.com/location: europe-west9
+          run.googleapis.com/satisfiesPzs: 'true'
+        name: api-dev
+        namespace: '32108269805'
+        resourceVersion: AAYxn51FW4U
+        selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+        uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      spec:
+        template:
+          metadata:
+            annotations:
+              autoscaling.knative.dev/maxScale: '10'
+              run.googleapis.com/client-name: gcloud
+              run.googleapis.com/client-version: 441.0.0
+            labels:
+              run.googleapis.com/startupProbeType: Default
+            name: api-dev-00006-qir
+          spec:
+            containerConcurrency: 80
+            containers:
+            - image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 512Mi
+            serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+            timeoutSeconds: 300
+        traffic:
+        - latestRevision: true
+          percent: 100
+      status:
+        conditions:
+        - lastTransitionTime: '2025-03-31T08:57:48.325641Z'
+          reason: HealthCheckContainerError
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2025-03-31T08:57:48.325542Z'
+          status: 'True'
+          type: ConfigurationsReady
+        - lastTransitionTime: '2025-03-31T08:57:48.325641Z'
+          reason: HealthCheckContainerError
+          status: 'False'
+          type: RoutesReady
+        latestCreatedRevisionName: api-dev-00005-neg
+        observedGeneration: 5
+  requestMetadata:
+    callerIp: 195.154.25.58
+    callerSuppliedUserAgent: google-cloud-sdk gcloud/441.0.0 command/gcloud.run.deploy
+      invocation-id/79797b69147641deaa8624b2e3633570 environment/None environment-version/None
+      client-os/MACOSX client-os-ver/24.3.0 client-pltf-arch/x86_64 interactive/True
+      from-script/False python/3.10.6 term/xterm-256color (Macintosh; Intel Mac OS
+      X 24.3.0),gzip(gfe)
+    destinationAttributes: {}
+    requestAttributes:
+      auth: {}
+      time: '2025-03-31T09:00:14.878670Z'
+  resourceLocation:
+    currentLocations:
+    - europe-west9
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  serviceName: run.googleapis.com
+receiveTimestamp: '2025-03-31T09:00:15.026288930Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: NOTICE
+timestamp: '2025-03-31T09:00:14.544164Z'
+---
+insertId: a18nfqd1iey
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Service
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/ingress: all
+        run.googleapis.com/ingress-status: all
+        run.googleapis.com/operation-id: e4cb43fa-e447-45ec-8172-a00076707ad3
+        run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+        serving.knative.dev/creator: quentin@jayd.ai
+        serving.knative.dev/lastModifier: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:47:49.275224Z'
+      generation: 5
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+      name: api-dev
+      namespace: '32108269805'
+      resourceVersion: AAYxn51FW4U
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+      uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+    spec:
+      template:
+        metadata:
+          annotations:
+            autoscaling.knative.dev/maxScale: '10'
+            run.googleapis.com/client-name: gcloud
+            run.googleapis.com/client-version: 441.0.0
+          labels:
+            run.googleapis.com/startupProbeType: Default
+          name: api-dev-00005-neg
+        spec:
+          containerConcurrency: 80
+          containers:
+          - env:
+            - name: SUPABASE_URL
+            - name: SUPABASE_SERVICE_ROLE_KEY
+            image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+            ports:
+            - containerPort: 8000
+              name: http1
+            resources:
+              limits:
+                cpu: '1'
+                memory: 512Mi
+            startupProbe:
+              failureThreshold: 1
+              periodSeconds: 240
+              tcpSocket:
+                port: 8000
+              timeoutSeconds: 240
+          serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+          timeoutSeconds: 300
+      traffic:
+      - latestRevision: true
+        percent: 100
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:57:48.325641Z'
+        message: |-
+          Revision 'api-dev-00005-neg' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00005-neg&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00005-neg%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:57:48.325542Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00005-neg&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00005-neg%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        status: 'True'
+        type: ConfigurationsReady
+      - lastTransitionTime: '2025-03-31T08:57:48.325641Z'
+        message: |-
+          Revision 'api-dev-00005-neg' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00005-neg&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00005-neg%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: RoutesReady
+      latestCreatedRevisionName: api-dev-00005-neg
+      observedGeneration: 5
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Service api-dev with message: Revision 'api-dev-00005-neg' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00005-neg&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00005-neg%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T08:57:48.784746334Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:57:48.407093Z'
+---
+insertId: -h5l4mpd1jxc
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/revisions/api-dev-00005-neg
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Revision
+    apiVersion: serving.knative.dev/v1
+    kind: Revision
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/operation-id: e4cb43fa-e447-45ec-8172-a00076707ad3
+        serving.knative.dev/creator: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:57:44.218330Z'
+      generation: 1
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+        run.googleapis.com/startupProbeType: Default
+        serving.knative.dev/configuration: api-dev
+        serving.knative.dev/configurationGeneration: '5'
+        serving.knative.dev/route: api-dev
+        serving.knative.dev/service: api-dev
+        serving.knative.dev/serviceUid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      name: api-dev-00005-neg
+      namespace: '32108269805'
+      ownerReferences:
+      - apiVersion: serving.knative.dev/v1
+        blockOwnerDeletion: true
+        controller: true
+        kind: Configuration
+        name: api-dev
+        uid: 1bcf1d36-de66-487a-a567-897fe38421ac
+      resourceVersion: AAYxn51DwyY
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/revisions/api-dev-00005-neg
+      uid: 162a229e-53b7-4578-a6a3-c488438fd926
+    spec:
+      containerConcurrency: 80
+      containers:
+      - env:
+        - name: SUPABASE_URL
+        - name: SUPABASE_SERVICE_ROLE_KEY
+        image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+        ports:
+        - containerPort: 8000
+          name: http1
+        resources:
+          limits:
+            cpu: '1'
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8000
+          timeoutSeconds: 240
+      serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:57:48.288806Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00005-neg&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00005-neg%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:57:48.288806Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00005-neg&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00005-neg%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: ContainerHealthy
+      - lastTransitionTime: '2025-03-31T08:57:44.640320Z'
+        message: Container image import completed.
+        status: 'True'
+        type: ContainerReady
+      - lastTransitionTime: '2025-03-31T08:57:46.026913Z'
+        message: Provisioning imported containers completed in 1.38s. Checking container
+          health.
+        status: 'True'
+        type: ResourcesAvailable
+      - lastTransitionTime: '2025-03-31T08:57:46.026913Z'
+        message: System will retry after 0:00:00 from lastTransitionTime for attempt
+          0.
+        reason: ImmediateRetry
+        severity: Info
+        status: 'True'
+        type: Retry
+      containerStatuses:
+      - imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+      imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+      logUrl: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00005-neg&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00005-neg%22
+      observedGeneration: 1
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Revision api-dev-00005-neg with message: The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00005-neg&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00005-neg%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T08:57:48.848476520Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00005-neg
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:57:48.301284Z'
+---
+insertId: 67ea590c0004690a4176aa8e
+labels:
+  instanceId: 00afae8043cec3c6f3c76f71594feb9e9e3d2b94f9efcf7bd56adcd6ff1e47e5a7ab944b2c85c621ecacc161759e7a5d7632fe75341abe6a6dbe9b761129f00966a405cb75a6bc32b67de1a80e22
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T08:57:48.569116199Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00005-neg
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+textPayload: |-
+  Default STARTUP TCP probe failed 1 time consecutively for container "archimind-backend-dev-1" on port 8000. The instance was not started.
+  Connection failed with status CANCELLED.
+timestamp: '2025-03-31T08:57:48.289034Z'
+---
+insertId: 67ea590c000388d39909782f
+labels:
+  instanceId: 00afae8043cec3c6f3c76f71594feb9e9e3d2b94f9efcf7bd56adcd6ff1e47e5a7ab944b2c85c621ecacc161759e7a5d7632fe75341abe6a6dbe9b761129f00966a405cb75a6bc32b67de1a80e22
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:57:48.422258222Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00005-neg
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: "Error: Invalid value for '--port': '${PORT:-8000}' is not a valid integer."
+timestamp: '2025-03-31T08:57:48.231635Z'
+---
+insertId: 67ea590c00038874cc1d5d97
+labels:
+  container_name: archimind-backend-dev-1
+  instanceId: 00afae8043cec3c6f3c76f71594feb9e9e3d2b94f9efcf7bd56adcd6ff1e47e5a7ab944b2c85c621ecacc161759e7a5d7632fe75341abe6a6dbe9b761129f00966a405cb75a6bc32b67de1a80e22
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T08:57:48.233513680Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00005-neg
+    service_name: api-dev
+  type: cloud_run_revision
+severity: WARNING
+textPayload: Container called exit(2).
+timestamp: '2025-03-31T08:57:48.231466436Z'
+---
+insertId: 67ea590b00066b92e1ea13eb
+labels:
+  instanceId: 00afae8043cec3c6f3c76f71594feb9e9e3d2b94f9efcf7bd56adcd6ff1e47e5a7ab944b2c85c621ecacc161759e7a5d7632fe75341abe6a6dbe9b761129f00966a405cb75a6bc32b67de1a80e22
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:57:47.423412972Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00005-neg
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: Try 'uvicorn --help' for help.
+timestamp: '2025-03-31T08:57:47.420754Z'
+---
+insertId: 67ea590b00066b75509159a2
+labels:
+  instanceId: 00afae8043cec3c6f3c76f71594feb9e9e3d2b94f9efcf7bd56adcd6ff1e47e5a7ab944b2c85c621ecacc161759e7a5d7632fe75341abe6a6dbe9b761129f00966a405cb75a6bc32b67de1a80e22
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:57:47.423412972Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00005-neg
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: 'Usage: uvicorn [OPTIONS] APP'
+timestamp: '2025-03-31T08:57:47.420725Z'
+---
+insertId: u9cxlfd1afs
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Factivity
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  authenticationInfo:
+    principalEmail: quentin@jayd.ai
+    principalSubject: user:quentin@jayd.ai
+  authorizationInfo:
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes: {}
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes:
+      name: namespaces/neat-library-433414-r7/services/api-dev
+      service: run.googleapis.com/
+      type: run.googleapis.com/Service
+  methodName: google.cloud.run.v1.Services.ReplaceService
+  request:
+    '@type': type.googleapis.com/google.cloud.run.v1.ReplaceServiceRequest
+    name: namespaces/neat-library-433414-r7/services/api-dev
+    service:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      metadata:
+        annotations:
+          run.googleapis.com/client-name: gcloud
+          run.googleapis.com/client-version: 441.0.0
+          run.googleapis.com/ingress: all
+          run.googleapis.com/ingress-status: all
+          run.googleapis.com/operation-id: c3346916-d713-42c4-bfce-81787816b913
+          run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+          serving.knative.dev/creator: quentin@jayd.ai
+          serving.knative.dev/lastModifier: quentin@jayd.ai
+        creationTimestamp: '2025-03-31T08:47:49.275224Z'
+        generation: 4
+        labels:
+          cloud.googleapis.com/location: europe-west9
+          run.googleapis.com/satisfiesPzs: 'true'
+        name: api-dev
+        namespace: '32108269805'
+        resourceVersion: AAYxn5uz8NM
+        selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+        uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      spec:
+        template:
+          metadata:
+            annotations:
+              autoscaling.knative.dev/maxScale: '10'
+              run.googleapis.com/client-name: gcloud
+              run.googleapis.com/client-version: 441.0.0
+            labels:
+              run.googleapis.com/startupProbeType: Default
+            name: api-dev-00005-neg
+          spec:
+            containerConcurrency: 80
+            containers:
+            - image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 512Mi
+            serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+            timeoutSeconds: 300
+        traffic:
+        - latestRevision: true
+          percent: 100
+      status:
+        conditions:
+        - lastTransitionTime: '2025-03-31T08:57:22.015676Z'
+          reason: HealthCheckContainerError
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2025-03-31T08:57:22.016604Z'
+          status: 'True'
+          type: ConfigurationsReady
+        - lastTransitionTime: '2025-03-31T08:57:22.015676Z'
+          reason: HealthCheckContainerError
+          status: 'False'
+          type: RoutesReady
+        latestCreatedRevisionName: api-dev-00004-nek
+        observedGeneration: 4
+  requestMetadata:
+    callerIp: 195.154.25.58
+    callerSuppliedUserAgent: google-cloud-sdk gcloud/441.0.0 command/gcloud.run.deploy
+      invocation-id/6e83ec3cc4f04fb1818746c218f5e0c4 environment/None environment-version/None
+      client-os/MACOSX client-os-ver/24.3.0 client-pltf-arch/x86_64 interactive/True
+      from-script/False python/3.10.6 term/xterm-256color (Macintosh; Intel Mac OS
+      X 24.3.0),gzip(gfe)
+    destinationAttributes: {}
+    requestAttributes:
+      auth: {}
+      time: '2025-03-31T08:57:44.177563Z'
+  resourceLocation:
+    currentLocations:
+    - europe-west9
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  serviceName: run.googleapis.com
+receiveTimestamp: '2025-03-31T08:57:44.758842796Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: NOTICE
+timestamp: '2025-03-31T08:57:43.800439Z'
+---
+insertId: -daugr6d1m86
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Service
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/ingress: all
+        run.googleapis.com/ingress-status: all
+        run.googleapis.com/operation-id: c3346916-d713-42c4-bfce-81787816b913
+        run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+        serving.knative.dev/creator: quentin@jayd.ai
+        serving.knative.dev/lastModifier: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:47:49.275224Z'
+      generation: 4
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+      name: api-dev
+      namespace: '32108269805'
+      resourceVersion: AAYxn5uzVPU
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+      uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+    spec:
+      template:
+        metadata:
+          annotations:
+            autoscaling.knative.dev/maxScale: '10'
+            run.googleapis.com/client-name: gcloud
+            run.googleapis.com/client-version: 441.0.0
+          labels:
+            run.googleapis.com/startupProbeType: Default
+          name: api-dev-00004-nek
+        spec:
+          containerConcurrency: 80
+          containers:
+          - env:
+            - name: SUPABASE_URL
+            - name: SUPABASE_SERVICE_ROLE_KEY
+            image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+            ports:
+            - containerPort: 8000
+              name: http1
+            resources:
+              limits:
+                cpu: '1'
+                memory: 512Mi
+            startupProbe:
+              failureThreshold: 1
+              periodSeconds: 240
+              tcpSocket:
+                port: 8000
+              timeoutSeconds: 240
+          serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+          timeoutSeconds: 300
+      traffic:
+      - latestRevision: true
+        percent: 100
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:57:22.015676Z'
+        message: |-
+          Revision 'api-dev-00004-nek' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00004-nek&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00004-nek%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:57:19.757258Z'
+        message: Provisioning imported containers completed in 2.62s. Checking container
+          health.
+        status: 'True'
+        type: ConfigurationsReady
+      - lastTransitionTime: '2025-03-31T08:57:22.015676Z'
+        message: |-
+          Revision 'api-dev-00004-nek' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00004-nek&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00004-nek%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: RoutesReady
+      latestCreatedRevisionName: api-dev-00004-nek
+      observedGeneration: 4
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Service api-dev with message: Revision 'api-dev-00004-nek' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00004-nek&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00004-nek%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T08:57:22.403646749Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:57:22.057441Z'
+---
+insertId: ezojjed1mt4
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/revisions/api-dev-00004-nek
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Revision
+    apiVersion: serving.knative.dev/v1
+    kind: Revision
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/operation-id: c3346916-d713-42c4-bfce-81787816b913
+        serving.knative.dev/creator: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:57:16.520838Z'
+      generation: 1
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+        run.googleapis.com/startupProbeType: Default
+        serving.knative.dev/configuration: api-dev
+        serving.knative.dev/configurationGeneration: '4'
+        serving.knative.dev/route: api-dev
+        serving.knative.dev/service: api-dev
+        serving.knative.dev/serviceUid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      name: api-dev-00004-nek
+      namespace: '32108269805'
+      ownerReferences:
+      - apiVersion: serving.knative.dev/v1
+        blockOwnerDeletion: true
+        controller: true
+        kind: Configuration
+        name: api-dev
+        uid: 1bcf1d36-de66-487a-a567-897fe38421ac
+      resourceVersion: AAYxn5uyXJI
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/revisions/api-dev-00004-nek
+      uid: 16329ea8-3592-4d86-97d1-e90e5e0159f2
+    spec:
+      containerConcurrency: 80
+      containers:
+      - env:
+        - name: SUPABASE_URL
+        - name: SUPABASE_SERVICE_ROLE_KEY
+        image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+        ports:
+        - containerPort: 8000
+          name: http1
+        resources:
+          limits:
+            cpu: '1'
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8000
+          timeoutSeconds: 240
+      serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:57:21.982610Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00004-nek&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00004-nek%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:57:21.982610Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00004-nek&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00004-nek%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: ContainerHealthy
+      - lastTransitionTime: '2025-03-31T08:57:17.104831Z'
+        message: Container image import completed.
+        status: 'True'
+        type: ContainerReady
+      - lastTransitionTime: '2025-03-31T08:57:19.725003Z'
+        message: Provisioning imported containers completed in 2.62s. Checking container
+          health.
+        status: 'True'
+        type: ResourcesAvailable
+      - lastTransitionTime: '2025-03-31T08:57:19.725003Z'
+        message: System will retry after 0:00:00 from lastTransitionTime for attempt
+          0.
+        reason: ImmediateRetry
+        severity: Info
+        status: 'True'
+        type: Retry
+      containerStatuses:
+      - imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+      imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+      logUrl: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00004-nek&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00004-nek%22
+      observedGeneration: 1
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Revision api-dev-00004-nek with message: The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00004-nek&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00004-nek%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T08:57:22.758356602Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00004-nek
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:57:21.992357Z'
+---
+insertId: 67ea58f1000eff45a2d70fc1
+labels:
+  instanceId: 00afae8043305088ccdffdc457ab312a6ffac1151ca7f55352542e8869f2607e3567f628b5280ecbbd523c0bd1c59e170c2a09db34b1e4105dd4317cc2820a71323e21fe7477f7d3f934b25be0
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T08:57:22.268012836Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00004-nek
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+textPayload: |-
+  Default STARTUP TCP probe failed 1 time consecutively for container "archimind-backend-dev-1" on port 8000. The instance was not started.
+  Connection failed with status CANCELLED.
+timestamp: '2025-03-31T08:57:21.982853Z'
+---
+insertId: 67ea58f1000e37f1d0eccec0
+labels:
+  instanceId: 00afae8043305088ccdffdc457ab312a6ffac1151ca7f55352542e8869f2607e3567f628b5280ecbbd523c0bd1c59e170c2a09db34b1e4105dd4317cc2820a71323e21fe7477f7d3f934b25be0
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:57:22.251220361Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00004-nek
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: "Error: Invalid value for '--port': '${PORT:-8000}' is not a valid integer."
+timestamp: '2025-03-31T08:57:21.931825Z'
+---
+insertId: 67ea58f1000e37b21a838d7f
+labels:
+  container_name: archimind-backend-dev-1
+  instanceId: 00afae8043305088ccdffdc457ab312a6ffac1151ca7f55352542e8869f2607e3567f628b5280ecbbd523c0bd1c59e170c2a09db34b1e4105dd4317cc2820a71323e21fe7477f7d3f934b25be0
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T08:57:21.934352467Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00004-nek
+    service_name: api-dev
+  type: cloud_run_revision
+severity: WARNING
+textPayload: Container called exit(2).
+timestamp: '2025-03-31T08:57:21.931655147Z'
+---
+insertId: 67ea58f0000df8d79a410913
+labels:
+  instanceId: 00afae8043305088ccdffdc457ab312a6ffac1151ca7f55352542e8869f2607e3567f628b5280ecbbd523c0bd1c59e170c2a09db34b1e4105dd4317cc2820a71323e21fe7477f7d3f934b25be0
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:57:20.919045517Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00004-nek
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: Try 'uvicorn --help' for help.
+timestamp: '2025-03-31T08:57:20.915671Z'
+---
+insertId: 67ea58f0000df8b61d72be48
+labels:
+  instanceId: 00afae8043305088ccdffdc457ab312a6ffac1151ca7f55352542e8869f2607e3567f628b5280ecbbd523c0bd1c59e170c2a09db34b1e4105dd4317cc2820a71323e21fe7477f7d3f934b25be0
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:57:20.919045517Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00004-nek
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: 'Usage: uvicorn [OPTIONS] APP'
+timestamp: '2025-03-31T08:57:20.915638Z'
+---
+insertId: 1vhh1ctd19ib
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Factivity
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  authenticationInfo:
+    principalEmail: quentin@jayd.ai
+    principalSubject: user:quentin@jayd.ai
+  authorizationInfo:
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes: {}
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes:
+      name: namespaces/neat-library-433414-r7/services/api-dev
+      service: run.googleapis.com/
+      type: run.googleapis.com/Service
+  methodName: google.cloud.run.v1.Services.ReplaceService
+  request:
+    '@type': type.googleapis.com/google.cloud.run.v1.ReplaceServiceRequest
+    name: namespaces/neat-library-433414-r7/services/api-dev
+    service:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      metadata:
+        annotations:
+          run.googleapis.com/client-name: gcloud
+          run.googleapis.com/client-version: 441.0.0
+          run.googleapis.com/ingress: all
+          run.googleapis.com/ingress-status: all
+          run.googleapis.com/operation-id: 939a799e-2035-4b58-8182-b1550649dc45
+          run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+          serving.knative.dev/creator: quentin@jayd.ai
+          serving.knative.dev/lastModifier: quentin@jayd.ai
+        creationTimestamp: '2025-03-31T08:47:49.275224Z'
+        generation: 3
+        labels:
+          cloud.googleapis.com/location: europe-west9
+          run.googleapis.com/satisfiesPzs: 'true'
+        name: api-dev
+        namespace: '32108269805'
+        resourceVersion: AAYxn4kWQHo
+        selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+        uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      spec:
+        template:
+          metadata:
+            annotations:
+              autoscaling.knative.dev/maxScale: '10'
+              run.googleapis.com/client-name: gcloud
+              run.googleapis.com/client-version: 441.0.0
+            labels:
+              run.googleapis.com/startupProbeType: Default
+            name: api-dev-00004-nek
+          spec:
+            containerConcurrency: 80
+            containers:
+            - image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 512Mi
+            serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+            timeoutSeconds: 300
+        traffic:
+        - latestRevision: true
+          percent: 100
+      status:
+        conditions:
+        - lastTransitionTime: '2025-03-31T08:52:09.702327Z'
+          reason: HealthCheckContainerError
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2025-03-31T08:52:09.697629Z'
+          status: 'True'
+          type: ConfigurationsReady
+        - lastTransitionTime: '2025-03-31T08:52:09.702327Z'
+          reason: HealthCheckContainerError
+          status: 'False'
+          type: RoutesReady
+        latestCreatedRevisionName: api-dev-00003-tik
+        observedGeneration: 3
+  requestMetadata:
+    callerIp: 195.154.25.58
+    callerSuppliedUserAgent: google-cloud-sdk gcloud/441.0.0 command/gcloud.run.deploy
+      invocation-id/37b558e4eeaf4eddb67109887589840f environment/None environment-version/None
+      client-os/MACOSX client-os-ver/24.3.0 client-pltf-arch/x86_64 interactive/True
+      from-script/False python/3.10.6 term/xterm-256color (Macintosh; Intel Mac OS
+      X 24.3.0),gzip(gfe)
+    destinationAttributes: {}
+    requestAttributes:
+      auth: {}
+      time: '2025-03-31T08:57:16.482571Z'
+  resourceLocation:
+    currentLocations:
+    - europe-west9
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  serviceName: run.googleapis.com
+receiveTimestamp: '2025-03-31T08:57:17.391775693Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: NOTICE
+timestamp: '2025-03-31T08:57:16.142405Z'
+---
+insertId: -zgtvmpd1h9s
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Service
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/ingress: all
+        run.googleapis.com/ingress-status: all
+        run.googleapis.com/operation-id: 939a799e-2035-4b58-8182-b1550649dc45
+        run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+        serving.knative.dev/creator: quentin@jayd.ai
+        serving.knative.dev/lastModifier: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:47:49.275224Z'
+      generation: 3
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+      name: api-dev
+      namespace: '32108269805'
+      resourceVersion: AAYxn4kVopw
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+      uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+    spec:
+      template:
+        metadata:
+          annotations:
+            autoscaling.knative.dev/maxScale: '10'
+            run.googleapis.com/client-name: gcloud
+            run.googleapis.com/client-version: 441.0.0
+          labels:
+            run.googleapis.com/startupProbeType: Default
+          name: api-dev-00003-tik
+        spec:
+          containerConcurrency: 80
+          containers:
+          - env:
+            - name: SUPABASE_URL
+            - name: SUPABASE_SERVICE_ROLE_KEY
+            image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+            ports:
+            - containerPort: 8000
+              name: http1
+            resources:
+              limits:
+                cpu: '1'
+                memory: 512Mi
+            startupProbe:
+              failureThreshold: 1
+              periodSeconds: 240
+              tcpSocket:
+                port: 8000
+              timeoutSeconds: 240
+          serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+          timeoutSeconds: 300
+      traffic:
+      - latestRevision: true
+        percent: 100
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:52:09.702327Z'
+        message: |-
+          Revision 'api-dev-00003-tik' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00003-tik&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00003-tik%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:52:09.650541Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00002-hir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00002-hir%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        status: 'True'
+        type: ConfigurationsReady
+      - lastTransitionTime: '2025-03-31T08:52:09.702327Z'
+        message: |-
+          Revision 'api-dev-00003-tik' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00003-tik&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00003-tik%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: RoutesReady
+      latestCreatedRevisionName: api-dev-00003-tik
+      observedGeneration: 3
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Service api-dev with message: Revision 'api-dev-00003-tik' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00003-tik&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00003-tik%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T08:52:09.809925356Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:52:09.732571Z'
+---
+insertId: r82suvd1n4u
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/revisions/api-dev-00003-tik
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Revision
+    apiVersion: serving.knative.dev/v1
+    kind: Revision
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/operation-id: 939a799e-2035-4b58-8182-b1550649dc45
+        serving.knative.dev/creator: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:51:58.723626Z'
+      generation: 1
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+        run.googleapis.com/startupProbeType: Default
+        serving.knative.dev/configuration: api-dev
+        serving.knative.dev/configurationGeneration: '3'
+        serving.knative.dev/route: api-dev
+        serving.knative.dev/service: api-dev
+        serving.knative.dev/serviceUid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      name: api-dev-00003-tik
+      namespace: '32108269805'
+      ownerReferences:
+      - apiVersion: serving.knative.dev/v1
+        blockOwnerDeletion: true
+        controller: true
+        kind: Configuration
+        name: api-dev
+        uid: 1bcf1d36-de66-487a-a567-897fe38421ac
+      resourceVersion: AAYxn4kUhXk
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/revisions/api-dev-00003-tik
+      uid: 5be77431-c107-4592-ad45-d1ec76645145
+    spec:
+      containerConcurrency: 80
+      containers:
+      - env:
+        - name: SUPABASE_URL
+        - name: SUPABASE_SERVICE_ROLE_KEY
+        image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+        ports:
+        - containerPort: 8000
+          name: http1
+        resources:
+          limits:
+            cpu: '1'
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8000
+          timeoutSeconds: 240
+      serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:52:09.648505Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00003-tik&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00003-tik%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:52:09.648505Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00003-tik&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00003-tik%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: ContainerHealthy
+      - lastTransitionTime: '2025-03-31T08:52:04.883281Z'
+        message: Container image import completed in 5.69s.
+        status: 'True'
+        type: ContainerReady
+      - lastTransitionTime: '2025-03-31T08:52:07.367300Z'
+        message: Provisioning imported containers completed in 2.48s. Checking container
+          health.
+        status: 'True'
+        type: ResourcesAvailable
+      - lastTransitionTime: '2025-03-31T08:52:07.367300Z'
+        message: System will retry after 0:00:00 from lastTransitionTime for attempt
+          0.
+        reason: ImmediateRetry
+        severity: Info
+        status: 'True'
+        type: Retry
+      containerStatuses:
+      - imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+      imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+      logUrl: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00003-tik&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00003-tik%22
+      observedGeneration: 1
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Revision api-dev-00003-tik with message: The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00003-tik&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00003-tik%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T08:52:10.423549551Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00003-tik
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:52:09.657685Z'
+---
+insertId: 67ea57b90009e09f7c393995
+labels:
+  instanceId: 00afae80433ebda53d4cc3f47b7e814aeb16e9ac9edef8e845424cb260e34f647977a1e429cc4b4662697f0da3bc663be48d20a1e27c4c1889932693f5379ae730f8d66bb39db8754d1c565dea
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T08:52:09.933746803Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00003-tik
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+textPayload: |-
+  Default STARTUP TCP probe failed 1 time consecutively for container "archimind-backend-dev-1" on port 8000. The instance was not started.
+  Connection failed with status CANCELLED.
+timestamp: '2025-03-31T08:52:09.647327Z'
+---
+insertId: 2sga1md1cp2
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/revisions/api-dev-00002-hir
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Revision
+    apiVersion: serving.knative.dev/v1
+    kind: Revision
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/operation-id: 939a799e-2035-4b58-8182-b1550649dc45
+        serving.knative.dev/creator: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:49:00.181054Z'
+      generation: 1
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+        run.googleapis.com/startupProbeType: Default
+        serving.knative.dev/configuration: api-dev
+        serving.knative.dev/configurationGeneration: '2'
+        serving.knative.dev/route: api-dev
+        serving.knative.dev/service: api-dev
+        serving.knative.dev/serviceUid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      name: api-dev-00002-hir
+      namespace: '32108269805'
+      ownerReferences:
+      - apiVersion: serving.knative.dev/v1
+        blockOwnerDeletion: true
+        controller: true
+        kind: Configuration
+        name: api-dev
+        uid: 1bcf1d36-de66-487a-a567-897fe38421ac
+      resourceVersion: AAYxn4kUBrQ
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/revisions/api-dev-00002-hir
+      uid: 609ffde0-8545-4424-84b1-1c1c08573f96
+    spec:
+      containerConcurrency: 80
+      containers:
+      - image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+        ports:
+        - containerPort: 8000
+          name: http1
+        resources:
+          limits:
+            cpu: '1'
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8000
+          timeoutSeconds: 240
+      serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:52:09.616052Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00002-hir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00002-hir%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:52:09.616052Z'
+        message: |-
+          The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+          Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00002-hir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00002-hir%22 
+          For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+        reason: HealthCheckContainerError
+        status: 'False'
+        type: ContainerHealthy
+      - lastTransitionTime: '2025-03-31T08:52:04.893367Z'
+        message: Container image import completed in 5.68s.
+        status: 'True'
+        type: ContainerReady
+      - lastTransitionTime: '2025-03-31T08:52:07.366432Z'
+        message: Provisioning imported containers completed in 2.47s. Checking container
+          health.
+        status: 'True'
+        type: ResourcesAvailable
+      - lastTransitionTime: '2025-03-31T08:52:07.366432Z'
+        message: System will retry after 0:00:00 from lastTransitionTime for attempt
+          0.
+        reason: ImmediateRetry
+        severity: Info
+        status: 'True'
+        type: Retry
+      containerStatuses:
+      - imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+        name: archimind-backend-dev-1
+      imageDigest: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev@sha256:59d3c9bba188f580847a6734ffbcd7d1695159650e2e11efae8bcea7a7de764d
+      logUrl: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00002-hir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00002-hir%22
+      observedGeneration: 1
+  serviceName: run.googleapis.com
+  status:
+    code: 9
+    message: |-
+      Ready condition status changed to False for Revision api-dev-00002-hir with message: The user-provided container failed to start and listen on the port defined provided by the PORT=8000 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
+
+      Logs URL: https://console.cloud.google.com/logs/viewer?project=neat-library-433414-r7&resource=cloud_run_revision/service_name/api-dev/revision_name/api-dev-00002-hir&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22api-dev%22%0Aresource.labels.revision_name%3D%22api-dev-00002-hir%22 
+      For more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start
+receiveTimestamp: '2025-03-31T08:52:09.739798198Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00002-hir
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:52:09.627769Z'
+---
+insertId: 67ea57b9000961d2f2a58647
+labels:
+  instanceId: 00afae8043ff2e5141888cfcacf848c4edc6fc19325192870a2b79d286e36065f5f2161dcd755c33fa990afdf0209344f14c806e7f1dfa8fe6e16c68eb6da17c20c9b04e607ae24068f313ef3fc4
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T08:52:09.897722831Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00002-hir
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+textPayload: |-
+  Default STARTUP TCP probe failed 1 time consecutively for container "archimind-backend-dev-1" on port 8000. The instance was not started.
+  Connection failed with status CANCELLED.
+timestamp: '2025-03-31T08:52:09.614866Z'
+---
+insertId: 67ea57b900091f18debe702a
+labels:
+  instanceId: 00afae80433ebda53d4cc3f47b7e814aeb16e9ac9edef8e845424cb260e34f647977a1e429cc4b4662697f0da3bc663be48d20a1e27c4c1889932693f5379ae730f8d66bb39db8754d1c565dea
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:52:09.922267624Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00003-tik
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: "Error: Invalid value for '--port': '${PORT:-8000}' is not a valid integer."
+timestamp: '2025-03-31T08:52:09.597784Z'
+---
+insertId: 67ea57b900091ed2bc4452ef
+labels:
+  container_name: archimind-backend-dev-1
+  instanceId: 00afae80433ebda53d4cc3f47b7e814aeb16e9ac9edef8e845424cb260e34f647977a1e429cc4b4662697f0da3bc663be48d20a1e27c4c1889932693f5379ae730f8d66bb39db8754d1c565dea
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T08:52:09.601334752Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00003-tik
+    service_name: api-dev
+  type: cloud_run_revision
+severity: WARNING
+textPayload: Container called exit(2).
+timestamp: '2025-03-31T08:52:09.597641317Z'
+---
+insertId: 67ea57b9000893bcc1b1a539
+labels:
+  instanceId: 00afae8043ff2e5141888cfcacf848c4edc6fc19325192870a2b79d286e36065f5f2161dcd755c33fa990afdf0209344f14c806e7f1dfa8fe6e16c68eb6da17c20c9b04e607ae24068f313ef3fc4
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:52:09.884435360Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00002-hir
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: "Error: Invalid value for '--port': '${PORT:-8000}' is not a valid integer."
+timestamp: '2025-03-31T08:52:09.562108Z'
+---
+insertId: 67ea57b90008937361aa704a
+labels:
+  container_name: archimind-backend-dev-1
+  instanceId: 00afae8043ff2e5141888cfcacf848c4edc6fc19325192870a2b79d286e36065f5f2161dcd755c33fa990afdf0209344f14c806e7f1dfa8fe6e16c68eb6da17c20c9b04e607ae24068f313ef3fc4
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fvarlog%2Fsystem
+receiveTimestamp: '2025-03-31T08:52:09.564398454Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00002-hir
+    service_name: api-dev
+  type: cloud_run_revision
+severity: WARNING
+textPayload: Container called exit(2).
+timestamp: '2025-03-31T08:52:09.561952868Z'
+---
+insertId: 67ea57b80008f6ec129e1802
+labels:
+  instanceId: 00afae80433ebda53d4cc3f47b7e814aeb16e9ac9edef8e845424cb260e34f647977a1e429cc4b4662697f0da3bc663be48d20a1e27c4c1889932693f5379ae730f8d66bb39db8754d1c565dea
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:52:08.589991429Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00003-tik
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: Try 'uvicorn --help' for help.
+timestamp: '2025-03-31T08:52:08.587500Z'
+---
+insertId: 67ea57b80008f6d34961d1de
+labels:
+  instanceId: 00afae80433ebda53d4cc3f47b7e814aeb16e9ac9edef8e845424cb260e34f647977a1e429cc4b4662697f0da3bc663be48d20a1e27c4c1889932693f5379ae730f8d66bb39db8754d1c565dea
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:52:08.589991429Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00003-tik
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: 'Usage: uvicorn [OPTIONS] APP'
+timestamp: '2025-03-31T08:52:08.587475Z'
+---
+insertId: 67ea57b8000865ec32d79a08
+labels:
+  instanceId: 00afae8043ff2e5141888cfcacf848c4edc6fc19325192870a2b79d286e36065f5f2161dcd755c33fa990afdf0209344f14c806e7f1dfa8fe6e16c68eb6da17c20c9b04e607ae24068f313ef3fc4
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:52:08.555124289Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00002-hir
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: Try 'uvicorn --help' for help.
+timestamp: '2025-03-31T08:52:08.550380Z'
+---
+insertId: 67ea57b8000865d646f70949
+labels:
+  instanceId: 00afae8043ff2e5141888cfcacf848c4edc6fc19325192870a2b79d286e36065f5f2161dcd755c33fa990afdf0209344f14c806e7f1dfa8fe6e16c68eb6da17c20c9b04e607ae24068f313ef3fc4
+logName: projects/neat-library-433414-r7/logs/run.googleapis.com%2Fstderr
+receiveTimestamp: '2025-03-31T08:52:08.555124289Z'
+resource:
+  labels:
+    configuration_name: api-dev
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: api-dev-00002-hir
+    service_name: api-dev
+  type: cloud_run_revision
+textPayload: 'Usage: uvicorn [OPTIONS] APP'
+timestamp: '2025-03-31T08:52:08.550358Z'
+---
+insertId: 32fvrid1cok
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Factivity
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  authenticationInfo:
+    principalEmail: quentin@jayd.ai
+    principalSubject: user:quentin@jayd.ai
+  authorizationInfo:
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes: {}
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes:
+      name: namespaces/neat-library-433414-r7/services/api-dev
+      service: run.googleapis.com/
+      type: run.googleapis.com/Service
+  methodName: google.cloud.run.v1.Services.ReplaceService
+  request:
+    '@type': type.googleapis.com/google.cloud.run.v1.ReplaceServiceRequest
+    name: namespaces/neat-library-433414-r7/services/api-dev
+    service:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      metadata:
+        annotations:
+          run.googleapis.com/client-name: gcloud
+          run.googleapis.com/client-version: 441.0.0
+          run.googleapis.com/ingress: all
+          run.googleapis.com/ingress-status: all
+          run.googleapis.com/operation-id: 3f866adb-114f-4be6-be41-b95ead8abaac
+          run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+          serving.knative.dev/creator: quentin@jayd.ai
+          serving.knative.dev/lastModifier: quentin@jayd.ai
+        creationTimestamp: '2025-03-31T08:47:49.275224Z'
+        generation: 2
+        labels:
+          cloud.googleapis.com/location: europe-west9
+          run.googleapis.com/satisfiesPzs: 'true'
+        name: api-dev
+        namespace: '32108269805'
+        resourceVersion: AAYxn33Meog
+        selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+        uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      spec:
+        template:
+          metadata:
+            annotations:
+              autoscaling.knative.dev/maxScale: '10'
+              run.googleapis.com/client-name: gcloud
+              run.googleapis.com/client-version: 441.0.0
+            labels:
+              run.googleapis.com/startupProbeType: Default
+            name: api-dev-00003-tik
+          spec:
+            containerConcurrency: 80
+            containers:
+            - image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 512Mi
+            serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+            timeoutSeconds: 300
+        traffic:
+        - latestRevision: true
+          percent: 100
+      status:
+        conditions:
+        - lastTransitionTime: '2025-03-31T08:49:00.307089Z'
+          reason: RevisionFailed
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2025-03-31T08:49:00.303215Z'
+          status: 'True'
+          type: ConfigurationsReady
+        - lastTransitionTime: '2025-03-31T08:49:00.307089Z'
+          reason: RevisionFailed
+          status: 'False'
+          type: RoutesReady
+        latestCreatedRevisionName: api-dev-00002-hir
+        observedGeneration: 2
+  requestMetadata:
+    callerIp: 195.154.25.58
+    callerSuppliedUserAgent: google-cloud-sdk gcloud/441.0.0 command/gcloud.run.deploy
+      invocation-id/8ec6e79f7aa145c9a78f375133b3af3a environment/None environment-version/None
+      client-os/MACOSX client-os-ver/24.3.0 client-pltf-arch/x86_64 interactive/True
+      from-script/False python/3.10.6 term/xterm-256color (Macintosh; Intel Mac OS
+      X 24.3.0),gzip(gfe)
+    destinationAttributes: {}
+    requestAttributes:
+      auth: {}
+      time: '2025-03-31T08:51:58.684689Z'
+  resourceLocation:
+    currentLocations:
+    - europe-west9
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  serviceName: run.googleapis.com
+receiveTimestamp: '2025-03-31T08:51:59.346525963Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: NOTICE
+timestamp: '2025-03-31T08:51:58.282753Z'
+---
+insertId: -h5l4mpd1jsy
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.ReplaceService
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Service
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/ingress: all
+        run.googleapis.com/ingress-status: all
+        run.googleapis.com/operation-id: 3f866adb-114f-4be6-be41-b95ead8abaac
+        run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+        serving.knative.dev/creator: quentin@jayd.ai
+        serving.knative.dev/lastModifier: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:47:49.275224Z'
+      generation: 2
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+      name: api-dev
+      namespace: '32108269805'
+      resourceVersion: AAYxn33Meog
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+      uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+    spec:
+      template:
+        metadata:
+          annotations:
+            autoscaling.knative.dev/maxScale: '10'
+            run.googleapis.com/client-name: gcloud
+            run.googleapis.com/client-version: 441.0.0
+          labels:
+            run.googleapis.com/startupProbeType: Default
+          name: api-dev-00002-hir
+        spec:
+          containerConcurrency: 80
+          containers:
+          - image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+            ports:
+            - containerPort: 8000
+              name: http1
+            resources:
+              limits:
+                cpu: '1'
+                memory: 512Mi
+            startupProbe:
+              failureThreshold: 1
+              periodSeconds: 240
+              tcpSocket:
+                port: 8000
+              timeoutSeconds: 240
+          serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+          timeoutSeconds: 300
+      traffic:
+      - latestRevision: true
+        percent: 100
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:49:00.307089Z'
+        message: Revision 'api-dev-00002-hir' is not ready and cannot serve traffic.
+          Image 'europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial'
+          not found.
+        reason: RevisionFailed
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:49:00.303215Z'
+        message: Image 'europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial'
+          not found.
+        status: 'True'
+        type: ConfigurationsReady
+      - lastTransitionTime: '2025-03-31T08:49:00.307089Z'
+        message: Revision 'api-dev-00002-hir' is not ready and cannot serve traffic.
+          Image 'europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial'
+          not found.
+        reason: RevisionFailed
+        status: 'False'
+        type: RoutesReady
+      latestCreatedRevisionName: api-dev-00002-hir
+      observedGeneration: 2
+  serviceName: run.googleapis.com
+  status:
+    code: 5
+    message: "Ready condition status changed to False for Service api-dev with message:\
+      \ Revision 'api-dev-00002-hir' is not ready and cannot serve traffic. Image\
+      \ 'europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial'\
+      \ not found."
+receiveTimestamp: '2025-03-31T08:49:00.407190997Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:49:00.388910Z'
+---
+insertId: 14u2gm2d1bl8
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Factivity
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  authenticationInfo:
+    principalEmail: quentin@jayd.ai
+    principalSubject: user:quentin@jayd.ai
+  authorizationInfo:
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes: {}
+  - granted: true
+    permission: run.services.update
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes:
+      name: namespaces/neat-library-433414-r7/services/api-dev
+      service: run.googleapis.com/
+      type: run.googleapis.com/Service
+  methodName: google.cloud.run.v1.Services.ReplaceService
+  request:
+    '@type': type.googleapis.com/google.cloud.run.v1.ReplaceServiceRequest
+    name: namespaces/neat-library-433414-r7/services/api-dev
+    service:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      metadata:
+        annotations:
+          run.googleapis.com/client-name: gcloud
+          run.googleapis.com/client-version: 441.0.0
+          run.googleapis.com/ingress: all
+          run.googleapis.com/ingress-status: all
+          run.googleapis.com/operation-id: 729efeee-d4c3-478d-8d86-906a7b622abd
+          run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+          serving.knative.dev/creator: quentin@jayd.ai
+          serving.knative.dev/lastModifier: quentin@jayd.ai
+        creationTimestamp: '2025-03-31T08:47:49.275224Z'
+        generation: 1
+        labels:
+          cloud.googleapis.com/location: europe-west9
+          run.googleapis.com/satisfiesPzs: 'true'
+        name: api-dev
+        namespace: '32108269805'
+        resourceVersion: AAYxn3mdHe4
+        selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+        uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+      spec:
+        template:
+          metadata:
+            annotations:
+              autoscaling.knative.dev/maxScale: '10'
+              run.googleapis.com/client-name: gcloud
+              run.googleapis.com/client-version: 441.0.0
+            labels:
+              run.googleapis.com/startupProbeType: Default
+            name: api-dev-00002-hir
+          spec:
+            containerConcurrency: 80
+            containers:
+            - image: europe-west9-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 512Mi
+            serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+            timeoutSeconds: 300
+        traffic:
+        - latestRevision: true
+          percent: 100
+      status:
+        conditions:
+        - lastTransitionTime: '2025-03-31T08:47:50.089610Z'
+          reason: RevisionFailed
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2025-03-31T08:47:50.088782Z'
+          status: 'True'
+          type: ConfigurationsReady
+        - lastTransitionTime: '2025-03-31T08:47:50.089610Z'
+          reason: RevisionFailed
+          status: 'False'
+          type: RoutesReady
+        latestCreatedRevisionName: api-dev-00001-fit
+        observedGeneration: 1
+  requestMetadata:
+    callerIp: 195.154.25.58
+    callerSuppliedUserAgent: google-cloud-sdk gcloud/441.0.0 command/gcloud.run.deploy
+      invocation-id/c06993c83f5140b8bd88ff683f3da747 environment/None environment-version/None
+      client-os/MACOSX client-os-ver/24.3.0 client-pltf-arch/x86_64 interactive/True
+      from-script/False python/3.10.6 term/xterm-256color (Macintosh; Intel Mac OS
+      X 24.3.0),gzip(gfe)
+    destinationAttributes: {}
+    requestAttributes:
+      auth: {}
+      time: '2025-03-31T08:49:00.146962Z'
+  resourceLocation:
+    currentLocations:
+    - europe-west9
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  serviceName: run.googleapis.com
+receiveTimestamp: '2025-03-31T08:49:00.790773416Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: NOTICE
+timestamp: '2025-03-31T08:48:59.744258Z'
+---
+insertId: -632xn3d1c7u
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Fsystem_event
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  methodName: /Services.CreateService
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  response:
+    '@type': type.googleapis.com/google.cloud.run.v1.Service
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 441.0.0
+        run.googleapis.com/ingress: all
+        run.googleapis.com/ingress-status: all
+        run.googleapis.com/operation-id: 729efeee-d4c3-478d-8d86-906a7b622abd
+        run.googleapis.com/urls: '["https://api-dev-32108269805.europe-west9.run.app"]'
+        serving.knative.dev/creator: quentin@jayd.ai
+        serving.knative.dev/lastModifier: quentin@jayd.ai
+      creationTimestamp: '2025-03-31T08:47:49.275224Z'
+      generation: 1
+      labels:
+        cloud.googleapis.com/location: europe-west9
+        run.googleapis.com/satisfiesPzs: 'true'
+      name: api-dev
+      namespace: '32108269805'
+      resourceVersion: AAYxn3mccnU
+      selfLink: /apis/serving.knative.dev/v1/namespaces/32108269805/services/api-dev
+      uid: 67685593-c33a-44d6-9f55-d22cbdd2a216
+    spec:
+      template:
+        metadata:
+          annotations:
+            autoscaling.knative.dev/maxScale: '10'
+            run.googleapis.com/client-name: gcloud
+            run.googleapis.com/client-version: 441.0.0
+          labels:
+            run.googleapis.com/startupProbeType: Default
+          name: api-dev-00001-fit
+        spec:
+          containerConcurrency: 80
+          containers:
+          - image: us-central1-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+            ports:
+            - containerPort: 8000
+              name: http1
+            resources:
+              limits:
+                cpu: '1'
+                memory: 512Mi
+            startupProbe:
+              failureThreshold: 1
+              periodSeconds: 240
+              tcpSocket:
+                port: 8000
+              timeoutSeconds: 240
+          serviceAccountName: 32108269805-compute@developer.gserviceaccount.com
+          timeoutSeconds: 300
+      traffic:
+      - latestRevision: true
+        percent: 100
+    status:
+      conditions:
+      - lastTransitionTime: '2025-03-31T08:47:50.089610Z'
+        message: Revision 'api-dev-00001-fit' is not ready and cannot serve traffic.
+          Image 'us-central1-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial'
+          not found.
+        reason: RevisionFailed
+        status: 'False'
+        type: Ready
+      - lastTransitionTime: '2025-03-31T08:47:49.432986Z'
+        status: 'True'
+        type: ConfigurationsReady
+      - lastTransitionTime: '2025-03-31T08:47:50.089610Z'
+        message: Revision 'api-dev-00001-fit' is not ready and cannot serve traffic.
+          Image 'us-central1-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial'
+          not found.
+        reason: RevisionFailed
+        status: 'False'
+        type: RoutesReady
+      latestCreatedRevisionName: api-dev-00001-fit
+      observedGeneration: 1
+  serviceName: run.googleapis.com
+  status:
+    code: 5
+    message: "Ready condition status changed to False for Service api-dev with message:\
+      \ Revision 'api-dev-00001-fit' is not ready and cannot serve traffic. Image\
+      \ 'us-central1-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial'\
+      \ not found."
+receiveTimestamp: '2025-03-31T08:47:50.626778605Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: ERROR
+timestamp: '2025-03-31T08:47:50.134086Z'
+---
+insertId: 1w9w8x9d19j0
+logName: projects/neat-library-433414-r7/logs/cloudaudit.googleapis.com%2Factivity
+protoPayload:
+  '@type': type.googleapis.com/google.cloud.audit.AuditLog
+  authenticationInfo:
+    principalEmail: quentin@jayd.ai
+    principalSubject: user:quentin@jayd.ai
+  authorizationInfo:
+  - granted: true
+    permission: run.services.create
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes: {}
+  - granted: true
+    permission: run.services.create
+    permissionType: ADMIN_WRITE
+    resource: namespaces/neat-library-433414-r7/services/api-dev
+    resourceAttributes:
+      name: namespaces/neat-library-433414-r7/services/api-dev
+      service: run.googleapis.com/
+      type: run.googleapis.com/Service
+  methodName: google.cloud.run.v1.Services.CreateService
+  request:
+    '@type': type.googleapis.com/google.cloud.run.v1.CreateServiceRequest
+    parent: namespaces/neat-library-433414-r7
+    service:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      metadata:
+        annotations:
+          run.googleapis.com/client-name: gcloud
+          run.googleapis.com/client-version: 441.0.0
+        name: api-dev
+        namespace: neat-library-433414-r7
+      spec:
+        template:
+          metadata:
+            annotations:
+              autoscaling.knative.dev/maxScale: '10'
+              run.googleapis.com/client-name: gcloud
+              run.googleapis.com/client-version: 441.0.0
+            name: api-dev-00001-fit
+          spec:
+            containers:
+            - image: us-central1-docker.pkg.dev/neat-library-433414-r7/jaydai-backend/archimind-backend-dev:initial
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 512Mi
+      status: {}
+  requestMetadata:
+    callerIp: 195.154.25.58
+    callerSuppliedUserAgent: google-cloud-sdk gcloud/441.0.0 command/gcloud.run.deploy
+      invocation-id/67c828d9c24240b1a683610a5347db6b environment/None environment-version/None
+      client-os/MACOSX client-os-ver/24.3.0 client-pltf-arch/x86_64 interactive/True
+      from-script/False python/3.10.6 term/xterm-256color (Macintosh; Intel Mac OS
+      X 24.3.0),gzip(gfe)
+    destinationAttributes: {}
+    requestAttributes:
+      auth: {}
+      time: '2025-03-31T08:47:49.394510Z'
+  resourceLocation:
+    currentLocations:
+    - europe-west9
+  resourceName: namespaces/neat-library-433414-r7/services/api-dev
+  serviceName: run.googleapis.com
+receiveTimestamp: '2025-03-31T08:47:49.626624953Z'
+resource:
+  labels:
+    configuration_name: ''
+    location: europe-west9
+    project_id: neat-library-433414-r7
+    revision_name: ''
+    service_name: api-dev
+  type: cloud_run_revision
+severity: NOTICE
+timestamp: '2025-03-31T08:47:48.715144Z'
