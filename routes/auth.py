@@ -240,7 +240,23 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
         #raise HTTPException(status_code=500, detail=f"Google Sign-In error: {error_message}")
 
 
-    
+@router.post("/refresh_token")
+async def refresh_token(refresh_data: RefreshTokenData):
+    """Refresh an expired access token using the refresh token."""
+    try:
+        response = supabase.auth.refresh_session(refresh_data.refresh_token)
+
+        return {
+            "success": True,
+            "session": {
+                "access_token": response.session.access_token,
+                "refresh_token": response.session.refresh_token,
+                "expires_at": response.session.expires_at
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
 @router.get("/me")
 async def get_current_user(user_id: str = Depends(supabase.auth.get_user)):
     """Get the current authenticated user."""

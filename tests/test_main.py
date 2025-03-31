@@ -11,11 +11,13 @@ def test_root_endpoint(test_client):
 
 def test_health_check_healthy(test_client, mock_supabase):
     """Test the health check endpoint when all services are healthy."""
-    # Configure the mock to simulate a successful database connection
-    mock_supabase["stats"].storage.list_buckets.return_value = []
+    # First create a proper mock for create_client
+    mock_client = MagicMock()
+    mock_client.storage.list_buckets.return_value = []
     
-    # Create a mock for time.time() to return a constant value
-    with patch('time.time', return_value=1617321600.0):
+    # Then patch the create_client function to return our mock
+    with patch('main.create_client', return_value=mock_client), \
+         patch('time.time', return_value=1617321600.0):
         response = test_client.get("/health")
     
     assert response.status_code == 200
