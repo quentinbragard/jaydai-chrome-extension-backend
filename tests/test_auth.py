@@ -47,28 +47,31 @@ def test_sign_up_success(test_client, mock_supabase):
 
 def test_sign_in_success(test_client, mock_supabase):
     """Test successful user sign in."""
-    # Create proper mock response objects
-    # User mock with a simpler setup to avoid _mock_methods error
-    user_mock = MagicMock(spec=[])  # Use an empty spec to avoid attribute conflicts
-    user_mock.id = "test-user-id"
-    user_mock.email = "test@example.com"
-    
-    # Session mock
-    session_mock = MagicMock()
-    session_mock.access_token = "fake_access_token"
-    session_mock.refresh_token = "fake_refresh_token"
-    session_mock.expires_at = 3600
-    
-    # Response object with proper structure
-    auth_response = MagicMock(spec=[])  # Use an empty spec
-    setattr(auth_response, 'user', user_mock)
-    setattr(auth_response, 'session', session_mock)
-    
-    # Mock sign in response
+    # Create proper class instances (not dictionaries or MagicMocks)
+    class User:
+        def __init__(self):
+            self.id = "test-user-id"
+            self.email = "test@example.com"
+            # Regular classes have a __dict__ that the route handler can spread
+
+    class Session:
+        def __init__(self):
+            self.access_token = "fake_access_token"
+            self.refresh_token = "fake_refresh_token"
+            self.expires_at = 3600
+
+    class AuthResponse:
+        def __init__(self):
+            self.user = User()
+            self.session = Session()
+
+    # Create our auth response as an actual class instance
+    auth_response = AuthResponse()
     mock_supabase["auth"].auth.sign_in_with_password.return_value = auth_response
     
     # Mock user metadata
-    metadata_mock = {
+    metadata_response = MagicMock()
+    metadata_response.data = {
         "name": "Test User",
         "additional_email": "test@example.com",
         "phone_number": None,
@@ -77,15 +80,11 @@ def test_sign_in_success(test_client, mock_supabase):
         "pinned_organization_folder_ids": []
     }
     
-    # Create a response with the data property
-    metadata_response = MagicMock()
-    metadata_response.data = metadata_mock
+    # Mock the metadata query
+    mock_supabase["auth"].table().select().eq().single().execute.return_value = metadata_response
     
     # Mock the notifications service
     with patch('utils.notification_service.check_user_notifications'):
-        # Mock the select method chain
-        mock_supabase["auth"].table().select().eq().single().execute.return_value = metadata_response
-        
         # Make the request
         response = test_client.post(
             "/auth/sign_in",
