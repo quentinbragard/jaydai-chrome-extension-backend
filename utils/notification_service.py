@@ -37,7 +37,11 @@ class NotificationService:
                     "type": "welcome_first_conversation",
                     "title": "Analyze Your First Conversation",
                     "body": "Start your AI analytics journey by sending your first message to ChatGPT or loading a past conversation.",
-                    "metadata": "Start Conversation"
+                    "metadata": {
+                        "action_type": "start_conversation",
+                        "action_title_key": "startConversation",
+                        "action_url": "https://chatgpt.com"
+                    }
                 }
                 
                 # Insert notification
