@@ -1,328 +1,353 @@
-from fastapi import APIRouter, Depends, HTTPException
+import pytest
+from unittest.mock import patch, MagicMock
 from datetime import datetime, timezone
-from pydantic import BaseModel, Field
-from supabase import create_client, Client
-from utils import supabase_helpers
-import dotenv
-import os
-from typing import List, Optional, Dict, Any
 
-dotenv.load_dotenv()
-
-# Initialize Supabase client
-supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
-
-router = APIRouter(prefix="/save", tags=["Save"])
-
-class MessageData(BaseModel):
-    message_provider_id: str
-    content: str
-    role: str
-    chat_provider_id: str
-    model: str = "unknown"  # Default model to "unknown"
-    created_at: Optional[float] = None  # Make created_at optional
-    parent_message_provider_id: Optional[str] = None
-
-class ChatData(BaseModel):
-    chat_provider_id: str
-    title: str
-    provider_name: str = "ChatGPT"  # Default provider to ChatGPT
-
-class UserMetadataData(BaseModel):
-    email: str
-    name: Optional[str] = None
-    picture: Optional[str] = None
-    phone_number: Optional[str] = None
-    org_name: Optional[str] = None
-class BatchMessagesRequest(BaseModel):
-    messages: List[MessageData]
-
-class BatchChatsRequest(BaseModel):
-    chats: List[ChatData]
-
-class CombinedBatchRequest(BaseModel):
-    messages: Optional[List[MessageData]] = []
-    chats: Optional[List[ChatData]] = []
-
-@router.post("/message")
-async def save_message(message: MessageData, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Save a chat message with parent message ID support."""
-    print("message", message)
-    #try:
-    created_at = None
-    if message.created_at:
-        try:
-            # Handle both seconds and milliseconds timestamps
-            # If timestamp is very large (milliseconds), convert to seconds
-            timestamp_in_seconds = message.created_at / 1000 if message.created_at > 1e10 else message.created_at
-            created_at = datetime.fromtimestamp(timestamp_in_seconds, tz=timezone.utc).isoformat()
-        except Exception as e:
-            print(f"Error converting timestamp {message.created_at}: {str(e)}")
-            # Use current time as fallback
-            created_at = datetime.now(tz=timezone.utc).isoformat()
-    else:
-        # If no timestamp provided, use current time
-        created_at = datetime.now(tz=timezone.utc).isoformat()
-        
-    # Prepare data to insert
+def test_save_message(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test saving a chat message."""
+    # Mock the insert response
+    saved_message = {
+        "id": 1,
+        "user_id": mock_authenticate_user,
+        "message_provider_id": "msg_123",
+        "content": "This is a test message",
+        "role": "user",
+        "chat_provider_id": "chat_456",
+        "model": "gpt-4",
+        "created_at": "2025-03-10T12:00:00+00:00"
+    }
+    
+    # Create a mock response
+    response_mock = MagicMock()
+    response_mock.data = [saved_message]
+    mock_supabase["save"].table().insert().execute.return_value = response_mock
+    
+    # Message data
     message_data = {
-        "user_id": user_id,
-        "message_provider_id": message.message_provider_id,
-        "content": message.content,
-        "role": message.role,
-        "chat_provider_id": message.chat_provider_id,
-        "model": message.model,
-        "created_at": created_at
+        "message_provider_id": "msg_123",
+        "content": "This is a test message",
+        "role": "user",
+        "chat_provider_id": "chat_456",
+        "model": "gpt-4",
+        "created_at": 1709384400.0,  # 2024-03-02T12:00:00+00:00 in timestamp
+        "parent_message_provider_id": None
     }
     
-    # Add parent_message_provider_id if provided
-    if message.parent_message_provider_id:
-        message_data["parent_message_provider_id"] = message.parent_message_provider_id
-        
-    # Insert message with validated data
-    response = supabase.table("messages").insert(message_data).execute()
+    # Make the request
+    response = test_client.post("/save/message", json=message_data, headers=valid_auth_header)
     
-    return {"success": True, "data": response.data}
-    #except Exception as e:
-    #    raise HTTPException(status_code=500, detail=f"Message save error: {str(e)}")
-@router.post("/chat")
-async def save_chat(chat: ChatData, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Save a chat session."""
-    try:
-        # Check if chat already exists
-        existing = supabase.table("chats").select("id") \
-            .eq("user_id", user_id) \
-            .eq("chat_provider_id", chat.chat_provider_id) \
-            .execute()
-            
-        if existing.data:
-            # Update existing chat
-            response = supabase.table("chats").update({
-                "title": chat.title,
-                "provider_name": chat.provider_name,
-            }).eq("user_id", user_id) \
-              .eq("chat_provider_id", chat.chat_provider_id) \
-              .execute()
-        else:
-            # Create new chat
-            response = supabase.table("chats").insert({
-                "user_id": user_id,
-                "chat_provider_id": chat.chat_provider_id,
-                "title": chat.title,
-                "provider_name": chat.provider_name,
-            }).execute()
-            
-        return {"success": True, "data": response.data}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Chat save error: {str(e)}")
+    # Assertions
+    assert response.status_code == 200
+    assert response.json()["success"] == True
+    assert response.json()["data"][0]["id"] == 1
+    
+    # Verify Supabase client was called correctly - use assert_called instead of assert_called_once
+    mock_supabase["save"].table.assert_called_with("messages")
+    assert mock_supabase["save"].table().insert.called
 
-@router.post("/user_metadata")
-async def save_user_metadata(metadata: UserMetadataData, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    print(f"Saving user metadata for user {user_id} with metadata {metadata}")
-    """Save user metadata."""
-    #try:
-        # Check if metadata already exists
-    existing = supabase.table("users_metadata").select("id") \
-        .eq("user_id", user_id) \
-        .execute()
+def test_save_chat(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test saving a chat session."""
+    # Mock the select response (no existing chat)
+    select_mock = MagicMock()
+    select_mock.data = []
+    mock_supabase["save"].table().select().eq().eq().execute.return_value = select_mock
     
-    # Prepare data with validation and defaults
-    update_data = {
-        "additional_email": metadata.email,
+    # Mock the insert response
+    saved_chat = {
+        "id": 1,
+        "user_id": mock_authenticate_user,
+        "chat_provider_id": "chat_456",
+        "title": "Test Chat",
+        "provider_name": "ChatGPT",
+        "created_at": "2025-03-10T12:00:00+00:00"
     }
     
-    # Only include fields that are not None
-    if metadata.name is not None:
-        update_data["name"] = metadata.name
-    if metadata.phone_number is not None:
-        update_data["phone_number"] = metadata.phone_number
-    if metadata.org_name is not None:
-        update_data["additional_organization"] = metadata.org_name
-
-        
-    if existing.data:
-        # Update existing metadata
-        response = supabase.table("users_metadata").update(update_data).eq("user_id", user_id).execute()
-    else:
-        # Create new metadata
-        update_data["user_id"] = user_id
-        response = supabase.table("users_metadata").insert(update_data).execute()
-        
-    return {"success": True, "data": response.data}
-    #except Exception as e:
-   #     raise HTTPException(status_code=500, detail=f"Metadata save error: {str(e)}")
-
-@router.post("/batch/message")
-async def save_batch_messages(batch_data: BatchMessagesRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Save multiple messages in a single batch operation with parent message ID support."""
-    print("batch_data", batch_data)
-    #try:
-    if not batch_data.messages:
-        return {"success": True, "message": "No messages to save", "count": 0}
-        
-    # Check which message IDs already exist
-    message_ids = [msg.message_provider_id for msg in batch_data.messages]
-    existing_messages = {}
+    insert_mock = MagicMock()
+    insert_mock.data = [saved_chat]
+    mock_supabase["save"].table().insert().execute.return_value = insert_mock
     
-    if message_ids:
-        existing_query = supabase.table("messages").select("message_provider_id") \
-            .eq("user_id", user_id) \
-            .in_("message_provider_id", message_ids) \
-            .execute()
-        
-        if existing_query.data:
-            for msg in existing_query.data:
-                existing_messages[msg['message_provider_id']] = True
-    
-    # Filter out messages that already exist
-    messages_to_insert = []
-    skipped_messages = 0
-    
-    for message in batch_data.messages:
-        if message.message_provider_id in existing_messages:
-            skipped_messages += 1
-            continue
-            
-        # Handle timestamp conversion
-        created_at = None
-        if message.created_at:
-            try:
-                # Convert timestamp to ISO format, handling both seconds and milliseconds
-                timestamp_in_seconds = message.created_at / 1000 if message.created_at > 1e10 else message.created_at
-                created_at = datetime.fromtimestamp(timestamp_in_seconds, tz=timezone.utc).isoformat()
-            except Exception as e:
-                # Use current time as fallback
-                created_at = datetime.now(tz=timezone.utc).isoformat()
-        else:
-            # If no timestamp provided, use current time
-            created_at = datetime.now(tz=timezone.utc).isoformat()
-            
-        # Prepare message data
-        message_data = {
-            "user_id": user_id,
-            "message_provider_id": message.message_provider_id,
-            "content": message.content,
-            "role": message.role,
-            "chat_provider_id": message.chat_provider_id,
-            "model": message.model,
-            "created_at": created_at
-        }
-        
-        # Add parent_message_provider_id if provided
-        if hasattr(message, 'parent_message_provider_id') and message.parent_message_provider_id:
-            message_data["parent_message_provider_id"] = message.parent_message_provider_id
-            
-        messages_to_insert.append(message_data)
-    
-    results = []
-    if messages_to_insert:
-        response = supabase.table("messages").insert(messages_to_insert).execute()
-        results = response.data
-    
-    return {
-        "success": True,
-        "message": f"Saved {len(messages_to_insert)} messages, skipped {skipped_messages} existing messages",
-        "saved_count": len(messages_to_insert),
-        "skipped_count": skipped_messages,
-        "total_count": len(batch_data.messages),
-        "data": results
+    # Chat data
+    chat_data = {
+        "chat_provider_id": "chat_456",
+        "title": "Test Chat",
+        "provider_name": "ChatGPT"
     }
-    #except Exception as e:
-    #    raise HTTPException(status_code=500, detail=f"Message batch save error: {str(e)}")
+    
+    # Make the request
+    response = test_client.post("/save/chat", json=chat_data, headers=valid_auth_header)
+    
+    # Assertions
+    assert response.status_code == 200
+    assert response.json()["success"] == True
+    assert response.json()["data"][0]["id"] == 1
+    
+    # Verify Supabase client was called correctly
+    mock_supabase["save"].table.assert_called_with("chats")
+    assert mock_supabase["save"].table().select().eq.called
+    assert mock_supabase["save"].table().insert.called
 
-@router.post("/batch/chat")
-async def save_batch_chats(batch_data: BatchChatsRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Save multiple chats in a single batch operation."""
-    try:
-        if not batch_data.chats:
-            return {"success": True, "message": "No chats to save", "count": 0}
-            
-        # Extract chat IDs to check for existing ones
-        chat_provider_ids = [chat.chat_provider_id for chat in batch_data.chats]
-        existing_chats = {}
-        
-        if chat_provider_ids:
-            existing_query = supabase.table("chats").select("chat_provider_id") \
-                .eq("user_id", user_id) \
-                .in_("chat_provider_id", chat_provider_ids) \
-                .execute()
-            
-            if existing_query.data:
-                for chat in existing_query.data:
-                    existing_chats[chat['chat_provider_id']] = True
-        
-        # Process updates and inserts
-        chats_to_insert = []
-        updated_chats = 0
-        
-        for chat in batch_data.chats:
-            if chat.chat_provider_id in existing_chats:
-                # Update existing chat
-                supabase.table("chats").update({
-                    "title": chat.title,
-                    "provider_name": chat.provider_name
-                }).eq("user_id", user_id) \
-                  .eq("chat_provider_id", chat.chat_provider_id) \
-                  .execute()
-                updated_chats += 1
-            else:
-                # Prepare for batch insert
-                chats_to_insert.append({
-                    "user_id": user_id,
-                    "chat_provider_id": chat.chat_provider_id,
-                    "title": chat.title,
-                    "provider_name": chat.provider_name
-                })
-        
-        results = []
-        if chats_to_insert:
-            response = supabase.table("chats").insert(chats_to_insert).execute()
-            results = response.data
-        
-        return {
-            "success": True,
-            "message": f"Saved {len(chats_to_insert)} new chats, updated {updated_chats} existing chats",
-            "inserted_count": len(chats_to_insert),
-            "updated_count": updated_chats,
-            "total_count": len(batch_data.chats),
-            "data": results
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Chat batch save error: {str(e)}")
+def test_update_existing_chat(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test updating an existing chat session."""
+    # Mock the select response (existing chat)
+    existing_chat = {
+        "id": 1,
+        "user_id": mock_authenticate_user,
+        "chat_provider_id": "chat_456",
+        "title": "Old Title",
+        "provider_name": "ChatGPT",
+        "created_at": "2025-03-10T12:00:00+00:00"
+    }
+    
+    select_mock = MagicMock()
+    select_mock.data = [existing_chat]
+    mock_supabase["save"].table().select().eq().eq().execute.return_value = select_mock
+    
+    # Mock the update response
+    updated_chat = {
+        "id": 1,
+        "user_id": mock_authenticate_user,
+        "chat_provider_id": "chat_456",
+        "title": "Updated Title",
+        "provider_name": "ChatGPT",
+        "created_at": "2025-03-10T12:00:00+00:00"
+    }
+    
+    update_mock = MagicMock()
+    update_mock.data = [updated_chat]
+    mock_supabase["save"].table().update().eq().eq().execute.return_value = update_mock
+    
+    # Chat data for update
+    chat_data = {
+        "chat_provider_id": "chat_456",
+        "title": "Updated Title",
+        "provider_name": "ChatGPT"
+    }
+    
+    # Make the request
+    response = test_client.post("/save/chat", json=chat_data, headers=valid_auth_header)
+    
+    # Assertions
+    assert response.status_code == 200
+    assert response.json()["success"] == True
+    assert response.json()["data"][0]["id"] == 1
+    
+    # Verify Supabase client was called correctly
+    assert mock_supabase["save"].table().update.called
+    assert mock_supabase["save"].table().select().eq.called
 
-@router.post("/batch")
-async def save_batch(batch_data: CombinedBatchRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    """Save both chats and messages in a single batch operation."""
-    try:
-        results = {
-            "messages": {"saved_count": 0, "skipped_count": 0, "total_count": 0},
-            "chats": {"inserted_count": 0, "updated_count": 0, "total_count": 0}
+def test_save_user_metadata(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test saving user metadata."""
+    # Mock the select response (no existing metadata)
+    select_mock = MagicMock()
+    select_mock.data = []
+    mock_supabase["save"].table().select().eq().execute.return_value = select_mock
+    
+    # Mock the insert response
+    saved_metadata = {
+        "id": 1,
+        "user_id": mock_authenticate_user,
+        "additional_email": "user@example.com",
+        "name": "Test User",
+        "phone_number": "+123456789",
+        "additional_organization": "Test Org",
+        "created_at": "2025-03-10T12:00:00+00:00"
+    }
+    
+    insert_mock = MagicMock()
+    insert_mock.data = [saved_metadata]
+    mock_supabase["save"].table().insert().execute.return_value = insert_mock
+    
+    # Metadata data
+    metadata_data = {
+        "email": "user@example.com",
+        "name": "Test User",
+        "phone_number": "+123456789",
+        "org_name": "Test Org"
+    }
+    
+    # Make the request
+    response = test_client.post("/save/user_metadata", json=metadata_data, headers=valid_auth_header)
+    
+    # Assertions
+    assert response.status_code == 200
+    assert response.json()["success"] == True
+    assert response.json()["data"][0]["id"] == 1
+    
+    # Verify Supabase client was called correctly
+    mock_supabase["save"].table.assert_called_with("users_metadata")
+    assert mock_supabase["save"].table().select().eq.called
+    assert mock_supabase["save"].table().insert.called
+
+def test_batch_save_messages(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test batch saving messages."""
+    # Messages to save
+    messages = [
+        {
+            "message_provider_id": "msg_123",
+            "content": "This is a test message 1",
+            "role": "user",
+            "chat_provider_id": "chat_456",
+            "model": "gpt-4",
+            "created_at": 1709384400.0
+        },
+        {
+            "message_provider_id": "msg_124",
+            "content": "This is a test message 2",
+            "role": "assistant",
+            "chat_provider_id": "chat_456",
+            "model": "gpt-4",
+            "created_at": 1709384410.0,
+            "parent_message_provider_id": "msg_123"
+        }
+    ]
+    
+    # Mock the existing messages check
+    existing_check = MagicMock()
+    existing_check.data = []
+    mock_supabase["save"].table().select().eq().in_().execute.return_value = existing_check
+    
+    # Mock the insert response
+    saved_messages = [
+        {
+            "id": 1,
+            "user_id": mock_authenticate_user,
+            "message_provider_id": "msg_123",
+            "content": "This is a test message 1",
+            "role": "user",
+            "chat_provider_id": "chat_456",
+            "model": "gpt-4",
+            "created_at": "2025-03-10T12:00:00+00:00"
+        },
+        {
+            "id": 2,
+            "user_id": mock_authenticate_user,
+            "message_provider_id": "msg_124",
+            "content": "This is a test message 2",
+            "role": "assistant",
+            "chat_provider_id": "chat_456",
+            "model": "gpt-4",
+            "created_at": "2025-03-10T12:00:10+00:00",
+            "parent_message_provider_id": "msg_123"
+        }
+    ]
+    
+    insert_mock = MagicMock()
+    insert_mock.data = saved_messages
+    mock_supabase["save"].table().insert().execute.return_value = insert_mock
+    
+    # Make the request
+    response = test_client.post("/save/batch/message", json={"messages": messages}, headers=valid_auth_header)
+    
+    # Assertions
+    assert response.status_code == 200
+    assert response.json()["success"] == True
+    
+    # Verify Supabase client was called correctly
+    mock_supabase["save"].table.assert_called_with("messages")
+    assert mock_supabase["save"].table().select().eq.called
+    assert mock_supabase["save"].table().insert.called
+
+def test_batch_save_chats(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test batch saving chats."""
+    # Chats to save
+    chats = [
+        {
+            "chat_provider_id": "chat_456",
+            "title": "Test Chat 1",
+            "provider_name": "ChatGPT"
+        },
+        {
+            "chat_provider_id": "chat_457",
+            "title": "Test Chat 2",
+            "provider_name": "ChatGPT"
+        }
+    ]
+    
+    # Mock the existing chats check
+    existing_check = MagicMock()
+    existing_check.data = []
+    mock_supabase["save"].table().select().eq().in_().execute.return_value = existing_check
+    
+    # Mock the insert response
+    saved_chats = [
+        {
+            "id": 1,
+            "user_id": mock_authenticate_user,
+            "chat_provider_id": "chat_456",
+            "title": "Test Chat 1",
+            "provider_name": "ChatGPT",
+            "created_at": "2025-03-10T12:00:00+00:00"
+        },
+        {
+            "id": 2,
+            "user_id": mock_authenticate_user,
+            "chat_provider_id": "chat_457",
+            "title": "Test Chat 2",
+            "provider_name": "ChatGPT",
+            "created_at": "2025-03-10T12:00:00+00:00"
+        }
+    ]
+    
+    insert_mock = MagicMock()
+    insert_mock.data = saved_chats
+    mock_supabase["save"].table().insert().execute.return_value = insert_mock
+    
+    # Make the request
+    response = test_client.post("/save/batch/chat", json={"chats": chats}, headers=valid_auth_header)
+    
+    # Assertions
+    assert response.status_code == 200
+    assert response.json()["success"] == True
+    
+    # Verify Supabase client was called correctly
+    mock_supabase["save"].table.assert_called_with("chats")
+    assert mock_supabase["save"].table().select().eq.called
+    assert mock_supabase["save"].table().insert.called
+
+def test_combined_batch_save(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test combined batch saving of both messages and chats."""
+    # Create a patch to bypass the batch save functions
+    with patch('routes.save.save_batch_messages') as mock_save_messages, \
+         patch('routes.save.save_batch_chats') as mock_save_chats:
+        
+        # Set up mock returns
+        mock_save_messages.return_value = {
+            "saved_count": 1,
+            "skipped_count": 0,
+            "total_count": 1
         }
         
-        # Process messages batch if present
-        if batch_data.messages:
-            messages_request = BatchMessagesRequest(messages=batch_data.messages)
-            messages_result = await save_batch_messages(messages_request, user_id)
-            results["messages"] = {
-                "saved_count": messages_result.get("saved_count", 0),
-                "skipped_count": messages_result.get("skipped_count", 0),
-                "total_count": messages_result.get("total_count", 0)
-            }
-        
-        # Process chats batch if present
-        if batch_data.chats:
-            chats_request = BatchChatsRequest(chats=batch_data.chats)
-            chats_result = await save_batch_chats(chats_request, user_id)
-            results["chats"] = {
-                "inserted_count": chats_result.get("inserted_count", 0),
-                "updated_count": chats_result.get("updated_count", 0),
-                "total_count": chats_result.get("total_count", 0)
-            }
-        
-        return {
-            "success": True,
-            "message": f"Processed {len(batch_data.messages or [])} messages and {len(batch_data.chats or [])} chats",
-            "results": results
+        mock_save_chats.return_value = {
+            "inserted_count": 1,
+            "updated_count": 0,
+            "total_count": 1
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Combined batch save error: {str(e)}")
+        
+        # Make the request with combined data
+        combined_data = {
+            "messages": [
+                {
+                    "message_provider_id": "msg_123",
+                    "content": "Test message",
+                    "role": "user",
+                    "chat_provider_id": "chat_456",
+                    "model": "gpt-4",
+                    "created_at": 1709384400.0
+                }
+            ],
+            "chats": [
+                {
+                    "chat_provider_id": "chat_456",
+                    "title": "Test Chat",
+                    "provider_name": "ChatGPT"
+                }
+            ]
+        }
+        
+        response = test_client.post("/save/batch", json=combined_data, headers=valid_auth_header)
+        
+        # Assertions
+        assert response.status_code == 200
+        assert response.json()["success"] == True
+        assert "results" in response.json()
+        assert "messages" in response.json()["results"]
+        assert "chats" in response.json()["results"]
