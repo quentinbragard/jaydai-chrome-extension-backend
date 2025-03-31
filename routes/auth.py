@@ -5,7 +5,7 @@ import requests
 from supabase import create_client, Client
 import dotenv
 import os
-from utils.notification_service import check_user_notifications
+from utils.notification_service import create_first_notification
 from typing import Optional
 from datetime import datetime, timedelta
 import uuid
@@ -127,7 +127,7 @@ async def sign_in(sign_in_data: SignInData):
         })
 
         # Check for notifications after successful login
-        await check_user_notifications(response.user.id)
+        await create_first_notification(response.user.id)
 
         # Get user metadata
         metadata_response = supabase.table("users_metadata") \
@@ -179,7 +179,7 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
     user_id = response.user.id
     
     # Check for notifications after successful login
-    await check_user_notifications(user_id)
+    await create_first_notification(user_id)
 
     # Get user metadata
     metadata_response = supabase.table("users_metadata") \
@@ -262,7 +262,7 @@ async def get_current_user(user_id: str = Depends(supabase.auth.get_user)):
     """Get the current authenticated user."""
     try:
         # Check for notifications on user session validation
-        await check_user_notifications(user_id)
+        await create_first_notification(user_id)
         
         return {
             "success": True,

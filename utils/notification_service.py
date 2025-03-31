@@ -13,34 +13,34 @@ class NotificationService:
     """Service for creating and managing system notifications."""
     
     @staticmethod
-    async def check_and_create_first_message_notification(user_id: str):
+    async def create_welcome_notification(user_id: str, username: str = ""):
         """
-        Check if user needs a first conversation notification.
-        This happens when they have 0 messages saved.
+        Create a welcome notification for new users with LinkedIn follow button.
+        Should be called when a user first signs up.
         """
         try:
-            # Check if user already has messages
-            message_count = supabase.table("messages").select("id").eq("user_id", user_id).execute()
-            
             # Check if user already has this notification
             existing_notification = supabase.table("notifications") \
                 .select("id") \
                 .eq("user_id", user_id) \
-                .eq("type", "welcome_first_conversation") \
+                .eq("type", "welcome_new_user") \
                 .execute()
             
-            # If user has no messages and no existing notification of this type
-            if len(message_count.data) == 0 and len(existing_notification.data) == 0:
+            # If no existing welcome notification
+            if len(existing_notification.data) == 0:
+                # Create personalized greeting if username is provided
+                greeting = f"Hi {username}! " if username else ""
+                
                 # Create the notification
                 notification = {
                     "user_id": user_id,
-                    "type": "welcome_first_conversation",
-                    "title": "Analyze Your First Conversation",
-                    "body": "Start your AI analytics journey by sending your first message to ChatGPT or loading a past conversation.",
+                    "type": "welcome_new_user",
+                    "title": "welcome_notification_title", # Use localization key
+                    "body": f"{greeting}welcome_notification_body", # Use localization key with personalization
                     "metadata": {
-                        "action_type": "start_conversation",
-                        "action_title_key": "startConversation",
-                        "action_url": "https://chatgpt.com"
+                        "action_type": "openLinkedIn",
+                        "action_title_key": "followOnLinkedIn",
+                        "action_url": "https://www.linkedin.com/company/104914264/admin/dashboard/"
                     }
                 }
                 
@@ -50,8 +50,9 @@ class NotificationService:
                 
             return False
         except Exception as e:
-            print(f"Error checking/creating first message notification: {str(e)}")
+            print(f"Error creating welcome notification: {str(e)}")
             return False
+
     
     @staticmethod
     async def create_notification(user_id: str, notification_type: str, title: str, body: str, metadata: str = None):
@@ -76,24 +77,24 @@ class NotificationService:
         """Create an analytics insight notification."""
         insights = {
             "prompt_length": {
-                "title": "Prompt Length Insight",
+                "title": "prompt_length_insight_title",
                 "body": insight_text,
                 "metadata": "View Details"
             },
             "response_time": {
-                "title": "Response Time Insight",
+                "title": "response_time_insight_title",
                 "body": insight_text,
                 "metadata": "View Details"
             },
             "conversation_quality": {
-                "title": "Conversation Quality Insight",
+                "title": "conversation_quality_insight_title",
                 "body": insight_text,
                 "metadata": "View Details"
             }
         }
         
         insight = insights.get(insight_type, {
-            "title": "New Insight Available",
+            "title": "new_insight_title",
             "body": insight_text,
             "metadata": "View Details"
         })
@@ -108,13 +109,13 @@ class NotificationService:
 
 # Helper functions to use in API routes
 
-async def check_user_notifications(user_id: str):
+async def create_first_notification(user_id: str, username: str = ""):
     """
     Check various notification conditions for a user.
     Call this whenever user logs in or starts using the extension.
     """
-    # Check for first conversation notification
-    await NotificationService.check_and_create_first_message_notification(user_id)
+    # Check for welcome notification for new users
+    await NotificationService.create_welcome_notification(user_id, username)
     
     # Additional notification checks can be added here in the future
     # For example:

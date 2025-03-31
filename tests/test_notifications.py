@@ -42,8 +42,8 @@ def test_get_notifications(test_client, mock_supabase, valid_auth_header, mock_a
     mock_response.data = mock_notifications
     mock_supabase["notifications"].table().select().eq().order().execute.return_value = mock_response
     
-    # Skip the check_user_notifications call
-    with patch('utils.notification_service.check_user_notifications'):
+    # Skip the create_first_notification call
+    with patch('utils.notification_service.create_first_notification'):
         # Make the request
         response = test_client.get("/notifications/", headers=valid_auth_header)
     

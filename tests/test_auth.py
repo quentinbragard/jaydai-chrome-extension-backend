@@ -84,7 +84,7 @@ def test_sign_in_success(test_client, mock_supabase):
     mock_supabase["auth"].table().select().eq().single().execute.return_value = metadata_response
     
     # Mock the notifications service
-    with patch('utils.notification_service.check_user_notifications'):
+    with patch('utils.notification_service.create_first_notification'):
         # Make the request
         response = test_client.post(
             "/auth/sign_in",
