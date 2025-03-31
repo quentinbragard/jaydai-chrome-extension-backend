@@ -325,7 +325,7 @@ async def update_template(
         if template.locale is not None:
             update_data["locale"] = template.locale
         if template.folder is not None:
-            update_data["folder_id"] = template.folder
+            update_data["folder_id"] = template.folder_id
         
         response = supabase.table("prompt_templates").update(update_data).eq("id", template_id).execute()
         

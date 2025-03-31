@@ -6,19 +6,19 @@ plugins: cov-6.0.0, anyio-4.8.0, mock-3.14.0
 collecting ... collected 37 items
 
 tests/test_auth.py::test_sign_up_success PASSED                          [  2%]
-tests/test_auth.py::test_sign_in_success FAILED                          [  5%]
+tests/test_auth.py::test_sign_in_success PASSED                          [  5%]
 tests/test_auth.py::test_refresh_token_success PASSED                    [  8%]
 tests/test_main.py::test_root_endpoint PASSED                            [ 10%]
 tests/test_main.py::test_health_check_healthy PASSED                     [ 13%]
-tests/test_main.py::test_health_check_degraded FAILED                    [ 16%]
+tests/test_main.py::test_health_check_degraded PASSED                    [ 16%]
 tests/test_notifications.py::test_get_notifications PASSED               [ 18%]
-tests/test_notifications.py::test_get_notification_count FAILED          [ 21%]
+tests/test_notifications.py::test_get_notification_count PASSED          [ 21%]
 tests/test_notifications.py::test_create_notification PASSED             [ 24%]
 tests/test_notifications.py::test_mark_notification_read PASSED          [ 27%]
 tests/test_notifications.py::test_mark_all_notifications_read PASSED     [ 29%]
 tests/test_notifications.py::test_delete_notification PASSED             [ 32%]
-tests/test_prompt_templates.py::test_get_templates FAILED                [ 35%]
-tests/test_prompt_templates.py::test_get_templates_by_type FAILED        [ 37%]
+tests/test_prompt_templates.py::test_get_templates PASSED                [ 35%]
+tests/test_prompt_templates.py::test_get_templates_by_type PASSED        [ 37%]
 tests/test_prompt_templates.py::test_create_template PASSED              [ 40%]
 tests/test_prompt_templates.py::test_update_template FAILED              [ 43%]
 tests/test_prompt_templates.py::test_delete_template PASSED              [ 45%]
@@ -44,419 +44,29 @@ tests/test_user.py::test_get_user_metadata_not_found PASSED              [ 97%]
 tests/test_user.py::test_get_folders_with_prompts PASSED                 [100%]
 
 =================================== FAILURES ===================================
-_____________________________ test_sign_in_success _____________________________
-
-test_client = <starlette.testclient.TestClient object at 0x10a88ee90>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4471745808'>, 'folders': <MagicMock name='supabase' id='4477760080'>, 'helpers': <MagicMock name='supabase' id='4477800352'>, 'notification_service': <MagicMock name='supabase' id='4477808368'>, ...}
-
-    def test_sign_in_success(test_client, mock_supabase):
-        """Test successful user sign in."""
-        # Create proper mock response objects
-        # User mock with a simpler setup to avoid _mock_methods error
-        user_mock = MagicMock(spec=[])  # Use an empty spec to avoid attribute conflicts
-        user_mock.id = "test-user-id"
-        user_mock.email = "test@example.com"
-    
-        # Session mock
-        session_mock = MagicMock()
-        session_mock.access_token = "fake_access_token"
-        session_mock.refresh_token = "fake_refresh_token"
-        session_mock.expires_at = 3600
-    
-        # Response object with proper structure
-        auth_response = MagicMock(spec=[])  # Use an empty spec
-        setattr(auth_response, 'user', user_mock)
-        setattr(auth_response, 'session', session_mock)
-    
-        # Mock sign in response
-        mock_supabase["auth"].auth.sign_in_with_password.return_value = auth_response
-    
-        # Mock user metadata
-        metadata_mock = {
-            "name": "Test User",
-            "additional_email": "test@example.com",
-            "phone_number": None,
-            "additional_organization": None,
-            "pinned_official_folder_ids": [1],
-            "pinned_organization_folder_ids": []
-        }
-    
-        # Create a response with the data property
-        metadata_response = MagicMock()
-        metadata_response.data = metadata_mock
-    
-        # Mock the notifications service
-        with patch('utils.notification_service.check_user_notifications'):
-            # Mock the select method chain
-            mock_supabase["auth"].table().select().eq().single().execute.return_value = metadata_response
-    
-            # Make the request
->           response = test_client.post(
-                "/auth/sign_in",
-                json={"email": "test@example.com", "password": "password123"}
-            )
-
-tests/test_auth.py:90: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/testclient.py:531: in post
-    return super().post(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/httpx/_client.py:1144: in post
-    return self.request(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/testclient.py:430: in request
-    return super().request(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/httpx/_client.py:825: in request
-    return self.send(request, auth=auth, follow_redirects=follow_redirects)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/httpx/_client.py:914: in send
-    response = self._send_handling_auth(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/httpx/_client.py:942: in _send_handling_auth
-    response = self._send_handling_redirects(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/httpx/_client.py:979: in _send_handling_redirects
-    response = self._send_single_request(request)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/httpx/_client.py:1014: in _send_single_request
-    response = transport.handle_request(request)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/testclient.py:339: in handle_request
-    raise exc
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/testclient.py:336: in handle_request
-    portal.call(self.app, scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/anyio/from_thread.py:290: in call
-    return cast(T_Retval, self.start_task_soon(func, *args).result())
-../../.pyenv/versions/3.10.6/lib/python3.10/concurrent/futures/_base.py:458: in result
-    return self.__get_result()
-../../.pyenv/versions/3.10.6/lib/python3.10/concurrent/futures/_base.py:403: in __get_result
-    raise self._exception
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/anyio/from_thread.py:221: in _call_func
-    retval = await retval_or_awaitable
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/applications.py:1054: in __call__
-    await super().__call__(scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/applications.py:112: in __call__
-    await self.middleware_stack(scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/middleware/errors.py:187: in __call__
-    raise exc
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/middleware/errors.py:165: in __call__
-    await self.app(scope, receive, _send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/middleware/cors.py:85: in __call__
-    await self.app(scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/middleware/exceptions.py:62: in __call__
-    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/_exception_handler.py:53: in wrapped_app
-    raise exc
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/_exception_handler.py:42: in wrapped_app
-    await app(scope, receive, sender)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/routing.py:715: in __call__
-    await self.middleware_stack(scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/routing.py:735: in app
-    await route.handle(scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/routing.py:288: in handle
-    await self.app(scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/routing.py:76: in app
-    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/_exception_handler.py:53: in wrapped_app
-    raise exc
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/_exception_handler.py:42: in wrapped_app
-    await app(scope, receive, sender)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/starlette/routing.py:73: in app
-    response = await f(request)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/routing.py:327: in app
-    content = await serialize_response(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/routing.py:201: in serialize_response
-    return jsonable_encoder(response_content)
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:289: in jsonable_encoder
-    encoded_value = jsonable_encoder(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:289: in jsonable_encoder
-    encoded_value = jsonable_encoder(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:333: in jsonable_encoder
-    return jsonable_encoder(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:289: in jsonable_encoder
-    encoded_value = jsonable_encoder(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:289: in jsonable_encoder
-    encoded_value = jsonable_encoder(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:333: in jsonable_encoder
-    return jsonable_encoder(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:289: in jsonable_encoder
-    encoded_value = jsonable_encoder(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:333: in jsonable_encoder
-    return jsonable_encoder(
-../../.pyenv/versions/3.10.6/envs/archimind_backend/lib/python3.10/site-packages/fastapi/encoders.py:289: in jsonable_encoder
-    encoded_value = jsonable_encoder(
-E   RecursionError: maximum recursion depth exceeded while calling a Python object
-!!! Recursion detected (same locals & position)
-__________________________ test_health_check_degraded __________________________
-
-test_client = <starlette.testclient.TestClient object at 0x10b1680a0>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4480999408'>, 'folders': <MagicMock name='supabase' id='4491120928'>, 'helpers': <MagicMock name='supabase' id='4491161136'>, 'notification_service': <MagicMock name='supabase' id='4491185504'>, ...}
-
-    def test_health_check_degraded(test_client, mock_supabase):
-        """Test the health check endpoint when database is unhealthy."""
-        # Patch the database connection to raise an exception
-        mock_supabase["stats"].storage.list_buckets.side_effect = Exception("Database connection error")
-    
-        # Make the request - ensure we check the response code properly
-        with patch('time.time', return_value=1617321600.0):  # Mock time for consistent results
-            response = test_client.get("/health")
-    
-        # Verify the mock was called
->       assert mock_supabase["stats"].storage.list_buckets.called
-E       AssertionError: assert False
-E        +  where False = <MagicMock name='supabase.storage.list_buckets' id='4481002672'>.called
-E        +    where <MagicMock name='supabase.storage.list_buckets' id='4481002672'> = <MagicMock name='supabase.storage' id='4483256704'>.list_buckets
-E        +      where <MagicMock name='supabase.storage' id='4483256704'> = <MagicMock name='supabase' id='4490918112'>.storage
-
-tests/test_main.py:37: AssertionError
-_________________________ test_get_notification_count __________________________
-
-test_client = <starlette.testclient.TestClient object at 0x10b1de4a0>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4481467200'>, 'folders': <MagicMock name='supabase' id='4490678128'>, 'helpers': <MagicMock name='supabase' id='4490290672'>, 'notification_service': <MagicMock name='supabase' id='4490282752'>, ...}
-valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
-mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
-
-    def test_get_notification_count(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
-        """Test getting notification counts."""
-        # Mock the total counts
-        total_response = MagicMock()
-        total_response.count = 5
-        total_response.data = [{"id": i} for i in range(5)]
-    
-        # Mock the unread counts
-        unread_response = MagicMock()
-        unread_response.count = 2
-        unread_response.data = [{"id": i} for i in range(2)]
-    
-        # Setup the mock table method
-        mock_supabase["notifications"].table().select().eq().execute.return_value = total_response
-        mock_supabase["notifications"].table().select().eq().is_().execute.return_value = unread_response
-    
-        # Make the request
-        response = test_client.get("/notifications/count", headers=valid_auth_header)
-    
-        # Assertions
-        assert response.status_code == 200
->       assert response.json()["total"] == 5
-E       assert 2 == 5
-
-tests/test_notifications.py:81: AssertionError
------------------------------ Captured stdout call -----------------------------
-authorization========== <class 'str'>
-authorization========== Bearer fake_valid_token
-token========== <class 'str'>
-user_info========== <MagicMock name='supabase.auth.get_user()' id='4488061728'>
-______________________________ test_get_templates ______________________________
-
-self = <MagicMock name='supabase.get_all_templates' id='4490689984'>
-
-    def assert_called(self):
-        """assert that the mock was called at least once
-        """
-        if self.call_count == 0:
-            msg = ("Expected '%s' to have been called." %
-                   (self._mock_name or 'mock'))
->           raise AssertionError(msg)
-E           AssertionError: Expected 'get_all_templates' to have been called.
-
-../../.pyenv/versions/3.10.6/lib/python3.10/unittest/mock.py:888: AssertionError
-
-During handling of the above exception, another exception occurred:
-
-test_client = <starlette.testclient.TestClient object at 0x10baa5c30>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4480590432'>, 'folders': <MagicMock name='supabase' id='4472914512'>, 'helpers': <MagicMock name='supabase' id='4472987488'>, 'notification_service': <MagicMock name='supabase' id='4472995504'>, ...}
-valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
-mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
-
-    def test_get_templates(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
-        """Test getting all templates."""
-        # Mock the templates response
-        mock_user_templates = [
-            {
-                "id": 1,
-                "folder_id": 1,
-                "title": "User Template 1",
-                "content": "This is a user template",
-                "type": "user",
-                "tags": ["personal"],
-                "locale": "en"
-            },
-            {
-                "id": 2,
-                "folder_id": 2,
-                "title": "User Template 2",
-                "content": "This is another user template",
-                "type": "user",
-                "tags": ["work"],
-                "locale": "en"
-            }
-        ]
-    
-        mock_official_templates = [
-            {
-                "id": 3,
-                "folder_id": 3,
-                "title": "Official Template 1",
-                "content": "This is an official template",
-                "type": "official",
-                "tags": ["starter"],
-                "locale": "en"
-            }
-        ]
-    
-        mock_org_templates = [
-            {
-                "id": 4,
-                "folder_id": 5,
-                "title": "Organization Template 1",
-                "content": "This is an organization template",
-                "type": "organization",
-                "tags": ["team"],
-                "locale": "en"
-            }
-        ]
-    
-        # Mock folders
-        mock_user_folders = [
-            {"id": 1, "path": "/user/folder1", "templates": mock_user_templates[:1]},
-            {"id": 2, "path": "/user/folder2", "templates": mock_user_templates[1:]}
-        ]
-    
-        mock_official_folders = [
-            {"id": 3, "path": "/official/folder1", "templates": mock_official_templates, "is_pinned": True}
-        ]
-    
-        mock_org_folders = [
-            {"id": 5, "path": "/org/folder1", "templates": mock_org_templates, "is_pinned": False}
-        ]
-    
-        # Setup mock response
-        mock_response = {
-            "success": True,
-            "pinnedFolders": {
-                "userTemplates": {
-                    "templates": mock_user_templates,
-                    "folders": mock_user_folders
-                },
-                "officialTemplates": {
-                    "templates": mock_official_templates,
-                    "folders": mock_official_folders
-                },
-                "organizationTemplates": {
-                    "templates": mock_org_templates,
-                    "folders": mock_org_folders
-                }
-            }
-        }
-    
-        # Use the direct method mock instead of complex chaining
-        mock_supabase["templates"].get_all_templates.return_value = mock_response
-    
-        # Make the request
-        response = test_client.get("/prompts/templates/", headers=valid_auth_header)
-    
-        # Assertions
-        assert response.status_code == 200
-        assert "success" in response.json()
-        assert response.json()["success"] == True
-        assert "pinnedFolders" in response.json()
-    
-        # Verify function was called
->       mock_supabase["templates"].get_all_templates.assert_called()
-E       AssertionError: Expected 'get_all_templates' to have been called.
-
-tests/test_prompt_templates.py:98: AssertionError
------------------------------ Captured stdout call -----------------------------
-authorization========== <class 'str'>
-authorization========== Bearer fake_valid_token
-token========== <class 'str'>
-user_info========== <MagicMock name='supabase.auth.get_user()' id='4476946704'>
-__________________________ test_get_templates_by_type __________________________
-
-self = <MagicMock name='supabase.get_official_templates' id='4478158304'>
-
-    def assert_called(self):
-        """assert that the mock was called at least once
-        """
-        if self.call_count == 0:
-            msg = ("Expected '%s' to have been called." %
-                   (self._mock_name or 'mock'))
->           raise AssertionError(msg)
-E           AssertionError: Expected 'get_official_templates' to have been called.
-
-../../.pyenv/versions/3.10.6/lib/python3.10/unittest/mock.py:888: AssertionError
-
-During handling of the above exception, another exception occurred:
-
-test_client = <starlette.testclient.TestClient object at 0x10a96dd50>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4472922288'>, 'folders': <MagicMock name='supabase' id='4483459696'>, 'helpers': <MagicMock name='supabase' id='4491800688'>, 'notification_service': <MagicMock name='supabase' id='4491941856'>, ...}
-valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
-mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
-
-    def test_get_templates_by_type(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
-        """Test getting templates by type."""
-        # Mock the templates response for a specific type
-        mock_official_templates = [
-            {
-                "id": 3,
-                "folder_id": 3,
-                "title": "Official Template 1",
-                "content": "This is an official template",
-                "type": "official",
-                "tags": ["starter"],
-                "locale": "en"
-            },
-            {
-                "id": 4,
-                "folder_id": 3,
-                "title": "Official Template 2",
-                "content": "This is another official template",
-                "type": "official",
-                "tags": ["advanced"],
-                "locale": "en"
-            }
-        ]
-    
-        mock_folders = ["official/folder1", "official/folder2"]
-    
-        # Setup mock response directly
-        mock_response = {
-            "success": True,
-            "templates": mock_official_templates,
-            "folders": mock_folders
-        }
-    
-        # Use the direct method mock
-        mock_supabase["templates"].get_official_templates.return_value = mock_response
-    
-        # Make the request
-        with patch('utils.supabase_helpers.supabase.auth.get_user'):
-            response = test_client.get("/prompts/templates/?type=official", headers=valid_auth_header)
-    
-        # Assertions
-        assert response.status_code == 200
-        assert "success" in response.json()
-        assert response.json()["success"] == True
-    
-        # Verify function was called
->       mock_supabase["templates"].get_official_templates.assert_called()
-E       AssertionError: Expected 'get_official_templates' to have been called.
-
-tests/test_prompt_templates.py:146: AssertionError
------------------------------ Captured stdout call -----------------------------
-authorization========== <class 'str'>
-authorization========== Bearer fake_valid_token
-token========== <class 'str'>
-user_info========== <MagicMock name='get_user()' id='4487944832'>
-user_id========================================== <MagicMock name='get_user().user.id' id='4487930560'>
 _____________________________ test_update_template _____________________________
 
-test_client = <starlette.testclient.TestClient object at 0x10b891c00>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4488497424'>, 'folders': <MagicMock name='supabase' id='4491319792'>, 'helpers': <MagicMock name='supabase' id='4491871136'>, 'notification_service': <MagicMock name='supabase' id='4491879152'>, ...}
+test_client = <starlette.testclient.TestClient object at 0x107a5ec50>
+mock_supabase = {'auth': <MagicMock name='supabase' id='4423274592'>, 'folders': <MagicMock name='supabase' id='4426868256'>, 'helpers': <MagicMock name='supabase' id='4426831360'>, 'notification_service': <MagicMock name='supabase' id='4426839280'>, ...}
 valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
 mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
 
     def test_update_template(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
         """Test updating an existing template."""
-        # Mock the verification response
-        verification_mock = MagicMock()
-        verification_mock.data = [{"id": "1"}]
-        mock_supabase["templates"].table().select().eq().eq().execute.return_value = verification_mock
+        # Create a more controlled mock chain
+        table_mock = MagicMock()
+        select_mock = MagicMock()
+        eq1_mock = MagicMock()
+        eq2_mock = MagicMock()
+        update_mock = MagicMock()
+        update_eq_mock = MagicMock()
     
-        # Mock the update response
+        # Set up the mock chain for verification
+        verification_data = [{"id": "1"}]
+        verification_result = MagicMock()
+        verification_result.data = verification_data
+    
+        # Set up the mock chain for update
         updated_template = {
             "id": "1",
             "folder_id": 1,
@@ -467,12 +77,21 @@ mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
             "locale": "en",
             "created_at": "2025-03-15T12:00:00+00:00"
         }
+        update_result = MagicMock()
+        update_result.data = [updated_template]
     
-        update_mock = MagicMock()
-        update_mock.data = [updated_template]
-        mock_supabase["templates"].table().update().eq().execute.return_value = update_mock
+        # Connect the mocks in the chain
+        mock_supabase["prompts"].table.return_value = table_mock
+        table_mock.select.return_value = select_mock
+        select_mock.eq.return_value = eq1_mock
+        eq1_mock.eq.return_value = eq2_mock
+        eq2_mock.execute.return_value = verification_result
     
-        # Make the request
+        table_mock.update.return_value = update_mock
+        update_mock.eq.return_value = update_eq_mock
+        update_eq_mock.execute.return_value = update_result
+    
+        # Make the request with the test data
         template_data = {
             "folder_id": 1,
             "title": "Updated Template",
@@ -482,23 +101,30 @@ mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
             "locale": "en"
         }
     
-        response = test_client.put("/prompts/templates/1", json=template_data, headers=valid_auth_header)
+        # Use comprehensive patching to ensure all parts work
+        with patch('utils.supabase_helpers.get_user_from_session_token', return_value=mock_authenticate_user):
+            with patch('routes.prompts.templates.supabase', mock_supabase["prompts"]):
+                response = test_client.put(
+                    "/prompts/templates/1",
+                    json=template_data,
+                    headers=valid_auth_header
+                )
     
         # Assertions
 >       assert response.status_code == 200
 E       assert 500 == 200
 E        +  where 500 = <Response [500 Internal Server Error]>.status_code
 
-tests/test_prompt_templates.py:225: AssertionError
+tests/test_prompt_templates.py:188: AssertionError
 ----------------------------- Captured stdout call -----------------------------
 authorization========== <class 'str'>
 authorization========== Bearer fake_valid_token
 token========== <class 'str'>
-user_info========== <MagicMock name='supabase.auth.get_user()' id='4474865504'>
+user_info========== <MagicMock name='supabase.auth.get_user()' id='4418882720'>
 _______________________________ test_get_folders _______________________________
 
-test_client = <starlette.testclient.TestClient object at 0x10b69b490>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4486438032'>, 'folders': <MagicMock name='supabase' id='4471925552'>, 'helpers': <MagicMock name='supabase' id='4471780064'>, 'notification_service': <MagicMock name='supabase' id='4471862608'>, ...}
+test_client = <starlette.testclient.TestClient object at 0x10780ceb0>
+mock_supabase = {'auth': <MagicMock name='supabase' id='4420857392'>, 'folders': <MagicMock name='supabase' id='4421521840'>, 'helpers': <MagicMock name='supabase' id='4425241008'>, 'notification_service': <MagicMock name='supabase' id='4425247824'>, ...}
 valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
 mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
 
@@ -572,19 +198,19 @@ mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
         # Verify function calls
 >       assert mock_supabase["folders"].get_template_folders_by_type.call_count == 3
 E       AssertionError: assert 0 == 3
-E        +  where 0 = <MagicMock name='supabase.get_template_folders_by_type' id='4472879184'>.call_count
-E        +    where <MagicMock name='supabase.get_template_folders_by_type' id='4472879184'> = <MagicMock name='supabase' id='4471925552'>.get_template_folders_by_type
+E        +  where 0 = <MagicMock name='supabase.get_template_folders_by_type' id='4424401920'>.call_count
+E        +    where <MagicMock name='supabase.get_template_folders_by_type' id='4424401920'> = <MagicMock name='supabase' id='4421521840'>.get_template_folders_by_type
 
 tests/test_prompts_folders.py:72: AssertionError
 ----------------------------- Captured stdout call -----------------------------
 authorization========== <class 'str'>
 authorization========== Bearer fake_valid_token
 token========== <class 'str'>
-user_info========== <MagicMock name='supabase.auth.get_user()' id='4474149504'>
+user_info========== <MagicMock name='supabase.auth.get_user()' id='4427004080'>
 ___________________________ test_get_folders_by_type ___________________________
 
-test_client = <starlette.testclient.TestClient object at 0x10a8b3580>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4471862704'>, 'folders': <MagicMock name='supabase' id='4479655392'>, 'helpers': <MagicMock name='supabase' id='4477724336'>, 'notification_service': <MagicMock name='supabase' id='4477725200'>, ...}
+test_client = <starlette.testclient.TestClient object at 0x10791b6a0>
+mock_supabase = {'auth': <MagicMock name='supabase' id='4421525920'>, 'folders': <MagicMock name='supabase' id='4417260896'>, 'helpers': <MagicMock name='supabase' id='4417333920'>, 'notification_service': <MagicMock name='supabase' id='4417522416'>, ...}
 valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
 mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
 
@@ -631,19 +257,19 @@ mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
         # Verify function calls
 >       assert mock_supabase["folders"].get_template_folders_by_type.called
 E       AssertionError: assert False
-E        +  where False = <MagicMock name='supabase.get_template_folders_by_type' id='4480258384'>.called
-E        +    where <MagicMock name='supabase.get_template_folders_by_type' id='4480258384'> = <MagicMock name='supabase' id='4479655392'>.get_template_folders_by_type
+E        +  where False = <MagicMock name='supabase.get_template_folders_by_type' id='4415964496'>.called
+E        +    where <MagicMock name='supabase.get_template_folders_by_type' id='4415964496'> = <MagicMock name='supabase' id='4417260896'>.get_template_folders_by_type
 
 tests/test_prompts_folders.py:116: AssertionError
 ----------------------------- Captured stdout call -----------------------------
 authorization========== <class 'str'>
 authorization========== Bearer fake_valid_token
 token========== <class 'str'>
-user_info========== <MagicMock name='supabase.auth.get_user()' id='4491466960'>
+user_info========== <MagicMock name='supabase.auth.get_user()' id='4425203136'>
 _______________________________ test_pin_folder ________________________________
 
-test_client = <starlette.testclient.TestClient object at 0x10b8c3c40>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4488702000'>, 'folders': <MagicMock name='supabase' id='4477715600'>, 'helpers': <MagicMock name='supabase' id='4471928336'>, 'notification_service': <MagicMock name='supabase' id='4471920512'>, ...}
+test_client = <starlette.testclient.TestClient object at 0x10814b970>
+mock_supabase = {'auth': <MagicMock name='supabase' id='4430535248'>, 'folders': <MagicMock name='supabase' id='4418949744'>, 'helpers': <MagicMock name='supabase' id='4418908080'>, 'notification_service': <MagicMock name='supabase' id='4418998080'>, ...}
 valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
 mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
 
@@ -675,19 +301,19 @@ mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
         # Verify helper functions were called correctly
 >       assert mock_supabase["folders"].get_user_pinned_folders.called
 E       AssertionError: assert False
-E        +  where False = <MagicMock name='supabase.get_user_pinned_folders' id='4483436928'>.called
-E        +    where <MagicMock name='supabase.get_user_pinned_folders' id='4483436928'> = <MagicMock name='supabase' id='4477715600'>.get_user_pinned_folders
+E        +  where False = <MagicMock name='supabase.get_user_pinned_folders' id='4423621776'>.called
+E        +    where <MagicMock name='supabase.get_user_pinned_folders' id='4423621776'> = <MagicMock name='supabase' id='4418949744'>.get_user_pinned_folders
 
 tests/test_prompts_folders.py:250: AssertionError
 ----------------------------- Captured stdout call -----------------------------
 authorization========== <class 'str'>
 authorization========== Bearer fake_valid_token
 token========== <class 'str'>
-user_info========== <MagicMock name='supabase.auth.get_user()' id='4476594608'>
+user_info========== <MagicMock name='supabase.auth.get_user()' id='4426459904'>
 ______________________________ test_unpin_folder _______________________________
 
-test_client = <starlette.testclient.TestClient object at 0x10ae49db0>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4477715504'>, 'folders': <MagicMock name='supabase' id='4481074896'>, 'helpers': <MagicMock name='supabase' id='4480881552'>, 'notification_service': <MagicMock name='supabase' id='4480673888'>, ...}
+test_client = <starlette.testclient.TestClient object at 0x107631030>
+mock_supabase = {'auth': <MagicMock name='supabase' id='4418908032'>, 'folders': <MagicMock name='supabase' id='4430618512'>, 'helpers': <MagicMock name='supabase' id='4414035984'>, 'notification_service': <MagicMock name='supabase' id='4414032672'>, ...}
 valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
 mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
 
@@ -719,19 +345,19 @@ mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
         # Verify helper functions were called correctly
 >       assert mock_supabase["folders"].get_user_pinned_folders.called
 E       AssertionError: assert False
-E        +  where False = <MagicMock name='supabase.get_user_pinned_folders' id='4478125296'>.called
-E        +    where <MagicMock name='supabase.get_user_pinned_folders' id='4478125296'> = <MagicMock name='supabase' id='4481074896'>.get_user_pinned_folders
+E        +  where False = <MagicMock name='supabase.get_user_pinned_folders' id='4431125312'>.called
+E        +    where <MagicMock name='supabase.get_user_pinned_folders' id='4431125312'> = <MagicMock name='supabase' id='4430618512'>.get_user_pinned_folders
 
 tests/test_prompts_folders.py:279: AssertionError
 ----------------------------- Captured stdout call -----------------------------
 authorization========== <class 'str'>
 authorization========== Bearer fake_valid_token
 token========== <class 'str'>
-user_info========== <MagicMock name='supabase.auth.get_user()' id='4490450240'>
+user_info========== <MagicMock name='supabase.auth.get_user()' id='4422685776'>
 __________________________ test_update_pinned_folders __________________________
 
-test_client = <starlette.testclient.TestClient object at 0x10b0f1210>
-mock_supabase = {'auth': <MagicMock name='supabase' id='4481074848'>, 'folders': <MagicMock name='supabase' id='4482302016'>, 'helpers': <MagicMock name='supabase' id='4481620560'>, 'notification_service': <MagicMock name='supabase' id='4481628576'>, ...}
+test_client = <starlette.testclient.TestClient object at 0x10815f730>
+mock_supabase = {'auth': <MagicMock name='supabase' id='4430618416'>, 'folders': <MagicMock name='supabase' id='4422624224'>, 'helpers': <MagicMock name='supabase' id='4423006384'>, 'notification_service': <MagicMock name='supabase' id='4422342720'>, ...}
 valid_auth_header = {'Authorization': 'Bearer fake_valid_token'}
 mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
 
@@ -760,25 +386,20 @@ mock_authenticate_user = '00000000-0000-0000-0000-000000000000'
         # Verify helper functions were called correctly
 >       assert mock_supabase["folders"].update_user_pinned_folders.call_count == 2
 E       AssertionError: assert 0 == 2
-E        +  where 0 = <MagicMock name='supabase.update_user_pinned_folders' id='4475277696'>.call_count
-E        +    where <MagicMock name='supabase.update_user_pinned_folders' id='4475277696'> = <MagicMock name='supabase' id='4482302016'>.update_user_pinned_folders
+E        +  where 0 = <MagicMock name='supabase.update_user_pinned_folders' id='4425067312'>.call_count
+E        +    where <MagicMock name='supabase.update_user_pinned_folders' id='4425067312'> = <MagicMock name='supabase' id='4422624224'>.update_user_pinned_folders
 
 tests/test_prompts_folders.py:305: AssertionError
 ----------------------------- Captured stdout call -----------------------------
 authorization========== <class 'str'>
 authorization========== Bearer fake_valid_token
 token========== <class 'str'>
-user_info========== <MagicMock name='supabase.auth.get_user()' id='4491822320'>
+user_info========== <MagicMock name='supabase.auth.get_user()' id='4420850096'>
 =========================== short test summary info ============================
-FAILED tests/test_auth.py::test_sign_in_success - RecursionError: maximum rec...
-FAILED tests/test_main.py::test_health_check_degraded - AssertionError: asser...
-FAILED tests/test_notifications.py::test_get_notification_count - assert 2 == 5
-FAILED tests/test_prompt_templates.py::test_get_templates - AssertionError: E...
-FAILED tests/test_prompt_templates.py::test_get_templates_by_type - Assertion...
 FAILED tests/test_prompt_templates.py::test_update_template - assert 500 == 200
 FAILED tests/test_prompts_folders.py::test_get_folders - AssertionError: asse...
 FAILED tests/test_prompts_folders.py::test_get_folders_by_type - AssertionErr...
 FAILED tests/test_prompts_folders.py::test_pin_folder - AssertionError: asser...
 FAILED tests/test_prompts_folders.py::test_unpin_folder - AssertionError: ass...
 FAILED tests/test_prompts_folders.py::test_update_pinned_folders - AssertionE...
-======================== 11 failed, 26 passed in 5.71s =========================
+========================= 6 failed, 31 passed in 4.84s =========================
