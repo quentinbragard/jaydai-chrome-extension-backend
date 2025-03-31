@@ -35,13 +35,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
-          # Install only what's needed for basic tests
           
-      - name: Run basic tests
+      - name: Run tests
         run: |
-          mkdir -p tests
-          echo 'def test_simple(): assert True' > tests/test_basic.py
-          pytest tests/test_basic.py --cov=./ --cov-report=xml
+          # Set PYTHONPATH to include project root directory
+          PYTHONPATH=$PWD pytest tests/ --cov=./ --cov-report=xml
           
       - name: Upload coverage report
         uses: codecov/codecov-action@v3
@@ -58,38 +56,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Create migration script
-        run: |
-          mkdir -p scripts
-          cat > scripts/run-migrations.sh << 'EOF'
-          #!/bin/bash
-          set -e
-          
-          # This is a simplified migration script
-          echo "Environment variables are set"
-          echo "SUPABASE_URL is present: $(if [ -n "$SUPABASE_URL" ]; then echo "Yes"; else echo "No"; fi)"
-          echo "SUPABASE_SERVICE_ROLE_KEY is present: $(if [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then echo "Yes"; else echo "No"; fi)"
-          
-          echo "Running database migrations..."
-          
-          # Check if supabase directory exists
-          if [ -d "supabase" ]; then
-            echo "Supabase directory found. Would run migrations here in a real implementation."
-          else
-            echo "Supabase directory not found. Creating a placeholder directory."
-            mkdir -p supabase/migrations
-            echo "-- Placeholder migration" > supabase/migrations/00000000000000_init.sql
-          fi
-          
-          echo "Migrations complete!"
-          EOF
-          chmod +x scripts/run-migrations.sh
-        
       - name: Run migrations
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
+          chmod +x scripts/run-migrations.sh
           ./scripts/run-migrations.sh
 
   build-and-deploy:
@@ -112,40 +84,6 @@ jobs:
             echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
           fi
           
-      - name: Create or update Dockerfile
-        run: |
-          cat > Dockerfile.prod << 'EOF'
-          FROM python:3.10-slim as builder
-          
-          # Install dependencies in virtual environment
-          WORKDIR /app
-          RUN python -m venv /opt/venv
-          ENV PATH="/opt/venv/bin:$PATH"
-          
-          # Copy and install requirements
-          COPY requirements.txt .
-          RUN pip install --no-cache-dir -r requirements.txt
-          
-          # Production stage
-          FROM python:3.10-slim
-          WORKDIR /app
-          COPY --from=builder /opt/venv /opt/venv
-          ENV PATH="/opt/venv/bin:$PATH"
-          
-          # Copy application code
-          COPY . .
-          
-          # Note: We don't need to set PORT here since Cloud Run will set it automatically
-          
-          # Create non-root user
-          RUN useradd -m appuser
-          USER appuser
-          
-          # Use shell form command to allow environment variable substitution
-          # The PORT environment variable is set by Cloud Run automatically
-          CMD uvicorn main:app --host 0.0.0.0 --port $PORT
-          EOF
-          
       - name: Google Auth
         id: auth
         uses: google-github-actions/auth@v1
@@ -158,8 +96,8 @@ jobs:
       - name: Create Artifact Registry Repository
         run: |
           # Check if repository exists, create if it doesn't
-          if ! gcloud artifacts repositories describe jaydai-backend --location=${{ env.REGION }} &>/dev/null; then
-            gcloud artifacts repositories create jaydai-backend \
+          if ! gcloud artifacts repositories describe ${{ env.REPOSITORY }} --location=${{ env.REGION }} &>/dev/null; then
+            gcloud artifacts repositories create ${{ env.REPOSITORY }} \
               --repository-format=docker \
               --location=${{ env.REGION }} \
               --description="Docker repository for Jayd.ai backend"
