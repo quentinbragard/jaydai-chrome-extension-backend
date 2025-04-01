@@ -33,10 +33,13 @@ class PromptType(str, Enum):
 # ---------------------- REUSABLE DATA ACCESS FUNCTIONS ----------------------
 
 async def fetch_folders(table_name: str, **filters) -> List[Dict]:
-    """Generic function to fetch folders with optional filters."""
+    """Generic function to fetch folders with optional filters including locale."""
     query = supabase.table(table_name).select("*")
     
-    # Apply filters
+    # Handle locale filtering for official and organization folders
+    locale = filters.pop("locale", None)
+    
+    # Apply standard filters
     for key, value in filters.items():
         if key == "in_column":
             if "in_values" in filters and filters["in_values"]:
@@ -44,7 +47,32 @@ async def fetch_folders(table_name: str, **filters) -> List[Dict]:
         elif key != "in_values":  # Skip the in_values item since it's used with in_column
             query = query.eq(key, value)
     
-    response = query.execute()
+    # Apply locale filter for official and organization folders
+    if locale and table_name in ["official_folders", "organization_folders"]:
+        query = query.eq("locale", locale)
+        response = query.execute()
+        
+        # If no folders found with specific locale, fallback to English
+        if not response.data and locale != "en":
+            # Reset query and try with English locale
+            query = supabase.table(table_name).select("*")
+            
+            # Reapply standard filters
+            for key, value in filters.items():
+                if key == "in_column":
+                    if "in_values" in filters and filters["in_values"]:
+                        query = query.in_(value, filters["in_values"])
+                elif key != "in_values":  
+                    query = query.eq(key, value)
+            
+            # Apply English locale filter
+            query = query.eq("locale", "en")
+            response = query.execute()
+            return response.data or []
+    else:
+        # Execute without locale filtering
+        response = query.execute()
+    
     return response.data or []
 
 async def fetch_templates(folder_ids: List[int], folder_type: str) -> List[Dict]:
@@ -84,7 +112,8 @@ async def get_template_folders_by_type(
     folder_type: str, 
     folder_ids: Optional[List[int]] = None, 
     user_id: Optional[str] = None,
-    empty: bool = False
+    empty: bool = False,
+    locale: Optional[str] = None
 ) -> Dict:
     """Central function to get template folders by type with optional filtering."""
     # Determine table name based on folder type
@@ -99,6 +128,11 @@ async def get_template_folders_by_type(
     
     # Define filters based on parameters
     filters = {}
+    
+    # Add locale to filters for official and organization folders
+    if folder_type in ["official", "organization"] and locale:
+        filters["locale"] = locale
+    
     if folder_type == "user" and user_id:
         filters["user_id"] = user_id
     elif folder_type == "organization" and user_id:
@@ -113,7 +147,7 @@ async def get_template_folders_by_type(
         filters["in_column"] = "id"
         filters["in_values"] = folder_ids
     
-    # Fetch folders
+    # Fetch folders with possible locale filtering
     folders = await fetch_folders(table_name, **filters)
     
     # If empty flag is set, return folders without templates
@@ -123,7 +157,7 @@ async def get_template_folders_by_type(
     # Get folder IDs for template query
     all_folder_ids = [folder["id"] for folder in folders]
     
-    # Fetch templates
+    # Fetch templates - no need to filter by locale here since we filtered the folders
     templates = await fetch_templates(all_folder_ids, folder_type)
     
     # Organize templates by folder
@@ -133,6 +167,7 @@ async def get_template_folders_by_type(
     folders_with_templates = add_templates_to_folders(folders, templates_by_folder)
     
     return {"success": True, "folders": folders_with_templates}
+
 
 async def get_user_pinned_folders(user_id: str) -> Dict[str, List[int]]:
     """Get user's pinned folder IDs."""
@@ -171,6 +206,7 @@ async def update_user_pinned_folders(user_id: str, folder_type: str, folder_ids:
 async def get_folders(
     type: Optional[str] = None,
     folder_ids: Optional[str] = None,  # Accept a comma-separated string
+    locale: Optional[str] = None,  # Add locale parameter
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """
@@ -178,6 +214,8 @@ async def get_folders(
     
     Parameters:
     - type: Optional filter by folder type ('user', 'official', or 'organization')
+    - folder_ids: Optional comma-separated string of folder IDs to filter by
+    - locale: Optional locale code to filter templates by language (e.g., 'en', 'fr')
     """
     try:
         if type not in ["user", "official", "organization", None]:
@@ -193,9 +231,11 @@ async def get_folders(
         if type:
             # Get specific folder type
             result = await get_template_folders_by_type(
-            folder_type=type,
-            folder_ids=folder_id_list if folder_id_list else None,
-            user_id=user_id if type == PromptType.user else None)
+                folder_type=type,
+                folder_ids=folder_id_list if folder_id_list else None,
+                user_id=user_id if type == PromptType.user else None,
+                locale=locale  # Pass locale parameter
+            )
             
             # For official and organization folders, add pinned status
             if type in ["official", "organization"]:
@@ -209,8 +249,8 @@ async def get_folders(
             # Get all folder types
             user_folders = await get_template_folders_by_type("user", user_id=user_id)
             
-            official_folders = await get_template_folders_by_type("official")
-            org_folders = await get_template_folders_by_type("organization", user_id=user_id)
+            official_folders = await get_template_folders_by_type("official", locale=locale)
+            org_folders = await get_template_folders_by_type("organization", user_id=user_id, locale=locale)
             
             # Add pinned status for official and organization folders
             pinned_folders = await get_user_pinned_folders(user_id)
@@ -231,7 +271,7 @@ async def get_folders(
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail=f"Error retrieving folders: {str(e)}")
-
+    
 @router.post("/")
 async def create_folder(
     folder: FolderCreate,
@@ -396,9 +436,18 @@ async def get_template_folders(
     type: PromptType,
     folder_ids: Optional[str] = None,  # Accept a comma-separated string
     empty: bool = False,
+    locale: Optional[str] = None,  # Add locale parameter
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
-    """Get template folders by type with proper error handling"""
+    """
+    Get template folders by type with proper error handling
+    
+    Parameters:
+    - type: Type of folders to fetch ('user', 'official', or 'organization')
+    - folder_ids: Optional comma-separated string of folder IDs to filter by
+    - empty: Whether to return folders without templates
+    - locale: Optional locale code to filter templates by language (e.g., 'en', 'fr')
+    """
     try:
         # Parse folder_ids from comma-separated string to list of integers
         folder_id_list = []
@@ -409,14 +458,15 @@ async def get_template_folders(
             except ValueError as e:
                 raise HTTPException(status_code=400, detail=f"Invalid folder ID format: {str(e)}")
         
-        print(f"Get template folders request: type={type}, folder_ids={folder_id_list}, empty={empty}")
+        print(f"Get template folders request: type={type}, folder_ids={folder_id_list}, empty={empty}, locale={locale}")
         
         # Get folders based on type
         result = await get_template_folders_by_type(
             folder_type=type.value,
             folder_ids=folder_id_list if folder_id_list else None,
             user_id=user_id if type == PromptType.user else None,
-            empty=empty
+            empty=empty,
+            locale=locale  # Pass locale parameter
         )
         
         return result

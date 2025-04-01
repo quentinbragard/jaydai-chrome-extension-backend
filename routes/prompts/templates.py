@@ -51,7 +51,26 @@ async def get_templates(
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
-
+    
+@router.get("/unorganized")
+async def get_unorganized_templates(
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Get all templates that are not organized in any folder."""
+    # Use is.null() instead of eq(None) for checking NULL values
+    unorganized_user_templates = (
+        supabase.table("prompt_templates")
+        .select("*")
+        .eq("type", "user")
+        .eq("user_id", user_id)  # Ensure we only get templates for this user
+        .is_("folder_id", "null")  # Use is_ with "null" string for NULL check
+        .execute()
+    )
+    
+    return {
+        "success": True,
+        "templates": unorganized_user_templates.data
+    }
 async def get_user_templates(user_id: str):
     """Get user's personal templates."""
     # Get all folders attached to the user_id
@@ -286,6 +305,7 @@ async def create_template(
         # Insert new template
         response = supabase.table("prompt_templates").insert({
             "type": "user",
+            "user_id": user_id,
             "folder_id": template.folder_id,
             "title": template.title,
             "content": template.content,
