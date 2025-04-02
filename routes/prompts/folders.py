@@ -202,7 +202,7 @@ async def update_user_pinned_folders(user_id: str, folder_type: str, folder_ids:
 
 # ---------------------- ROUTE HANDLERS ----------------------
 
-@router.get("/")
+@router.get("")
 async def get_folders(
     type: Optional[str] = None,
     folder_ids: Optional[str] = None,  # Accept a comma-separated string
@@ -272,7 +272,7 @@ async def get_folders(
             raise e
         raise HTTPException(status_code=500, detail=f"Error retrieving folders: {str(e)}")
     
-@router.post("/")
+@router.post("")
 async def create_folder(
     folder: FolderCreate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)

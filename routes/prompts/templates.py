@@ -27,7 +27,7 @@ class TemplateCreate(TemplateBase):
 class TemplateUpdate(TemplateBase):
     pass
 
-@router.get("/")
+@router.get("")
 async def get_templates(
     type: Optional[str] = None,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
@@ -292,7 +292,7 @@ async def get_all_templates(user_id: str):
         raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
     
     
-@router.post("/")
+@router.post("")
 async def create_template(
     template: TemplateCreate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
