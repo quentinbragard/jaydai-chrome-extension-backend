@@ -90,26 +90,50 @@ async def fetch_templates(folder_ids: List[int], folder_type: str, locale: str =
     
     templates = response.data or []
     
-    # Process templates to use locale-specific content
+    # Process templates to use locale-specific or custom content based on type
     processed_templates = []
     for template in templates:
         processed_template = template.copy()
         
-        # Select content based on locale (with fallback to English)
-        content_field = f"content_{locale}" if locale in ["en", "fr"] else "content_en"
-        fallback_field = "content_en"
-        
-        if content_field in template and template[content_field]:
-            processed_template["content"] = template[content_field]
-        elif fallback_field in template and template[fallback_field]:
-            processed_template["content"] = template[fallback_field]
+        # Different handling based on template type
+        if folder_type == "user":
+            # For user templates, use custom fields
+            if "title_custom" in template:
+                processed_template["title"] = template["title_custom"]
+            
+            if "content_custom" in template:
+                processed_template["content"] = template["content_custom"]
         else:
-            processed_template["content"] = ""
+            # For official/organization templates, use locale-specific fields
+            # Select content based on locale (with fallback to English)
+            content_field = f"content_{locale}" if locale in ["en", "fr"] else "content_en"
+            fallback_field = "content_en"
+            
+            if content_field in template and template[content_field]:
+                processed_template["content"] = template[content_field]
+            elif fallback_field in template and template[fallback_field]:
+                processed_template["content"] = template[fallback_field]
+            else:
+                processed_template["content"] = ""
+            
+            # Handle title field similarly
+            title_field = f"title_{locale}" if locale in ["en", "fr"] else "title_en"
+            fallback_title_field = "title_en"
+            
+            if title_field in template and template[title_field]:
+                processed_template["title"] = template[title_field]
+            elif fallback_title_field in template and template[fallback_title_field]:
+                processed_template["title"] = template[fallback_title_field]
+            else:
+                processed_template["title"] = ""
         
-        # Remove the locale-specific fields for backward compatibility
+        # Remove all specialized fields for backward compatibility
         processed_template.pop("content_en", None)
         processed_template.pop("content_fr", None)
-
+        processed_template.pop("content_custom", None)
+        processed_template.pop("title_en", None)
+        processed_template.pop("title_fr", None) 
+        processed_template.pop("title_custom", None)
         
         processed_templates.append(processed_template)
     

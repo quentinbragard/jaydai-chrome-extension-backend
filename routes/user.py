@@ -215,11 +215,20 @@ async def get_folders_with_prompts(
                     else:
                         processed_prompt["content"] = ""
                         
-            
+                    # Handle title if it has locale versions
+                    title_field = f"title_{locale}" if locale in ["en", "fr"] else "title_en"
+                    fallback_title = "title_en"
+                    
+                    if title_field in p and p[title_field]:
+                        processed_prompt["title"] = p[title_field]
+                    elif fallback_title in p and p[fallback_title]:
+                        processed_prompt["title"] = p[fallback_title]
                         
                     # Remove locale fields
                     processed_prompt.pop("content_en", None)
                     processed_prompt.pop("content_fr", None)
+                    processed_prompt.pop("title_en", None)
+                    processed_prompt.pop("title_fr", None)
                     
                     folder_prompts.append(processed_prompt)
                     
@@ -262,12 +271,21 @@ async def get_folders_with_prompts(
                         processed_prompt["content"] = p[fallback_content]
                     else:
                         processed_prompt["content"] = ""
-
+                        
+                    # Handle title if it has locale versions
+                    title_field = f"title_{locale}" if locale in ["en", "fr"] else "title_en"
+                    fallback_title = "title_en"
+                    
+                    if title_field in p and p[title_field]:
+                        processed_prompt["title"] = p[title_field]
+                    elif fallback_title in p and p[fallback_title]:
+                        processed_prompt["title"] = p[fallback_title]
                         
                     # Remove locale fields
                     processed_prompt.pop("content_en", None)
                     processed_prompt.pop("content_fr", None)
-
+                    processed_prompt.pop("title_en", None)
+                    processed_prompt.pop("title_fr", None)
                     
                     folder_prompts.append(processed_prompt)
                     
