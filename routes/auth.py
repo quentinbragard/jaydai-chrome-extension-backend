@@ -15,7 +15,6 @@ import jwt
 dotenv.load_dotenv()
 
 # Initialize Supabase client
-
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
@@ -43,8 +42,28 @@ class VerifyOTPData(BaseModel):
     token: str
     linkedin_id: Optional[str] = None
     name: Optional[str] = None
-    
-    
+
+async def get_all_folder_ids(folder_type):
+    """Get all folder IDs of a specific type (official or organization)."""
+    try:
+        table_name = f"{folder_type}_folders"
+        response = supabase.table(table_name).select("id").execute()
+        return [folder['id'] for folder in (response.data or [])]
+    except Exception as e:
+        print(f"Error fetching {folder_type} folder IDs: {str(e)}")
+        return []
+
+async def get_organization_folder_ids(organization_id):
+    """Get all folder IDs for a specific organization."""
+    if not organization_id:
+        return []
+        
+    try:
+        response = supabase.table("organization_folders").select("id").eq("organization_id", organization_id).execute()
+        return [folder['id'] for folder in (response.data or [])]
+    except Exception as e:
+        print(f"Error fetching organization folder IDs: {str(e)}")
+        return []
 
 @router.get("/confirm")
 async def confirm_email(token: str, type: str = "signup"):
@@ -71,51 +90,57 @@ async def confirm_email(token: str, type: str = "signup"):
     
 @router.post("/sign_up")
 async def sign_up(sign_up_data: SignUpData):
-    """Sign up a new user."""
-    #try:
-    # Create the user in Supabase
-    response = supabase.auth.sign_up({
-        "email": sign_up_data.email,
-        "password": sign_up_data.password,
-        "options": {
-            "data": {
-                "name": sign_up_data.name
+    """Sign up a new user and pin all available folders."""
+    try:
+        # Create the user in Supabase
+        response = supabase.auth.sign_up({
+            "email": sign_up_data.email,
+            "password": sign_up_data.password,
+            "options": {
+                "data": {
+                    "name": sign_up_data.name
+                }
+            }
+        })
+        
+        print("response", response)
+        
+        # Initialize user metadata with all available folders pinned
+        if response.user:
+            # Get all official folder IDs
+            official_folder_ids = await get_all_folder_ids("official")
+            
+            # Get organization folder IDs if applicable (default empty list)
+            organization_folder_ids = []
+            
+            # Create metadata with pinned folders
+            metadata_response = supabase.table("users_metadata").insert({
+                "user_id": response.user.id,
+                "pinned_official_folder_ids": official_folder_ids,
+                "pinned_organization_folder_ids": organization_folder_ids,
+                "name": sign_up_data.name,
+                "additional_email": None,
+                "phone_number": None,
+                "additional_organization": None
+            }).execute()
+            
+            print("metadata_response", metadata_response)
+            
+            metadata = metadata_response.data[0] if metadata_response.data else None
+            user_with_metadata = {**response.user.__dict__, "metadata": metadata}
+        
+        return {
+            "success": True,
+            "message": "Sign up successful. Please check your email to verify your account.",
+            "user": user_with_metadata,
+            "session": {
+                "access_token": response.session.access_token,
+                "refresh_token": response.session.refresh_token,
+                "expires_at": response.session.expires_at
             }
         }
-    })
-    
-    print("response", response)
-    
-    # Initialize user metadata with default pinned folders
-    if response.user:
-        # Create metadata with default pinned folder
-        metadata_response = supabase.table("users_metadata").insert({
-            "user_id": response.user.id,
-            "pinned_official_folder_ids": [1],  # Default starter pack folder
-            "pinned_organization_folder_ids": [],
-            "name": sign_up_data.name,
-            "additional_email": None,
-            "phone_number": None,
-            "additional_organization": None
-        }).execute()
-        
-        print("metadata_response", metadata_response)
-        
-        metadata = metadata_response.data[0] if metadata_response.data else None
-        user_with_metadata = {**response.user.__dict__, "metadata": metadata}
-    
-    return {
-        "success": True,
-        "message": "Sign up successful. Please check your email to verify your account.",
-        "user": user_with_metadata,
-        "session": {
-            "access_token": response.session.access_token,
-            "refresh_token": response.session.refresh_token,
-            "expires_at": response.session.expires_at
-        }
-    }
-    #except Exception as e:
-    #    raise HTTPException(status_code=500, detail=f"Error during sign up: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error during sign up: {str(e)}")
     
 @router.post("/sign_in")
 async def sign_in(sign_in_data: SignInData):
@@ -162,82 +187,90 @@ async def sign_in(sign_in_data: SignInData):
 
 @router.post("/sign_in_with_google")
 async def sign_in(google_sign_in_data: GoogleAuthRequest):
-    """Authenticate user via Google OAuth."""
+    """Authenticate user via Google OAuth and pin all available folders for new users."""
     print("google_sign_in_data", google_sign_in_data)
-    #try:
+    try:
         # Exchange ID token for user info with Supabase
-    response = supabase.auth.sign_in_with_id_token({
-        "provider": "google", 
-        "token": google_sign_in_data.id_token,
-    })
-    
-    print("===========================Supabase sign_in_with_id_token response:", response)
-    
-    if not response.user:
-        raise HTTPException(status_code=400, detail="Invalid Google ID token")
-    
-    user_id = response.user.id
-    
-    # Check for notifications after successful login
-    await create_first_notification(user_id)
+        response = supabase.auth.sign_in_with_id_token({
+            "provider": "google", 
+            "token": google_sign_in_data.id_token,
+        })
+        
+        print("===========================Supabase sign_in_with_id_token response:", response)
+        
+        if not response.user:
+            raise HTTPException(status_code=400, detail="Invalid Google ID token")
+        
+        user_id = response.user.id
+        is_new_user = False
+        
+        # Check for notifications after successful login
+        await create_first_notification(user_id)
 
-    # Get user metadata
-    metadata_response = supabase.table("users_metadata") \
-        .select("*") \
-        .eq("user_id", user_id) \
-        .execute()
-        
-    print("\n\n===========metadata_response", metadata_response)
+        # Get user metadata
+        metadata_response = supabase.table("users_metadata") \
+            .select("*") \
+            .eq("user_id", user_id) \
+            .execute()
+            
+        print("\n\n===========metadata_response", metadata_response)
 
-    # If no metadata exists for this user, create a new metadata record
-    if not metadata_response.data:
-        print("Creating new user metadata for Google user")
-        user_email = response.user.email
-        user_name = response.user.user_metadata.get("full_name", "")
-        
-        # Create default metadata for Google sign-in users
-        metadata_response = supabase.table("users_metadata").insert({
-            "user_id": user_id,
-            "name": user_name,
-            "email": user_email,
-            "google_id": response.user.user_metadata.get("sub", ""),
-            "pinned_official_folder_ids": [1],  # Default starter pack folder
-            "pinned_organization_folder_ids": []
-        }).execute()
-        
-        metadata = metadata_response.data[0] if metadata_response.data else {
-            "name": user_name,
-            "email": user_email,
-            "pinned_official_folder_ids": [1],
-            "pinned_organization_folder_ids": []
+        # If no metadata exists for this user, create a new metadata record
+        if not metadata_response.data:
+            print("Creating new user metadata for Google user")
+            is_new_user = True
+            user_email = response.user.email
+            user_name = response.user.user_metadata.get("full_name", "")
+            
+            # Get all official folder IDs
+            official_folder_ids = await get_all_folder_ids("official")
+            
+            # Get organization folder IDs if applicable (default empty list)
+            organization_folder_ids = []
+            
+            # Create default metadata for Google sign-in users with all folders pinned
+            metadata_response = supabase.table("users_metadata").insert({
+                "user_id": user_id,
+                "name": user_name,
+                "email": user_email,
+                "google_id": response.user.user_metadata.get("sub", ""),
+                "pinned_official_folder_ids": official_folder_ids,
+                "pinned_organization_folder_ids": organization_folder_ids
+            }).execute()
+            
+            metadata = metadata_response.data[0] if metadata_response.data else {
+                "name": user_name,
+                "email": user_email,
+                "pinned_official_folder_ids": official_folder_ids,
+                "pinned_organization_folder_ids": organization_folder_ids
+            }
+        else:
+            metadata = metadata_response.data
+
+        # Ensure we have user data to return
+        user_dict = response.user.__dict__ if hasattr(response.user, "__dict__") else {
+            "id": response.user.id,
+            "email": response.user.email,
+            "app_metadata": response.user.app_metadata,
+            "user_metadata": response.user.user_metadata,
         }
-    else:
-        metadata = metadata_response.data
+        
+        user_with_metadata = {**user_dict, "metadata": metadata}
 
-    # Ensure we have user data to return
-    user_dict = response.user.__dict__ if hasattr(response.user, "__dict__") else {
-        "id": response.user.id,
-        "email": response.user.email,
-        "app_metadata": response.user.app_metadata,
-        "user_metadata": response.user.user_metadata,
-    }
-    
-    user_with_metadata = {**user_dict, "metadata": metadata}
-
-    return {
-        "success": True,
-        "user": user_with_metadata,
-        "session": {
-            "access_token": response.session.access_token,
-            "refresh_token": response.session.refresh_token,
-            "expires_at": response.session.expires_at
+        return {
+            "success": True,
+            "user": user_with_metadata,
+            "session": {
+                "access_token": response.session.access_token,
+                "refresh_token": response.session.refresh_token,
+                "expires_at": response.session.expires_at
+            }
         }
-    }
-   # except Exception as e:
+    except Exception as e:
         # Proper error handling
-        #error_message = str(e)
-        #print(f"Google Sign-In error: {error_message}")
-        #raise HTTPException(status_code=500, detail=f"Google Sign-In error: {error_message}")
+        error_message = str(e)
+        print(f"Google Sign-In error: {error_message}")
+        raise HTTPException(status_code=500, detail=f"Google Sign-In error: {error_message}")
 
 
 @router.post("/refresh_token")

@@ -4,7 +4,7 @@ from supabase import create_client, Client
 from utils import supabase_helpers
 import dotenv
 import os
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 dotenv.load_dotenv()
 
@@ -18,7 +18,7 @@ class TemplateBase(BaseModel):
     title: str
     type: str
     tags: Optional[List[str]] = None
-    locale: Optional[str] = None
+    locale: Optional[str] = None  # Still accept locale for backward compatibility
     folder_id: Optional[int] = None
 
 class TemplateCreate(TemplateBase):
@@ -27,9 +27,48 @@ class TemplateCreate(TemplateBase):
 class TemplateUpdate(TemplateBase):
     pass
 
+def process_templates_for_locale(templates: List[Dict], locale: str = "en") -> List[Dict]:
+    """
+    Process templates to use the appropriate locale-specific content.
+    """
+    processed_templates = []
+    for template in templates:
+        processed_template = template.copy()
+        
+        # Handle content fields - select based on locale with fallback to English
+        content_field = f"content_{locale}" if locale in ["en", "fr"] else "content_en"
+        fallback_field = "content_en"
+        
+        if content_field in template and template[content_field]:
+            processed_template["content"] = template[content_field]
+        elif fallback_field in template and template[fallback_field]:
+            processed_template["content"] = template[fallback_field]
+        else:
+            processed_template["content"] = ""
+        
+        # Handle title fields if they have locale versions
+        title_field = f"title_{locale}" if locale in ["en", "fr"] else "title_en"
+        fallback_title_field = "title_en"
+        
+        if title_field in template and template[title_field]:
+            processed_template["title"] = template[title_field]
+        elif fallback_title_field in template and template[fallback_title_field]:
+            processed_template["title"] = template[fallback_title_field]
+        
+        # Remove locale-specific fields for backward compatibility
+        processed_template.pop("content_en", None)
+        processed_template.pop("content_fr", None)
+        processed_template.pop("title_en", None)
+        processed_template.pop("title_fr", None)
+        
+        processed_templates.append(processed_template)
+    
+    return processed_templates
+
 @router.get("")
 async def get_templates(
     type: Optional[str] = None,
+    locale: Optional[str] = "en",  # Default to English
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """
@@ -37,23 +76,25 @@ async def get_templates(
     
     Parameters:
     - type: Optional filter by template type ('user', 'official', or 'organization')
+    - locale: Optional locale code for content ('en', 'fr')
     """
     try:
         if type == "user":
-            return await get_user_templates(user_id)
+            return await get_user_templates(user_id, locale)
         elif type == "official":
-            return await get_official_templates(user_id)
+            return await get_official_templates(user_id, locale)
         elif type == "organization":
-            return await get_organization_templates(user_id)
+            return await get_organization_templates(user_id, locale)
         else:
             # Get all templates
-            return await get_all_templates(user_id)
+            return await get_all_templates(user_id, locale)
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
     
 @router.get("/unorganized")
 async def get_unorganized_templates(
+    locale: Optional[str] = "en",  # Default to English
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """Get all templates that are not organized in any folder."""
@@ -67,11 +108,15 @@ async def get_unorganized_templates(
         .execute()
     )
     
+    # Process templates for locale
+    templates = process_templates_for_locale(unorganized_user_templates.data, locale)
+    
     return {
         "success": True,
-        "templates": unorganized_user_templates.data
+        "templates": templates
     }
-async def get_user_templates(user_id: str):
+
+async def get_user_templates(user_id: str, locale: str = "en"):
     """Get user's personal templates."""
     # Get all folders attached to the user_id
     folder_response = supabase.table("user_folders").select("id, path").eq("user_id", user_id).execute()
@@ -82,7 +127,10 @@ async def get_user_templates(user_id: str):
 
     # Get templates in those folders with type "user"
     template_response = supabase.table("prompt_templates").select("*").in_("folder_id", folder_ids).eq("type", "user").execute()
-    templates = template_response.data if template_response.data else []
+    raw_templates = template_response.data if template_response.data else []
+    
+    # Process templates for locale
+    templates = process_templates_for_locale(raw_templates, locale)
 
     # Organize templates by folders
     folders = {folder['path']: [] for folder in user_folders}
@@ -120,7 +168,7 @@ async def get_user_templates(user_id: str):
         "templates_by_folder": folders
     }
 
-async def get_official_templates(user_id: Optional[str] = None):
+async def get_official_templates(user_id: Optional[str] = None, locale: str = "en"):
     """Get official prompt templates that can be used as a basis."""
     pinned_folder_ids = []
     print("user_id==========================================", user_id)
@@ -137,6 +185,26 @@ async def get_official_templates(user_id: Optional[str] = None):
         official_folders_response = supabase.table("official_folders").select("*").execute()
 
     official_folders = official_folders_response.data if official_folders_response.data else []
+    
+    # Process folder names for locale
+    processed_folders = []
+    for folder in official_folders:
+        processed_folder = folder.copy()
+        name_field = f"name_{locale}" if locale in ["en", "fr"] else "name_en"
+        fallback_field = "name_en"
+        
+        if name_field in folder and folder[name_field]:
+            processed_folder["name"] = folder[name_field]
+        elif fallback_field in folder and folder[fallback_field]:
+            processed_folder["name"] = folder[fallback_field]
+        else:
+            processed_folder["name"] = "Unnamed Folder"
+            
+        # Remove locale-specific fields
+        processed_folder.pop("name_en", None)
+        processed_folder.pop("name_fr", None)
+        
+        processed_folders.append(processed_folder)
 
     # Get templates in those folders with type "official"
     if pinned_folder_ids:
@@ -144,11 +212,14 @@ async def get_official_templates(user_id: Optional[str] = None):
     else:
         template_response = supabase.table("prompt_templates").select("*").eq("type", "official").execute()
 
-    templates = template_response.data if template_response.data else []
+    raw_templates = template_response.data if template_response.data else []
+    
+    # Process templates for locale
+    templates = process_templates_for_locale(raw_templates, locale)
 
     # Extract all unique folders from the official folders
     folders = set()
-    for folder in official_folders:
+    for folder in processed_folders:
         folder_path = folder.get('path')
         if folder_path:
             parts = folder_path.split('/')
@@ -168,7 +239,7 @@ async def get_official_templates(user_id: Optional[str] = None):
         "folders": folders_list
     }
 
-async def get_organization_templates(user_id: Optional[str] = None):
+async def get_organization_templates(user_id: Optional[str] = None, locale: str = "en"):
     """Get organization templates for the user's organization."""
     organization_id = None
     folder_ids = []
@@ -193,7 +264,10 @@ async def get_organization_templates(user_id: Optional[str] = None):
     else:
         templates_response = supabase.table("prompt_templates").select("*").eq("type", "organization").execute()
 
-    templates = templates_response.data or []
+    raw_templates = templates_response.data or []
+    
+    # Process templates for locale
+    templates = process_templates_for_locale(raw_templates, locale)
 
     # Extract all unique folders from the templates
     folders = set()
@@ -217,7 +291,7 @@ async def get_organization_templates(user_id: Optional[str] = None):
         "folders": folders_list
     }
 
-async def get_all_templates(user_id: str):
+async def get_all_templates(user_id: str, locale: str = "en"):
     """Get templates organized by type (official, organization, and user)."""
     try:
         # Get user metadata to check for organization_id and pinned folders
@@ -235,7 +309,27 @@ async def get_all_templates(user_id: str):
         # 1. Fetch all folders
         # Official folders
         official_folders_response = supabase.table("official_folders").select("*").execute()
-        official_folders = official_folders_response.data or []
+        raw_official_folders = official_folders_response.data or []
+        
+        # Process official folder names
+        official_folders = []
+        for folder in raw_official_folders:
+            processed_folder = folder.copy()
+            name_field = f"name_{locale}" if locale in ["en", "fr"] else "name_en"
+            fallback_field = "name_en"
+            
+            if name_field in folder and folder[name_field]:
+                processed_folder["name"] = folder[name_field]
+            elif fallback_field in folder and folder[fallback_field]:
+                processed_folder["name"] = folder[fallback_field]
+            else:
+                processed_folder["name"] = "Unnamed Folder"
+                
+            # Remove locale-specific fields
+            processed_folder.pop("name_en", None)
+            processed_folder.pop("name_fr", None)
+            
+            official_folders.append(processed_folder)
         
         # User folders for this user
         user_folders_response = supabase.table("user_folders").select("*").eq("user_id", user_id).execute()
@@ -245,7 +339,26 @@ async def get_all_templates(user_id: str):
         org_folders = []
         if organization_id:
             org_folders_response = supabase.table("organization_folders").select("*").eq("organization_id", organization_id).execute()
-            org_folders = org_folders_response.data or []
+            raw_org_folders = org_folders_response.data or []
+            
+            # Process organization folder names
+            for folder in raw_org_folders:
+                processed_folder = folder.copy()
+                name_field = f"name_{locale}" if locale in ["en", "fr"] else "name_en"
+                fallback_field = "name_en"
+                
+                if name_field in folder and folder[name_field]:
+                    processed_folder["name"] = folder[name_field]
+                elif fallback_field in folder and folder[fallback_field]:
+                    processed_folder["name"] = folder[fallback_field]
+                else:
+                    processed_folder["name"] = "Unnamed Folder"
+                    
+                # Remove locale-specific fields
+                processed_folder.pop("name_en", None)
+                processed_folder.pop("name_fr", None)
+                
+                org_folders.append(processed_folder)
         
         # 2. Fetch templates for each folder
         # For official folders
@@ -253,22 +366,25 @@ async def get_all_templates(user_id: str):
         for folder in official_folders:
             folder['is_pinned'] = folder['id'] in pinned_folders
             templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).execute()
-            folder['templates'] = templates_response.data or []
-            official_templates.extend(templates_response.data or [])  # Fix: added closing bracket
+            raw_templates = templates_response.data or []
+            folder['templates'] = process_templates_for_locale(raw_templates, locale)
+            official_templates.extend(folder['templates'])
         
         # For user folders
         user_templates = []
         for folder in user_folders:
             templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).execute()
-            folder['templates'] = templates_response.data or []
-            user_templates.extend(templates_response.data or [])
+            raw_templates = templates_response.data or []
+            folder['templates'] = process_templates_for_locale(raw_templates, locale)
+            user_templates.extend(folder['templates'])
         
         # For organization folders
         org_templates = []
         for folder in org_folders:
             templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).execute()
-            folder['templates'] = templates_response.data or []
-            org_templates.extend(templates_response.data or [])
+            raw_templates = templates_response.data or []
+            folder['templates'] = process_templates_for_locale(raw_templates, locale)
+            org_templates.extend(folder['templates'])
         
         return {
             "success": True,
@@ -297,25 +413,41 @@ async def create_template(
     template: TemplateCreate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
-    """Create a new template, optionally based on an official template."""
+    """Create a new template, with support for localized content."""
     try:
-
-
+        # Determine locale to properly set content fields
+        locale = template.locale or "en"
         
-        # Insert new template
-        response = supabase.table("prompt_templates").insert({
+        # Prepare template data
+        template_data = {
             "type": "user",
             "user_id": user_id,
             "folder_id": template.folder_id,
-            "title": template.title,
-            "content": template.content,
-            "tags": template.tags,
-            "locale": template.locale
-        }).execute()
+            "title_en": template.title,  # Set both language fields for consistency
+            "tags": template.tags
+        }
+        
+        # Set content fields based on locale
+        if locale == "fr":
+            template_data["content_fr"] = template.content
+            template_data["content_en"] = ""  # Empty default for the other language
+            template_data["title_fr"] = template.title
+        else:
+            template_data["content_en"] = template.content
+            template_data["content_fr"] = ""  # Empty default for the other language
+            template_data["title_fr"] = template.title if locale == "fr" else template.title  # Copy title for consistency
+        
+        # Insert new template
+        response = supabase.table("prompt_templates").insert(template_data).execute()
+        
+        # Process the returned template for the response
+        processed_template = None
+        if response.data:
+            processed_template = process_templates_for_locale([response.data[0]], locale)[0]
         
         return {
             "success": True,
-            "template": response.data[0] if response.data else None
+            "template": processed_template
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating template: {str(e)}")
@@ -326,7 +458,7 @@ async def update_template(
     template: TemplateUpdate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
-    """Update an existing template."""
+    """Update an existing template with locale-specific content handling."""
     try:
         # Verify template belongs to user
         verify = supabase.table("prompt_templates").select("id").eq("id", template_id).eq("user_id", user_id).execute()
@@ -334,24 +466,38 @@ async def update_template(
         if not verify.data:
             raise HTTPException(status_code=404, detail="Template not found or doesn't belong to user")
         
-        # Update fields
+        # Determine locale to update the right content field
+        locale = template.locale or "en"
+        
+        # Prepare update data
         update_data = {}
+        
+        # Set fields based on locale
         if template.title is not None:
-            update_data["title"] = template.title
+            title_field = f"title_{locale}"
+            update_data[title_field] = template.title
+        
         if template.content is not None:
-            update_data["content"] = template.content
+            content_field = f"content_{locale}"
+            update_data[content_field] = template.content
+            
         if template.tags is not None:
             update_data["tags"] = template.tags
-        if template.locale is not None:
-            update_data["locale"] = template.locale
-        if template.folder is not None:
+            
+        if template.folder_id is not None:
             update_data["folder_id"] = template.folder_id
         
+        # Update the template
         response = supabase.table("prompt_templates").update(update_data).eq("id", template_id).execute()
+        
+        # Process the template for response
+        processed_template = None
+        if response.data:
+            processed_template = process_templates_for_locale([response.data[0]], locale)[0]
         
         return {
             "success": True,
-            "template": response.data[0] if response.data else None
+            "template": processed_template
         }
     except Exception as e:
         if isinstance(e, HTTPException):

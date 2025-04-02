@@ -33,11 +33,11 @@ class PromptType(str, Enum):
 # ---------------------- REUSABLE DATA ACCESS FUNCTIONS ----------------------
 
 async def fetch_folders(table_name: str, **filters) -> List[Dict]:
-    """Generic function to fetch folders with optional filters including locale."""
+    """Generic function to fetch folders with optional locale-specific name handling."""
     query = supabase.table(table_name).select("*")
     
-    # Handle locale filtering for official and organization folders
-    locale = filters.pop("locale", None)
+    # Extract locale from filters (but don't use it for SQL filtering anymore)
+    locale = filters.pop("locale", "en")  # Default to English
     
     # Apply standard filters
     for key, value in filters.items():
@@ -47,36 +47,38 @@ async def fetch_folders(table_name: str, **filters) -> List[Dict]:
         elif key != "in_values":  # Skip the in_values item since it's used with in_column
             query = query.eq(key, value)
     
-    # Apply locale filter for official and organization folders
-    if locale and table_name in ["official_folders", "organization_folders"]:
-        query = query.eq("locale", locale)
-        response = query.execute()
-        
-        # If no folders found with specific locale, fallback to English
-        if not response.data and locale != "en":
-            # Reset query and try with English locale
-            query = supabase.table(table_name).select("*")
-            
-            # Reapply standard filters
-            for key, value in filters.items():
-                if key == "in_column":
-                    if "in_values" in filters and filters["in_values"]:
-                        query = query.in_(value, filters["in_values"])
-                elif key != "in_values":  
-                    query = query.eq(key, value)
-            
-            # Apply English locale filter
-            query = query.eq("locale", "en")
-            response = query.execute()
-            return response.data or []
-    else:
-        # Execute without locale filtering
-        response = query.execute()
+    # Execute query to get all folders
+    response = query.execute()
+    folders = response.data or []
     
-    return response.data or []
+    # Process folders to use locale-specific names
+    processed_folders = []
+    for folder in folders:
+        processed_folder = folder.copy()
+        
+        # Handle official and organization folders with locale-specific names
+        if table_name in ["official_folders", "organization_folders"]:
+            # Select name based on locale (with fallback to English)
+            name_field = f"name_{locale}" if locale in ["en", "fr"] else "name_en"
+            fallback_field = "name_en"
+            
+            if name_field in folder and folder[name_field]:
+                processed_folder["name"] = folder[name_field]
+            elif fallback_field in folder and folder[fallback_field]:
+                processed_folder["name"] = folder[fallback_field]
+            else:
+                processed_folder["name"] = "Unnamed Folder"
+            
+            # Remove the locale-specific fields for backward compatibility
+            processed_folder.pop("name_en", None)
+            processed_folder.pop("name_fr", None)
+        
+        processed_folders.append(processed_folder)
+    
+    return processed_folders
 
-async def fetch_templates(folder_ids: List[int], folder_type: str) -> List[Dict]:
-    """Generic function to fetch templates for given folder IDs and type."""
+async def fetch_templates(folder_ids: List[int], folder_type: str, locale: str = "en") -> List[Dict]:
+    """Generic function to fetch templates for given folder IDs and type with locale handling."""
     if not folder_ids:
         return []
         
@@ -85,8 +87,33 @@ async def fetch_templates(folder_ids: List[int], folder_type: str) -> List[Dict]
         .eq("type", folder_type) \
         .in_("folder_id", folder_ids) \
         .execute()
+    
+    templates = response.data or []
+    
+    # Process templates to use locale-specific content
+    processed_templates = []
+    for template in templates:
+        processed_template = template.copy()
         
-    return response.data or []
+        # Select content based on locale (with fallback to English)
+        content_field = f"content_{locale}" if locale in ["en", "fr"] else "content_en"
+        fallback_field = "content_en"
+        
+        if content_field in template and template[content_field]:
+            processed_template["content"] = template[content_field]
+        elif fallback_field in template and template[fallback_field]:
+            processed_template["content"] = template[fallback_field]
+        else:
+            processed_template["content"] = ""
+        
+        # Remove the locale-specific fields for backward compatibility
+        processed_template.pop("content_en", None)
+        processed_template.pop("content_fr", None)
+
+        
+        processed_templates.append(processed_template)
+    
+    return processed_templates
 
 def organize_templates_by_folder(templates: List[Dict]) -> Dict[int, List[Dict]]:
     """Group templates by their folder_id."""
@@ -116,6 +143,10 @@ async def get_template_folders_by_type(
     locale: Optional[str] = None
 ) -> Dict:
     """Central function to get template folders by type with optional filtering."""
+    # Use English as default locale if not specified
+    if not locale:
+        locale = "en"
+        
     # Determine table name based on folder type
     table_name = {
         "official": "official_folders",
@@ -129,9 +160,8 @@ async def get_template_folders_by_type(
     # Define filters based on parameters
     filters = {}
     
-    # Add locale to filters for official and organization folders
-    if folder_type in ["official", "organization"] and locale:
-        filters["locale"] = locale
+    # Add locale to filters for processing (not SQL filtering anymore)
+    filters["locale"] = locale
     
     if folder_type == "user" and user_id:
         filters["user_id"] = user_id
@@ -147,7 +177,7 @@ async def get_template_folders_by_type(
         filters["in_column"] = "id"
         filters["in_values"] = folder_ids
     
-    # Fetch folders with possible locale filtering
+    # Fetch folders with locale processing
     folders = await fetch_folders(table_name, **filters)
     
     # If empty flag is set, return folders without templates
@@ -157,8 +187,8 @@ async def get_template_folders_by_type(
     # Get folder IDs for template query
     all_folder_ids = [folder["id"] for folder in folders]
     
-    # Fetch templates - no need to filter by locale here since we filtered the folders
-    templates = await fetch_templates(all_folder_ids, folder_type)
+    # Fetch templates with locale processing
+    templates = await fetch_templates(all_folder_ids, folder_type, locale)
     
     # Organize templates by folder
     templates_by_folder = organize_templates_by_folder(templates)
@@ -206,7 +236,7 @@ async def update_user_pinned_folders(user_id: str, folder_type: str, folder_ids:
 async def get_folders(
     type: Optional[str] = None,
     folder_ids: Optional[str] = None,  # Accept a comma-separated string
-    locale: Optional[str] = None,  # Add locale parameter
+    locale: Optional[str] = None,  # Locale parameter still used but for different purpose
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """
@@ -215,11 +245,16 @@ async def get_folders(
     Parameters:
     - type: Optional filter by folder type ('user', 'official', or 'organization')
     - folder_ids: Optional comma-separated string of folder IDs to filter by
-    - locale: Optional locale code to filter templates by language (e.g., 'en', 'fr')
+    - locale: Optional locale code to select content language (e.g., 'en', 'fr')
     """
     try:
         if type not in ["user", "official", "organization", None]:
             raise HTTPException(status_code=400, detail="Invalid folder type")
+        
+        # Default to English if locale not specified
+        if not locale:
+            locale = "en"
+            
         folder_id_list = []
         if folder_ids:
             try:
@@ -436,7 +471,7 @@ async def get_template_folders(
     type: PromptType,
     folder_ids: Optional[str] = None,  # Accept a comma-separated string
     empty: bool = False,
-    locale: Optional[str] = None,  # Add locale parameter
+    locale: Optional[str] = None,  # Locale now selects language version instead of filtering
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """
@@ -446,9 +481,13 @@ async def get_template_folders(
     - type: Type of folders to fetch ('user', 'official', or 'organization')
     - folder_ids: Optional comma-separated string of folder IDs to filter by
     - empty: Whether to return folders without templates
-    - locale: Optional locale code to filter templates by language (e.g., 'en', 'fr')
+    - locale: Optional locale code to select content language (e.g., 'en', 'fr')
     """
     try:
+        # Default to English if locale not specified
+        if not locale:
+            locale = "en"
+            
         # Parse folder_ids from comma-separated string to list of integers
         folder_id_list = []
         if folder_ids:
