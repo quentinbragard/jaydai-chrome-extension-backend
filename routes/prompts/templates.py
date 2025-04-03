@@ -17,6 +17,7 @@ class TemplateBase(BaseModel):
     content: str
     title: str
     type: str
+    description: Optional[str] = None
     tags: Optional[List[str]] = None
     locale: Optional[str] = None  # Still accept locale for backward compatibility
     folder_id: Optional[int] = None
@@ -491,6 +492,7 @@ async def update_template(
     template: TemplateUpdate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
+    print("template==========================================", template)
     """Update an existing template with custom/locale-specific content handling."""
     try:
         # Verify template belongs to user

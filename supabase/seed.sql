@@ -106,7 +106,180 @@ INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created
 	('00000000-0000-0000-0000-000000000000', 'a0f47e73-83e3-4c84-8e73-d4b11acc7277', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-03-31 15:33:41.376331+00', ''),
 	('00000000-0000-0000-0000-000000000000', '324f7305-08aa-4e58-8501-6d246b70fa65', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-03-31 15:33:41.37823+00', ''),
 	('00000000-0000-0000-0000-000000000000', 'e04fb1ae-07cc-41e8-8e8b-e5719d79e5bf', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-03-31 15:33:43.247423+00', ''),
-	('00000000-0000-0000-0000-000000000000', '65c92c4f-db32-47b7-a9c9-0e5c595589b1', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-03-31 15:33:43.248136+00', '');
+	('00000000-0000-0000-0000-000000000000', '65c92c4f-db32-47b7-a9c9-0e5c595589b1', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-03-31 15:33:43.248136+00', ''),
+	('00000000-0000-0000-0000-000000000000', '3d7f7117-513b-4b42-b391-8bfad218488a', '{"action":"user_signedup","actor_id":"43f1515b-b9c7-408d-8705-7cc8f5a13c63","actor_username":"quentin@sopatech.co","actor_via_sso":false,"log_type":"team","traits":{"provider":"google"}}', '2025-04-01 09:35:48.83165+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'b62c022f-0fe2-4823-b2a0-5b5a6442f4ac', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-01 09:50:28.735244+00', ''),
+	('00000000-0000-0000-0000-000000000000', '2d6b07ab-7c7f-42bf-abac-9d6198fbc711', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-01 09:52:11.835766+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'b08a76e0-8b89-4003-9af7-288008546f84', '{"action":"login","actor_id":"43f1515b-b9c7-408d-8705-7cc8f5a13c63","actor_username":"quentin@sopatech.co","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-01 09:57:29.999487+00', ''),
+	('00000000-0000-0000-0000-000000000000', '9d308df7-89cc-4552-a8a6-97fb9e19ac40', '{"action":"login","actor_id":"43f1515b-b9c7-408d-8705-7cc8f5a13c63","actor_username":"quentin@sopatech.co","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-01 10:05:28.330376+00', ''),
+	('00000000-0000-0000-0000-000000000000', '6b8e9764-9a78-4186-8b3e-2a43b2263461', '{"action":"user_signedup","actor_id":"20259212-ba5c-4311-8781-6d249c7e885b","actor_username":"quentinbragard@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"google"}}', '2025-04-01 10:06:15.14738+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ead94b29-4fec-4e78-866d-fc4a211fb05c', '{"action":"login","actor_id":"20259212-ba5c-4311-8781-6d249c7e885b","actor_username":"quentinbragard@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-01 10:11:47.575271+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ae63f1be-0613-4e01-8650-60733f263dff', '{"action":"user_signedup","actor_id":"6b28412c-fece-4a00-9d91-24381700e79d","actor_username":"b00604891@essec.edu","actor_via_sso":false,"log_type":"team","traits":{"provider":"google"}}', '2025-04-01 10:21:25.686829+00', ''),
+	('00000000-0000-0000-0000-000000000000', '427ba076-0d76-458a-9e9f-670ffe883986', '{"action":"token_refreshed","actor_id":"20259212-ba5c-4311-8781-6d249c7e885b","actor_username":"quentinbragard@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 11:11:50.497981+00', ''),
+	('00000000-0000-0000-0000-000000000000', '293110ab-8d35-4cac-ad78-0351568536b2', '{"action":"token_revoked","actor_id":"20259212-ba5c-4311-8781-6d249c7e885b","actor_username":"quentinbragard@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 11:11:50.499021+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'e663cb0d-8691-4b9c-8606-3481cda4e32d', '{"action":"token_refreshed","actor_id":"6b28412c-fece-4a00-9d91-24381700e79d","actor_username":"b00604891@essec.edu","actor_via_sso":false,"log_type":"token"}', '2025-04-01 11:16:25.365914+00', ''),
+	('00000000-0000-0000-0000-000000000000', '56bf20bf-fdfc-434b-9e9a-2e5243874b6f', '{"action":"token_revoked","actor_id":"6b28412c-fece-4a00-9d91-24381700e79d","actor_username":"b00604891@essec.edu","actor_via_sso":false,"log_type":"token"}', '2025-04-01 11:16:25.366903+00', ''),
+	('00000000-0000-0000-0000-000000000000', '629b2466-bfe0-4c1d-ba5d-5b7092952d98', '{"action":"token_refreshed","actor_id":"6b28412c-fece-4a00-9d91-24381700e79d","actor_username":"b00604891@essec.edu","actor_via_sso":false,"log_type":"token"}', '2025-04-01 11:16:25.416498+00', ''),
+	('00000000-0000-0000-0000-000000000000', '1b554768-e720-4dbd-95a6-9de65425eef7', '{"action":"login","actor_id":"6b28412c-fece-4a00-9d91-24381700e79d","actor_username":"b00604891@essec.edu","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-01 12:06:01.199521+00', ''),
+	('00000000-0000-0000-0000-000000000000', '45cd87bf-da9e-40cf-9869-fdfe2a753f17', '{"action":"user_signedup","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"google"}}', '2025-04-01 12:10:03.738767+00', ''),
+	('00000000-0000-0000-0000-000000000000', '60f82577-f55e-4b29-adc3-30659993c609', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 13:05:03.440236+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'e28485ac-daa8-4bc3-81a2-47371af444c8', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 13:05:03.441196+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'd68dd792-759b-4113-ae59-a5bf9983ad0f', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 13:05:03.528135+00', ''),
+	('00000000-0000-0000-0000-000000000000', '236ea014-134c-4ad2-a198-64713ec4f102', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 14:00:03.610745+00', ''),
+	('00000000-0000-0000-0000-000000000000', '64f19146-a42c-45e3-ac20-c2b1c1972e24', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 14:00:03.611723+00', ''),
+	('00000000-0000-0000-0000-000000000000', '96902951-9114-4a4d-aacc-6413b8705605', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 14:00:03.694796+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'd53dc9ff-4c45-4883-b71e-1a14f07520f1', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 14:55:03.383578+00', ''),
+	('00000000-0000-0000-0000-000000000000', '9af85e79-bcf2-4d42-89c3-000e29d302bc', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 14:55:03.384637+00', ''),
+	('00000000-0000-0000-0000-000000000000', '16fa6b29-d598-46e1-aa2a-72b5d0e8d475', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 14:55:03.461288+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'c0d5289a-0b7f-4d77-b8ab-ac6d7aac85d3', '{"action":"login","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-01 15:24:26.792275+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f3e424d8-b91b-444a-9cf4-6112d2288ffa', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 15:50:03.425888+00', ''),
+	('00000000-0000-0000-0000-000000000000', '3a823c2b-9f41-4070-bd87-404af036a0a5', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 15:50:03.426862+00', ''),
+	('00000000-0000-0000-0000-000000000000', '762bbc8f-cb82-4062-9b8c-e4b00eff36a8', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 15:50:03.480688+00', ''),
+	('00000000-0000-0000-0000-000000000000', '7b6acef0-23fc-4c1f-b647-28cefd403672', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 16:19:26.431669+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f3f5b7f5-2241-4c90-be26-ff4fea3e5ee9', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 16:19:26.432759+00', ''),
+	('00000000-0000-0000-0000-000000000000', '9585a61b-d32d-409b-8fe1-17dbb2a96f16', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 16:45:03.4257+00', ''),
+	('00000000-0000-0000-0000-000000000000', '31c0402b-52cd-4e50-92cf-9ba8dec3130c', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 16:45:03.42677+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ab34592d-eeac-47e6-b331-09cd3fdcbfd3', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-01 16:45:03.488024+00', ''),
+	('00000000-0000-0000-0000-000000000000', '68457d2c-87a4-4952-af4e-b4f7a69d91e8', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 06:31:29.917289+00', ''),
+	('00000000-0000-0000-0000-000000000000', '16dc650f-6db7-4d2f-9004-b4cba22e503b', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 06:31:29.918179+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'b29f7c44-509c-485e-a4e0-2304a3b41464', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 06:31:30.042108+00', ''),
+	('00000000-0000-0000-0000-000000000000', '4ca642af-d695-4e7f-ac06-9527817f3154', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 07:31:33.136523+00', ''),
+	('00000000-0000-0000-0000-000000000000', '3d522508-0b21-453b-9ce0-e3099eb5fccf', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 07:31:33.138849+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'a0e655db-a5d1-4769-aab8-9082dbb8f37a', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 08:31:24.892541+00', ''),
+	('00000000-0000-0000-0000-000000000000', '687ea8fd-30df-45eb-b05b-6befb9867fb7', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 08:31:24.893526+00', ''),
+	('00000000-0000-0000-0000-000000000000', '671c725c-7c84-4afb-a8a8-cf6a4fd86e93', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 08:31:26.477181+00', ''),
+	('00000000-0000-0000-0000-000000000000', '41de7625-ce77-4fae-99f4-669daae29114', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 08:31:26.477899+00', ''),
+	('00000000-0000-0000-0000-000000000000', '98bf76f7-0457-420d-a2d2-8563280c90ee', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 08:47:16.896114+00', ''),
+	('00000000-0000-0000-0000-000000000000', '4abb0577-64e9-4c11-b41d-c112aadc7fbc', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 08:47:16.898366+00', ''),
+	('00000000-0000-0000-0000-000000000000', '56546d6e-ff22-45d9-bd4c-51a836ced301', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 08:47:16.982334+00', ''),
+	('00000000-0000-0000-0000-000000000000', '8dd6b4e7-13c6-4822-b227-677e37b43ee1', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 09:20:59.846183+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'b918ff72-793a-4881-83aa-f404a6c82516', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 09:24:23.366069+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'c007bcbe-99ad-4d63-b5ee-b41eabb26797', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 09:27:18.505122+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'b3d22142-8b49-453d-8456-47cce41d9c6d', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 09:37:36.301295+00', ''),
+	('00000000-0000-0000-0000-000000000000', '5ae6f221-dd31-4f50-8882-ed9c70d1f0cd', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 09:48:46.564994+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'cd7ff476-d2d5-48c4-8645-01ad90774f83', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 09:50:13.005233+00', ''),
+	('00000000-0000-0000-0000-000000000000', '458e2fbb-aac5-42a2-b39e-e30c0f487176', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 09:51:18.053288+00', ''),
+	('00000000-0000-0000-0000-000000000000', '04b0b681-e4e4-416b-9a81-e3f7bc63d277', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 09:56:39.07969+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'bc11f5f7-b382-4db6-b2b9-505a7975c9aa', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 10:03:00.227816+00', ''),
+	('00000000-0000-0000-0000-000000000000', '1242446b-1a40-452b-b376-4aaa9f9c7348', '{"action":"login","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 10:07:46.158417+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f6d298d2-46b9-4b19-9a24-0f51762db6b6', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:02:47.068345+00', ''),
+	('00000000-0000-0000-0000-000000000000', '297e0120-ddf1-40cd-aac7-7567145d2a0e', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:02:47.06935+00', ''),
+	('00000000-0000-0000-0000-000000000000', '83313b22-1b55-4cb2-bcad-3c0a3e2f14bd', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:02:47.125902+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'eaaf2cba-97c4-4fbd-b0d4-0d19ee05542f', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:04:02.901472+00', ''),
+	('00000000-0000-0000-0000-000000000000', '35447b89-f44b-4acb-9fe6-a4846431a5a0', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:04:02.902398+00', ''),
+	('00000000-0000-0000-0000-000000000000', '676ccb66-1b9f-4002-af4d-deaaba599eee', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:04:02.974841+00', ''),
+	('00000000-0000-0000-0000-000000000000', '2161ce97-34d7-443d-8be7-86915efea0d0', '{"action":"token_refreshed","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:25:41.785003+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ef1e9dcc-6ed1-4453-a8e3-8b46153fbd4d', '{"action":"token_revoked","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:25:41.78601+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ed6a1b7e-607f-4f34-94d4-4069f754181f', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:57:47.100952+00', ''),
+	('00000000-0000-0000-0000-000000000000', '8a7e920f-a8a9-4bdd-8130-b9eca3b7338e', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 11:57:47.102957+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'dd0ee1e5-f509-4f99-908e-9da7a3111111', '{"action":"token_refreshed","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 12:45:39.049801+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'b4cf1709-2282-4b92-8953-9617e6d5d187', '{"action":"token_revoked","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 12:45:39.051629+00', ''),
+	('00000000-0000-0000-0000-000000000000', '2b5f6efd-a8ae-48b6-a246-fd28a414b916', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 12:52:48.051232+00', ''),
+	('00000000-0000-0000-0000-000000000000', '0cdb5020-90ea-4e17-ba97-07581d7c9bbe', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 12:52:48.052485+00', ''),
+	('00000000-0000-0000-0000-000000000000', '64a931ae-a4ab-479a-be32-6d9ca66a4f89', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 13:00:55.092352+00', ''),
+	('00000000-0000-0000-0000-000000000000', '090c4465-576a-47eb-af5f-611c4ef000b5', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 13:00:55.095154+00', ''),
+	('00000000-0000-0000-0000-000000000000', '8857c94d-9160-4f03-a686-bade902a5fe5', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 13:00:55.167066+00', ''),
+	('00000000-0000-0000-0000-000000000000', '7eac558d-b87e-4a33-87bf-8921fdee8e5a', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 13:47:49.32915+00', ''),
+	('00000000-0000-0000-0000-000000000000', '0a566b6d-85e6-41e6-adb2-b6f3c70c9e67', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 13:47:49.331925+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'a64af024-086f-4485-8bf9-1a79df7443d1', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 14:42:50.050539+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'cfe45fb7-2ce6-4fd5-bde4-b956565be336', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 14:42:50.053084+00', ''),
+	('00000000-0000-0000-0000-000000000000', '631b5a47-ba78-40a0-983b-2bec9ab4ff8c', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 15:37:51.256881+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'bc15300d-f548-4ef5-9ca2-d75b47cef06d', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 15:37:51.258032+00', ''),
+	('00000000-0000-0000-0000-000000000000', '2d17d47f-9979-4d19-819c-56c37863e8a9', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 16:32:52.208557+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'a8881362-da83-4894-a1d3-af17a65fc89f', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 16:32:52.209484+00', ''),
+	('00000000-0000-0000-0000-000000000000', '7707c344-fbbc-428a-acc9-13c9f89d9e98', '{"action":"login","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 16:37:04.978455+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'e13f5a24-8272-43f9-9cbd-7bf963ef7160', '{"action":"user_signedup","actor_id":"f38eee2e-9293-4c3d-ad41-3e4264c826d7","actor_username":"qqqqqqqqqqqqqq@gf.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2025-04-02 17:50:14.343777+00', ''),
+	('00000000-0000-0000-0000-000000000000', '3e43c77e-c525-4504-bc87-70b73a79d5cc', '{"action":"login","actor_id":"f38eee2e-9293-4c3d-ad41-3e4264c826d7","actor_username":"qqqqqqqqqqqqqq@gf.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2025-04-02 17:50:14.348654+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'bf85b854-2ebd-4178-bdbd-702c2dd22ddb', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 17:51:02.052577+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'c765e8f5-0938-4c12-8a70-2764500463e3', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 17:51:02.053319+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'e11c31f7-f07e-40ed-8cf1-3667aa1fd55f', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 17:51:02.148739+00', ''),
+	('00000000-0000-0000-0000-000000000000', '1bf35555-a04c-4916-9b45-860f3b68814e', '{"action":"user_signedup","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2025-04-02 17:54:20.495006+00', ''),
+	('00000000-0000-0000-0000-000000000000', '66e2e558-bccb-4bfa-b938-9e845ea36f72', '{"action":"login","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2025-04-02 17:54:20.499161+00', ''),
+	('00000000-0000-0000-0000-000000000000', '4e03ff54-6800-43fc-b9d7-3f08d9b64ce5', '{"action":"login","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-02 18:06:40.362811+00', ''),
+	('00000000-0000-0000-0000-000000000000', '5426531d-0aec-4dc2-a11a-97fea3f41829', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:02:14.65055+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f4dd6eb6-508c-41ac-b383-958731ca62c3', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:02:14.652303+00', ''),
+	('00000000-0000-0000-0000-000000000000', '957865b6-da07-4c58-b4f2-ad34d1936521', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:02:14.743439+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ebfa6add-ea3f-4a1c-89ec-5bcac76afa30', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:02:14.818516+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'd47ac022-f54e-43d9-bd97-ca669919f9a2', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:02:14.894351+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'e1ee2bf4-52dd-4d17-83f8-65f9444c2833', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:10:12.019833+00', ''),
+	('00000000-0000-0000-0000-000000000000', '624152cf-de9d-470e-a374-e3bf99d828fa', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:10:12.021918+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ffa623ad-17a7-4d7a-9090-84819908d427', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:10:12.07822+00', ''),
+	('00000000-0000-0000-0000-000000000000', '195facb1-9ee6-42c6-8bdf-695d6cd27819', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:57:15.084307+00', ''),
+	('00000000-0000-0000-0000-000000000000', '67fa8687-4d66-467b-b0d9-2699ed1b66cf', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 19:57:15.085671+00', ''),
+	('00000000-0000-0000-0000-000000000000', '1dc60303-aab2-44b1-a656-de779efb3e2d', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:11.829035+00', ''),
+	('00000000-0000-0000-0000-000000000000', '57200a66-8b83-41a7-a0db-db06da17a33a', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:11.830097+00', ''),
+	('00000000-0000-0000-0000-000000000000', '170f0efd-7f5b-4c7e-9917-18879f4827b8', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:11.891786+00', ''),
+	('00000000-0000-0000-0000-000000000000', '3d50105b-9bdb-4824-8349-a4f0a8f4affc', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:11.978901+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'd29413c8-bb60-487b-93cf-bf504d97d53a', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:12.036395+00', ''),
+	('00000000-0000-0000-0000-000000000000', '9cb703f2-f50b-45d9-9514-f6624da17860', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:12.089065+00', ''),
+	('00000000-0000-0000-0000-000000000000', '2eebea12-8f58-4bc6-8a43-1971eea27680', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:12.177605+00', ''),
+	('00000000-0000-0000-0000-000000000000', '46a76f69-0f41-4661-a43e-81d08e8e0cca', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:12.233328+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'c6360509-f39b-405b-a186-bd26aa099013', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:12.294388+00', ''),
+	('00000000-0000-0000-0000-000000000000', '882d2880-f767-4c7b-bf58-19f290e144c1', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:12.347114+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'aef24595-5adc-4d8f-b77c-4f1498e0a516', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:03:12.452138+00', ''),
+	('00000000-0000-0000-0000-000000000000', '65c19dc5-d26b-4446-98f7-95b0b7d2ff34', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:05:12.947932+00', ''),
+	('00000000-0000-0000-0000-000000000000', '26981329-bc9f-477b-af98-e4639d45c2c0', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:05:12.94896+00', ''),
+	('00000000-0000-0000-0000-000000000000', '3774d5fe-5685-4ca7-aa45-a0ca04461422', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:52:16.705673+00', ''),
+	('00000000-0000-0000-0000-000000000000', '09ac26fe-197e-4f70-b63c-0fe436b3c921', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:52:16.706781+00', ''),
+	('00000000-0000-0000-0000-000000000000', '73c23a82-94fb-4dfc-abaa-0e2e1999cfb7', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:59:13.666991+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f0ad365a-4401-4196-abed-e3ade7beb33c', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 20:59:13.668006+00', ''),
+	('00000000-0000-0000-0000-000000000000', '6a479fca-55e4-4da5-8d33-e1638111fb19', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 21:00:12.927888+00', ''),
+	('00000000-0000-0000-0000-000000000000', '5c21b30d-f54d-4d93-8dc2-0088df46507a', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 21:00:12.929676+00', ''),
+	('00000000-0000-0000-0000-000000000000', '1bfa11e7-1e20-4f3b-9319-865b17c91b9d', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 22:01:00.947885+00', ''),
+	('00000000-0000-0000-0000-000000000000', '158bcea6-45e7-4424-8289-8a70d19b4a10', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 22:01:00.948851+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'c8d38ed1-f219-43d0-80d9-bf4fd73fc250', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 22:01:01.0315+00', ''),
+	('00000000-0000-0000-0000-000000000000', '300a467f-4a06-4621-95e4-09b9930242cb', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 22:47:48.573715+00', ''),
+	('00000000-0000-0000-0000-000000000000', '567ab633-d98e-418c-8dab-f6de12cdf224', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 22:47:48.575341+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f421e600-03a4-48c7-bced-54a9f90b1ca4', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 22:54:45.576227+00', ''),
+	('00000000-0000-0000-0000-000000000000', '2d39a15e-955f-4087-b202-0c13e9a7ff4f', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-02 22:54:45.577256+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f1df546e-18f9-466f-8cda-147ea84f19c9', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 00:08:27.435039+00', ''),
+	('00000000-0000-0000-0000-000000000000', '81f71629-705e-4cf4-9d4f-7de3aca10f2e', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 00:08:27.436902+00', ''),
+	('00000000-0000-0000-0000-000000000000', '59e63b24-6d60-45b9-935e-a5b456274a39', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 00:08:27.522484+00', ''),
+	('00000000-0000-0000-0000-000000000000', '832bc3ed-e798-4731-a0ae-7ae774bfa129', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 00:19:49.251682+00', ''),
+	('00000000-0000-0000-0000-000000000000', '69fca659-2845-481a-a8b2-5d1ae43e7ab3', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 00:19:49.253904+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'd7957dc7-81bc-41eb-a18f-95d47daaa662', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 00:26:46.249629+00', ''),
+	('00000000-0000-0000-0000-000000000000', '397eda6e-7769-4494-86b1-6dfdf80bf0af', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 00:26:46.250566+00', ''),
+	('00000000-0000-0000-0000-000000000000', '69768bc2-1b3a-4478-ab36-952e6ca75624', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 01:43:08.132857+00', ''),
+	('00000000-0000-0000-0000-000000000000', '61db69a0-8dfe-4205-bef0-d124690f5743', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 01:43:08.133887+00', ''),
+	('00000000-0000-0000-0000-000000000000', '700e6b39-7221-43a7-bf64-bb2e6e1de02a', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 01:43:08.209237+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'd46deff0-4bcc-4173-9e00-eaf491ce9b96', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 02:49:14.41119+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ebf7a80e-099a-4d5d-b8dd-3211117a164e', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 02:49:14.412614+00', ''),
+	('00000000-0000-0000-0000-000000000000', '0642f79e-f218-480c-963a-3075d3707452', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 02:49:14.485914+00', ''),
+	('00000000-0000-0000-0000-000000000000', '9c22d057-a9ab-4b76-9ad8-7e99b45e0f0b', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 02:49:14.591508+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'e9c5b515-5472-4c6c-9cfc-77c5ca8d876e', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 03:25:20.971199+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f937e6cb-70b2-4fe5-b230-1f1c23586d43', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 03:25:20.972229+00', ''),
+	('00000000-0000-0000-0000-000000000000', '0dd2af6c-a353-4a9f-8435-42cc5cdabd88', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 04:35:01.982841+00', ''),
+	('00000000-0000-0000-0000-000000000000', '7ad98a90-a9a9-4bdd-a565-aa86818959c6', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 04:35:01.983867+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'be1082d0-e94f-4bcb-aea2-782ea6ae0a7b', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 04:35:02.027528+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'cf5a2a6a-7a23-4fc6-b472-dc2074723dcd', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 05:46:42.200706+00', ''),
+	('00000000-0000-0000-0000-000000000000', '2f1a2da0-263a-4801-b41c-2f9d38d64b18', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 05:46:42.202882+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'b1c5ae04-2fec-4cec-ac36-fc7734c65bc0', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 05:46:42.247739+00', ''),
+	('00000000-0000-0000-0000-000000000000', '44d22e35-7f20-42d0-95ab-0eb2df7ced6e', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 05:47:02.977987+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f3fdc953-f591-4ee3-beb5-9bb60e3a78be', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 05:47:02.978653+00', ''),
+	('00000000-0000-0000-0000-000000000000', '46b092ea-9f87-4cd4-afa3-ef28c9984d99', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 06:53:38.9789+00', ''),
+	('00000000-0000-0000-0000-000000000000', '926ba809-b2f9-471e-a9a6-b5abb0a4c56c', '{"action":"token_revoked","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 06:53:38.990655+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f7604edc-107c-4006-a829-aaafa86cddb3', '{"action":"token_refreshed","actor_id":"ee0c9faa-7cf4-4328-9918-50489f9c6743","actor_username":"hyhyh@rer.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 06:53:39.056185+00', ''),
+	('00000000-0000-0000-0000-000000000000', '78665868-4574-46a6-8a53-5b7b10859e8e', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 08:48:27.675005+00', ''),
+	('00000000-0000-0000-0000-000000000000', '2537e63a-bc6c-49b0-9030-97c2ea7b64cc', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 08:48:27.677778+00', ''),
+	('00000000-0000-0000-0000-000000000000', '468458b5-2548-4a19-97a7-40481352ca40', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 08:48:27.739538+00', ''),
+	('00000000-0000-0000-0000-000000000000', '76383956-e4bb-41d3-b019-6034f9fd405c', '{"action":"token_refreshed","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 08:50:37.29212+00', ''),
+	('00000000-0000-0000-0000-000000000000', '08e73bd5-72d0-4a4b-9857-c02d54f23460', '{"action":"token_revoked","actor_id":"f0a0ed15-b090-489e-854f-8e4dd348e4ad","actor_username":"jbhuiban@gmail.com","actor_via_sso":false,"log_type":"token"}', '2025-04-03 08:50:37.293496+00', ''),
+	('00000000-0000-0000-0000-000000000000', '92606039-7395-469f-8713-1b3d9bdb1409', '{"action":"login","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-03 11:49:34.296448+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'e713195d-58df-4ef4-a74a-2ab0d9a4c742', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 11:53:36.318613+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'a08f2e78-25bd-412c-980b-b411e4d156ed', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 11:53:36.320363+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f59c9eeb-9493-4589-a93b-483082ad1ebd', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 11:53:36.382866+00', ''),
+	('00000000-0000-0000-0000-000000000000', '547e0c90-dde6-4f75-8e86-1c733490091f', '{"action":"login","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"account","traits":{"provider":"google"}}', '2025-04-03 11:53:58.929039+00', ''),
+	('00000000-0000-0000-0000-000000000000', '8db5fa18-1c47-441f-ae4e-690ea592c0fb', '{"action":"token_refreshed","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:44:34.747341+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f7e3d3e2-cab5-4934-be2e-680f50097276', '{"action":"token_revoked","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:44:34.748456+00', ''),
+	('00000000-0000-0000-0000-000000000000', '5696c84b-9e83-460a-a429-7ece6dcc3913', '{"action":"token_refreshed","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:44:34.800547+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'ebd91be0-5fb2-4db7-984f-b1296d88d1b6', '{"action":"token_refreshed","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:44:34.849382+00', ''),
+	('00000000-0000-0000-0000-000000000000', '89617f95-700e-419e-abd6-b415b531dd29', '{"action":"token_refreshed","actor_id":"5ac2ef2a-9c42-4dbf-86fd-51be8c67461b","actor_username":"quentin@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:44:34.892406+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'aa602dfb-8981-4382-9a60-efa215199a9d', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:48:57.259695+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'dd48f9ad-9634-4b8e-8361-e3d56fa1e30b', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:48:57.260729+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'eff468f2-04f1-4e86-a135-bcf96f0c6cf4', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:48:57.915022+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'fe520970-2459-4184-a0ce-331a1f853c37', '{"action":"token_revoked","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:48:57.915709+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'b7ebec12-5bcc-4edb-b3b5-29dec66a0f60', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:48:57.964149+00', ''),
+	('00000000-0000-0000-0000-000000000000', '5add03a9-3b34-4ea2-a130-d2a74fe1605a', '{"action":"token_refreshed","actor_id":"c2d2ed42-60e8-4514-ad26-419274b64f51","actor_username":"jean-baptiste@jayd.ai","actor_via_sso":false,"log_type":"token"}', '2025-04-03 12:48:58.01287+00', '');
 
 
 --
@@ -125,9 +298,15 @@ INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encryp
 	('00000000-0000-0000-0000-000000000000', 'af7a995b-feac-4950-b5d6-7a844c223854', 'authenticated', 'authenticated', 'qu@gmail.com', '$2a$10$nr3afmZKDZ5yUZSsIaPijunincHWFD8bWWUhVL1XMOu7k.xeOHOT6', '2025-03-25 18:11:58.23065+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-03-25 18:11:58.23492+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "af7a995b-feac-4950-b5d6-7a844c223854", "name": "gtr", "email": "qu@gmail.com", "email_verified": true, "phone_verified": false}', NULL, '2025-03-25 18:11:58.222082+00', '2025-03-25 18:11:58.237537+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
 	('00000000-0000-0000-0000-000000000000', 'b8d5f98e-23a5-4a21-8fa1-ce0a41f0ef42', 'authenticated', 'authenticated', 'fr@gmail.com', '$2a$10$ia7OjE9friaWP43mzavtGe3km39yX/9w011pAvxl32jiJxUjI6IgG', '2025-03-25 18:47:46.462428+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-03-25 18:47:46.466947+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "b8d5f98e-23a5-4a21-8fa1-ce0a41f0ef42", "name": "fg", "email": "fr@gmail.com", "email_verified": true, "phone_verified": false}', NULL, '2025-03-25 18:47:46.453744+00', '2025-03-25 22:02:34.219523+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
 	('00000000-0000-0000-0000-000000000000', 'd0c384b2-2966-47aa-8b07-22be4a7c0326', 'authenticated', 'authenticated', 'aa@gmaail.com', '$2a$10$riO2u1KsP/SHJaqG0/arPuzKEKF8edxOGxWA4PQbrr7nooKtMbNnK', '2025-03-25 18:23:22.034679+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-03-25 18:23:22.039133+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "d0c384b2-2966-47aa-8b07-22be4a7c0326", "name": "yi", "email": "aa@gmaail.com", "email_verified": true, "phone_verified": false}', NULL, '2025-03-25 18:23:22.025322+00', '2025-03-26 09:13:13.538677+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', 'authenticated', 'authenticated', 'quentin@jayd.ai', '$2a$10$aEvrttwsbyvIaLxqIYqX3uUxqquyMVpFmPx4Fh2.5DOkRZqoDSOpm', '2025-03-27 08:13:14.249522+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-03-30 12:19:28.276688+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "5ac2ef2a-9c42-4dbf-86fd-51be8c67461b", "name": "Quentin", "email": "quentin@jayd.ai", "email_verified": true, "phone_verified": false}', NULL, '2025-03-27 08:13:14.240894+00', '2025-03-30 21:24:29.821267+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
 	('00000000-0000-0000-0000-000000000000', 'e4bfcd23-fd85-41ba-a00e-950802edcb20', 'authenticated', 'authenticated', 'quentin+qq@jayd.ai', '$2a$10$0F4IFCj7U8lopRVAeGmXgekz0MQwbd1GD6zJvP05hGhN.A3.yD/jS', '2025-03-25 18:02:21.234641+00', NULL, '', '2025-03-25 18:01:43.186512+00', '', NULL, '', '', NULL, '2025-03-25 18:02:21.2382+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "e4bfcd23-fd85-41ba-a00e-950802edcb20", "name": "qq", "email": "quentin+qq@jayd.ai", "email_verified": true, "phone_verified": false}', NULL, '2025-03-25 18:01:43.178461+00', '2025-03-25 18:02:21.245921+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', 'c2d2ed42-60e8-4514-ad26-419274b64f51', 'authenticated', 'authenticated', 'jean-baptiste@jayd.ai', '$2a$10$qf2SKUQo3D7LKDK6X1yFa.XAIlmXVzz0Pi6bdDil5Mqp5ZNE5X.ge', '2025-03-28 14:54:07.015993+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-03-28 14:54:07.020404+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "c2d2ed42-60e8-4514-ad26-419274b64f51", "name": "huiban", "email": "jean-baptiste@jayd.ai", "email_verified": true, "phone_verified": false}', NULL, '2025-03-28 14:54:07.006132+00', '2025-03-31 15:33:43.249866+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
+	('00000000-0000-0000-0000-000000000000', 'c2d2ed42-60e8-4514-ad26-419274b64f51', 'authenticated', 'authenticated', 'jean-baptiste@jayd.ai', '$2a$10$qf2SKUQo3D7LKDK6X1yFa.XAIlmXVzz0Pi6bdDil5Mqp5ZNE5X.ge', '2025-03-28 14:54:07.015993+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-04-03 11:53:58.929705+00', '{"provider": "email", "providers": ["email", "google"]}', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743684838, "iat": 1743681238, "iss": "accounts.google.com", "sub": "116930847452716825256", "name": "huiban", "email": "jean-baptiste@jayd.ai", "email_verified": true, "phone_verified": false}', NULL, '2025-03-28 14:54:07.006132+00', '2025-04-03 12:48:57.91739+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', 'authenticated', 'authenticated', 'quentin@sopatech.co', NULL, '2025-04-01 09:35:48.833206+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-04-01 10:05:28.331946+00', '{"provider": "google", "providers": ["google"]}', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743505527, "iat": 1743501927, "iss": "accounts.google.com", "sub": "111651606195166769529", "email": "quentin@sopatech.co", "email_verified": true, "phone_verified": false}', NULL, '2025-04-01 09:35:48.820532+00', '2025-04-01 10:05:28.334551+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', 'authenticated', 'authenticated', 'quentin@jayd.ai', '$2a$10$aEvrttwsbyvIaLxqIYqX3uUxqquyMVpFmPx4Fh2.5DOkRZqoDSOpm', '2025-03-27 08:13:14.249522+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-04-03 11:49:34.298161+00', '{"provider": "email", "providers": ["email", "google"]}', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743684570, "iat": 1743680970, "iss": "accounts.google.com", "sub": "115073634455849698205", "name": "Quentin", "email": "quentin@jayd.ai", "email_verified": true, "phone_verified": false}', NULL, '2025-03-27 08:13:14.240894+00', '2025-04-03 12:44:34.751787+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', '6b28412c-fece-4a00-9d91-24381700e79d', 'authenticated', 'authenticated', 'b00604891@essec.edu', NULL, '2025-04-01 10:21:25.687617+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-04-01 12:06:01.200597+00', '{"provider": "google", "providers": ["google"]}', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743512760, "iat": 1743509160, "iss": "accounts.google.com", "sub": "116357914315519093526", "email": "b00604891@essec.edu", "email_verified": true, "phone_verified": false}', NULL, '2025-04-01 10:21:25.679185+00', '2025-04-01 12:06:01.203466+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', '20259212-ba5c-4311-8781-6d249c7e885b', 'authenticated', 'authenticated', 'quentinbragard@gmail.com', NULL, '2025-04-01 10:06:15.147913+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-04-01 10:11:47.576215+00', '{"provider": "google", "providers": ["google"]}', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743505907, "iat": 1743502307, "iss": "accounts.google.com", "sub": "104350031743014440835", "email": "quentinbragard@gmail.com", "email_verified": true, "phone_verified": false}', NULL, '2025-04-01 10:06:15.141415+00', '2025-04-01 11:11:50.502516+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', 'f38eee2e-9293-4c3d-ad41-3e4264c826d7', 'authenticated', 'authenticated', 'qqqqqqqqqqqqqq@gf.com', '$2a$10$IAObYVMXK/rKEBd5IVfz2uofIuC617Y/bA9aAxdHNxDIcy5IUm4Ci', '2025-04-02 17:50:14.344536+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-04-02 17:50:14.349198+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "f38eee2e-9293-4c3d-ad41-3e4264c826d7", "name": "QB", "email": "qqqqqqqqqqqqqq@gf.com", "email_verified": true, "phone_verified": false}', NULL, '2025-04-02 17:50:14.335291+00', '2025-04-02 17:50:14.352781+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', 'authenticated', 'authenticated', 'hyhyh@rer.com', '$2a$10$ykG5fmMKtank1gu6yyV6Y.HGYEWludUM357qtpTfYr6TgFFvRupe.', '2025-04-02 17:54:20.49572+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-04-02 17:54:20.499717+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "ee0c9faa-7cf4-4328-9918-50489f9c6743", "name": "hyhy", "email": "hyhyh@rer.com", "email_verified": true, "phone_verified": false}', NULL, '2025-04-02 17:54:20.488158+00', '2025-04-03 06:53:39.007206+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', 'authenticated', 'authenticated', 'jbhuiban@gmail.com', NULL, '2025-04-01 12:10:03.739677+00', NULL, '', NULL, '', NULL, '', '', NULL, '2025-04-01 15:24:26.793185+00', '{"provider": "google", "providers": ["google"]}', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743524666, "iat": 1743521066, "iss": "accounts.google.com", "sub": "103456325911028559455", "email": "jbhuiban@gmail.com", "email_verified": true, "phone_verified": false}', NULL, '2025-04-01 12:10:03.730806+00', '2025-04-03 08:50:37.29668+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
 
 
 --
@@ -142,7 +321,15 @@ INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "pro
 	('6730a941-19d4-412d-814a-ecdb6d34397b', '6730a941-19d4-412d-814a-ecdb6d34397b', '{"sub": "6730a941-19d4-412d-814a-ecdb6d34397b", "name": "Huiban", "email": "jeanbaptiste@jayd.ai", "email_verified": false, "phone_verified": false}', 'email', '2025-03-25 18:34:12.14166+00', '2025-03-25 18:34:12.14171+00', '2025-03-25 18:34:12.14171+00', '988a4451-853a-4655-9b5d-918955102707'),
 	('b8d5f98e-23a5-4a21-8fa1-ce0a41f0ef42', 'b8d5f98e-23a5-4a21-8fa1-ce0a41f0ef42', '{"sub": "b8d5f98e-23a5-4a21-8fa1-ce0a41f0ef42", "name": "fg", "email": "fr@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2025-03-25 18:47:46.458945+00', '2025-03-25 18:47:46.458993+00', '2025-03-25 18:47:46.458993+00', '99d95813-5161-4010-8583-1aae134f2567'),
 	('5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '{"sub": "5ac2ef2a-9c42-4dbf-86fd-51be8c67461b", "name": "Quentin", "email": "quentin@jayd.ai", "email_verified": false, "phone_verified": false}', 'email', '2025-03-27 08:13:14.246168+00', '2025-03-27 08:13:14.246215+00', '2025-03-27 08:13:14.246215+00', 'a6b556e3-5686-441a-9f7d-bba0991dbfe1'),
-	('c2d2ed42-60e8-4514-ad26-419274b64f51', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '{"sub": "c2d2ed42-60e8-4514-ad26-419274b64f51", "name": "huiban", "email": "jean-baptiste@jayd.ai", "email_verified": false, "phone_verified": false}', 'email', '2025-03-28 14:54:07.011598+00', '2025-03-28 14:54:07.011654+00', '2025-03-28 14:54:07.011654+00', 'bc87d0a1-45c1-4730-b1e9-787fe8bd3de3');
+	('c2d2ed42-60e8-4514-ad26-419274b64f51', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '{"sub": "c2d2ed42-60e8-4514-ad26-419274b64f51", "name": "huiban", "email": "jean-baptiste@jayd.ai", "email_verified": false, "phone_verified": false}', 'email', '2025-03-28 14:54:07.011598+00', '2025-03-28 14:54:07.011654+00', '2025-03-28 14:54:07.011654+00', 'bc87d0a1-45c1-4730-b1e9-787fe8bd3de3'),
+	('115073634455849698205', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743684570, "iat": 1743680970, "iss": "accounts.google.com", "sub": "115073634455849698205", "email": "quentin@jayd.ai", "email_verified": true, "phone_verified": false}', 'google', '2025-04-01 09:50:28.729755+00', '2025-04-01 09:50:28.729802+00', '2025-04-03 11:49:34.288988+00', '35a35963-2f66-44d2-86ec-578ddee242ec'),
+	('111651606195166769529', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743505527, "iat": 1743501927, "iss": "accounts.google.com", "sub": "111651606195166769529", "email": "quentin@sopatech.co", "email_verified": true, "phone_verified": false}', 'google', '2025-04-01 09:35:48.828198+00', '2025-04-01 09:35:48.828258+00', '2025-04-01 10:05:28.325506+00', 'f4432a1a-0e18-4e03-9786-e1fef37efec6'),
+	('104350031743014440835', '20259212-ba5c-4311-8781-6d249c7e885b', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743505907, "iat": 1743502307, "iss": "accounts.google.com", "sub": "104350031743014440835", "email": "quentinbragard@gmail.com", "email_verified": true, "phone_verified": false}', 'google', '2025-04-01 10:06:15.144303+00', '2025-04-01 10:06:15.144357+00', '2025-04-01 10:11:47.571247+00', '37f4cb90-ce71-400b-a8d9-d45bd7d1e68d'),
+	('116357914315519093526', '6b28412c-fece-4a00-9d91-24381700e79d', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743512760, "iat": 1743509160, "iss": "accounts.google.com", "sub": "116357914315519093526", "email": "b00604891@essec.edu", "email_verified": true, "phone_verified": false}', 'google', '2025-04-01 10:21:25.683328+00', '2025-04-01 10:21:25.683383+00', '2025-04-01 12:06:01.195152+00', '30595f42-9e1f-40a1-b356-cb90810e1a42'),
+	('103456325911028559455', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743524666, "iat": 1743521066, "iss": "accounts.google.com", "sub": "103456325911028559455", "email": "jbhuiban@gmail.com", "email_verified": true, "phone_verified": false}', 'google', '2025-04-01 12:10:03.735139+00', '2025-04-01 12:10:03.73521+00', '2025-04-01 15:24:26.787094+00', 'b8913464-9345-4b5d-8bbd-29d72a581601'),
+	('f38eee2e-9293-4c3d-ad41-3e4264c826d7', 'f38eee2e-9293-4c3d-ad41-3e4264c826d7', '{"sub": "f38eee2e-9293-4c3d-ad41-3e4264c826d7", "name": "QB", "email": "qqqqqqqqqqqqqq@gf.com", "email_verified": false, "phone_verified": false}', 'email', '2025-04-02 17:50:14.339773+00', '2025-04-02 17:50:14.339823+00', '2025-04-02 17:50:14.339823+00', '5dafeac4-8689-4883-b435-d55eb1aadf5c'),
+	('ee0c9faa-7cf4-4328-9918-50489f9c6743', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', '{"sub": "ee0c9faa-7cf4-4328-9918-50489f9c6743", "name": "hyhy", "email": "hyhyh@rer.com", "email_verified": false, "phone_verified": false}', 'email', '2025-04-02 17:54:20.492059+00', '2025-04-02 17:54:20.492107+00', '2025-04-02 17:54:20.492107+00', 'bb542d40-4ae0-4fbe-b9aa-54509b14c2f9'),
+	('116930847452716825256', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '{"aud": "32108269805-53if057t0kgq0qlmjqr3st6v124cajam.apps.googleusercontent.com", "exp": 1743684838, "iat": 1743681238, "iss": "accounts.google.com", "sub": "116930847452716825256", "email": "jean-baptiste@jayd.ai", "email_verified": true, "phone_verified": false}', 'google', '2025-04-02 10:07:46.153517+00', '2025-04-02 10:07:46.153564+00', '2025-04-03 11:53:58.924823+00', '9e32cff0-d402-4020-9e81-e814bc2a6216');
 
 
 --
@@ -159,12 +346,39 @@ INSERT INTO "auth"."sessions" ("id", "user_id", "created_at", "updated_at", "fac
 	('b83a3af6-d890-422e-9082-1e5e4b1cb645', 'e4bfcd23-fd85-41ba-a00e-950802edcb20', '2025-03-25 18:02:21.238283+00', '2025-03-25 18:02:21.238283+00', NULL, 'aal1', NULL, NULL, 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_3_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/134.0.6998.99 Mobile/15E148 Safari/604.1', '195.154.25.58', NULL),
 	('bb3810a6-993f-4155-aa24-5a16afc969f3', 'af7a995b-feac-4950-b5d6-7a844c223854', '2025-03-25 18:11:58.23499+00', '2025-03-25 18:11:58.23499+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.44.244', NULL),
 	('d8692883-5d6d-471c-a79f-82ee5c5d30e1', '6730a941-19d4-412d-814a-ecdb6d34397b', '2025-03-25 18:34:12.149037+00', '2025-03-25 18:34:12.149037+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.44.244', NULL),
+	('b877255a-ef60-48cf-b21f-90a94f79ea6e', '20259212-ba5c-4311-8781-6d249c7e885b', '2025-04-01 10:11:47.576284+00', '2025-04-01 11:11:50.504006+00', NULL, 'aal1', NULL, '2025-04-01 11:11:50.503927', 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('dd8e8bf4-6cdb-4c12-addd-5fafaca0bf51', '6b28412c-fece-4a00-9d91-24381700e79d', '2025-04-01 10:21:25.689491+00', '2025-04-01 11:16:25.417808+00', NULL, 'aal1', NULL, '2025-04-01 11:16:25.417737', 'python-httpx/0.28.1', '34.96.35.19', NULL),
 	('b82a998b-6712-4647-bd63-607ba0315d3a', 'b8d5f98e-23a5-4a21-8fa1-ce0a41f0ef42', '2025-03-25 18:47:46.467027+00', '2025-03-25 22:02:34.220654+00', NULL, 'aal1', NULL, '2025-03-25 22:02:34.220584', 'python-httpx/0.28.1', '34.34.233.166', NULL),
+	('5c1f100c-10e7-4d95-8040-1479e5116b84', '6b28412c-fece-4a00-9d91-24381700e79d', '2025-04-01 12:06:01.200689+00', '2025-04-01 12:06:01.200689+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.19', NULL),
 	('f655410b-6993-4250-b130-aff17b858220', 'd0c384b2-2966-47aa-8b07-22be4a7c0326', '2025-03-25 18:23:22.039209+00', '2025-03-26 09:13:14.265953+00', NULL, 'aal1', NULL, '2025-03-26 09:13:14.265866', 'python-httpx/0.28.1', '34.96.47.105', NULL),
+	('659d7a25-a9c0-41d6-89f3-3f5c29bd05b4', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', '2025-04-02 17:54:20.499787+00', '2025-04-03 06:53:39.057753+00', NULL, 'aal1', NULL, '2025-04-03 06:53:39.057681', 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('80c8659f-d1db-4e4e-aae1-dc77a2715b05', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '2025-04-02 10:07:46.159456+00', '2025-04-02 16:32:52.214502+00', NULL, 'aal1', NULL, '2025-04-02 16:32:52.214431', 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('45b9e9c6-52c5-4cae-9a91-6860b73ac864', 'f38eee2e-9293-4c3d-ad41-3e4264c826d7', '2025-04-02 17:50:14.349281+00', '2025-04-02 17:50:14.349281+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('edd56ffb-ee33-4298-813f-313f48200474', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '2025-04-02 16:37:04.980666+00', '2025-04-02 17:51:02.150023+00', NULL, 'aal1', NULL, '2025-04-02 17:51:02.149949', 'python-httpx/0.28.1', '34.96.35.19', NULL),
 	('985d2dfe-7b5e-4360-9f5f-21c8f05b5ed4', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-03-30 12:18:51.701913+00', '2025-03-30 12:18:51.701913+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.47.31', NULL),
 	('ede6e9c1-d8e1-4446-9689-14416c1b9860', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-03-27 08:13:14.253457+00', '2025-03-30 12:35:22.651066+00', NULL, 'aal1', NULL, '2025-03-30 12:35:22.650988', 'python-httpx/0.28.1', '34.96.47.31', NULL),
+	('61d76fbd-ffc4-4d32-9238-e880458e53b7', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', '2025-04-01 15:24:26.793256+00', '2025-04-03 08:50:37.297622+00', NULL, 'aal1', NULL, '2025-04-03 08:50:37.297552', 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('aae48c0b-13ae-4b45-a61b-a4b8e034acb5', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', '2025-04-01 12:10:03.741644+00', '2025-04-02 08:31:26.48099+00', NULL, 'aal1', NULL, '2025-04-02 08:31:26.480907', 'python-httpx/0.28.1', '34.96.35.23', NULL),
+	('39de33df-802a-4ea6-88eb-18ab28ec8e1c', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '2025-04-02 18:06:40.364682+00', '2025-04-03 11:53:36.384301+00', NULL, 'aal1', NULL, '2025-04-03 11:53:36.384228', 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('fa860ed4-0668-4d9f-acfc-20efbae3fece', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 09:20:59.847092+00', '2025-04-02 09:20:59.847092+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.23', NULL),
+	('6bbbfa4e-a76b-4c39-8916-45e587c77308', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 09:24:23.366967+00', '2025-04-02 09:24:23.366967+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.23', NULL),
+	('d4d85934-558c-41e2-8c29-a03433742c59', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 09:27:18.506141+00', '2025-04-02 09:27:18.506141+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.23', NULL),
 	('31cd7d6d-b638-495f-8378-12bf21e03660', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-03-30 12:19:28.276756+00', '2025-03-30 21:24:29.822317+00', NULL, 'aal1', NULL, '2025-03-30 21:24:29.822251', 'python-httpx/0.28.1', '34.96.47.32', NULL),
-	('cb35abf2-b06e-4dbf-b0fb-ac6815341e2e', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '2025-03-28 14:54:07.020476+00', '2025-03-31 15:33:43.250885+00', NULL, 'aal1', NULL, '2025-03-31 15:33:43.250817', 'python-httpx/0.28.1', '34.34.233.218', NULL);
+	('412a945e-8497-4481-a02c-9027e02fc2cb', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 09:37:36.302345+00', '2025-04-02 09:37:36.302345+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.23', NULL),
+	('2cfc4f9e-f974-457a-abfe-0caa4348da6c', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 09:48:46.566509+00', '2025-04-02 09:48:46.566509+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.60', NULL),
+	('42a15e1a-78c9-496a-a4c7-d7ea95abf260', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 09:50:13.006641+00', '2025-04-02 09:50:13.006641+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.60', NULL),
+	('0f53c4af-cdf9-4c5d-8028-9a18eabecf5a', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 09:51:18.054092+00', '2025-04-02 09:51:18.054092+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.60', NULL),
+	('c8726859-2107-47f1-97e9-6ef37cf8bab7', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 09:56:39.080775+00', '2025-04-02 09:56:39.080775+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.60', NULL),
+	('cb35abf2-b06e-4dbf-b0fb-ac6815341e2e', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '2025-03-28 14:54:07.020476+00', '2025-03-31 15:33:43.250885+00', NULL, 'aal1', NULL, '2025-03-31 15:33:43.250817', 'python-httpx/0.28.1', '34.34.233.218', NULL),
+	('2df3a6e4-81b8-47de-9dd0-27cc6bd86c17', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', '2025-04-01 09:35:48.837911+00', '2025-04-01 09:35:48.837911+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.28', NULL),
+	('35e8b79c-4f5b-49b8-9db2-ba8872ed46ce', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-01 09:50:28.736081+00', '2025-04-01 09:50:28.736081+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('a639fcb8-0c56-4e60-935c-f1afaedce3e8', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-01 09:52:11.836727+00', '2025-04-01 09:52:11.836727+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('3ac12ec5-9f19-4823-b365-7df7df21c7c1', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', '2025-04-01 09:57:30.028295+00', '2025-04-01 09:57:30.028295+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('6cffd239-0e74-46dd-8b4c-006bf4d7c5d1', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', '2025-04-01 10:05:28.332026+00', '2025-04-01 10:05:28.332026+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('faca5a4f-0dfc-49cb-81d2-8fc29a681530', '20259212-ba5c-4311-8781-6d249c7e885b', '2025-04-01 10:06:15.150022+00', '2025-04-01 10:06:15.150022+00', NULL, 'aal1', NULL, NULL, 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('1d3a3fd2-da7c-4dd8-9b60-b247b1a43f80', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-03 11:49:34.298236+00', '2025-04-03 12:44:34.89362+00', NULL, 'aal1', NULL, '2025-04-03 12:44:34.893543', 'python-httpx/0.28.1', '34.96.35.19', NULL),
+	('00e9eb35-8c83-4cea-8ae0-d5cf483553c5', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '2025-04-02 10:03:00.22972+00', '2025-04-02 12:45:39.057928+00', NULL, 'aal1', NULL, '2025-04-02 12:45:39.057845', 'python-httpx/0.28.1', '34.96.35.57', NULL),
+	('713f7d80-201a-43d2-b3b1-1c371c74862f', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '2025-04-03 11:53:58.929774+00', '2025-04-03 12:48:58.014241+00', NULL, 'aal1', NULL, '2025-04-03 12:48:58.014169', 'python-httpx/0.28.1', '34.96.35.19', NULL);
 
 
 --
@@ -180,7 +394,34 @@ INSERT INTO "auth"."mfa_amr_claims" ("session_id", "created_at", "updated_at", "
 	('ede6e9c1-d8e1-4446-9689-14416c1b9860', '2025-03-27 08:13:14.256269+00', '2025-03-27 08:13:14.256269+00', 'password', '366f976d-0a5b-4f2e-9128-94dd2daa57c9'),
 	('cb35abf2-b06e-4dbf-b0fb-ac6815341e2e', '2025-03-28 14:54:07.02388+00', '2025-03-28 14:54:07.02388+00', 'password', '9b6e0900-268b-4300-86a1-6101c9d630b4'),
 	('985d2dfe-7b5e-4360-9f5f-21c8f05b5ed4', '2025-03-30 12:18:51.705248+00', '2025-03-30 12:18:51.705248+00', 'password', '727abc3d-d2a3-40e4-a468-4074506b34a5'),
-	('31cd7d6d-b638-495f-8378-12bf21e03660', '2025-03-30 12:19:28.278852+00', '2025-03-30 12:19:28.278852+00', 'password', '8cdb45c5-bdfe-4ac2-89fa-9b76fdfe32e7');
+	('31cd7d6d-b638-495f-8378-12bf21e03660', '2025-03-30 12:19:28.278852+00', '2025-03-30 12:19:28.278852+00', 'password', '8cdb45c5-bdfe-4ac2-89fa-9b76fdfe32e7'),
+	('2df3a6e4-81b8-47de-9dd0-27cc6bd86c17', '2025-04-01 09:35:48.840472+00', '2025-04-01 09:35:48.840472+00', 'oauth', '25c9d64b-e1e7-4c62-b31c-e2f84d1c213d'),
+	('35e8b79c-4f5b-49b8-9db2-ba8872ed46ce', '2025-04-01 09:50:28.738908+00', '2025-04-01 09:50:28.738908+00', 'oauth', '88bdbed5-d6d0-45cb-86f1-971d89a0148f'),
+	('a639fcb8-0c56-4e60-935c-f1afaedce3e8', '2025-04-01 09:52:11.839681+00', '2025-04-01 09:52:11.839681+00', 'oauth', 'be6a05e9-dbd2-4c3e-8a81-1768f2812a1a'),
+	('3ac12ec5-9f19-4823-b365-7df7df21c7c1', '2025-04-01 09:57:30.034881+00', '2025-04-01 09:57:30.034881+00', 'oauth', '2c488d36-1386-45da-88d7-93005f711aca'),
+	('6cffd239-0e74-46dd-8b4c-006bf4d7c5d1', '2025-04-01 10:05:28.335051+00', '2025-04-01 10:05:28.335051+00', 'oauth', '03bd481b-6a3b-4c81-b621-cebd639c2446'),
+	('faca5a4f-0dfc-49cb-81d2-8fc29a681530', '2025-04-01 10:06:15.15243+00', '2025-04-01 10:06:15.15243+00', 'oauth', 'e175350d-303a-429d-bd9a-edf1247a9d84'),
+	('b877255a-ef60-48cf-b21f-90a94f79ea6e', '2025-04-01 10:11:47.579045+00', '2025-04-01 10:11:47.579045+00', 'oauth', '62001ba2-4074-4ca4-b77b-ac4ec2c69fcd'),
+	('dd8e8bf4-6cdb-4c12-addd-5fafaca0bf51', '2025-04-01 10:21:25.692373+00', '2025-04-01 10:21:25.692373+00', 'oauth', 'eb9f08c6-78b4-4de0-99c1-8ff62165164b'),
+	('5c1f100c-10e7-4d95-8040-1479e5116b84', '2025-04-01 12:06:01.204092+00', '2025-04-01 12:06:01.204092+00', 'oauth', '7d1527c0-aab5-46ce-b76f-75f1c80d9aec'),
+	('aae48c0b-13ae-4b45-a61b-a4b8e034acb5', '2025-04-01 12:10:03.744674+00', '2025-04-01 12:10:03.744674+00', 'oauth', '4f137116-ba6d-4e3e-94be-63252b3df8d8'),
+	('61d76fbd-ffc4-4d32-9238-e880458e53b7', '2025-04-01 15:24:26.796232+00', '2025-04-01 15:24:26.796232+00', 'oauth', '4b0df114-3e3f-4d2f-8b16-2d72f08bb839'),
+	('fa860ed4-0668-4d9f-acfc-20efbae3fece', '2025-04-02 09:20:59.851239+00', '2025-04-02 09:20:59.851239+00', 'oauth', '69e0ab94-f301-4f72-8e6a-35bf77fa0723'),
+	('6bbbfa4e-a76b-4c39-8916-45e587c77308', '2025-04-02 09:24:23.37023+00', '2025-04-02 09:24:23.37023+00', 'oauth', 'a92b98b1-c0e2-4e5e-9ac1-ac1bd1bcbeb5'),
+	('d4d85934-558c-41e2-8c29-a03433742c59', '2025-04-02 09:27:18.509368+00', '2025-04-02 09:27:18.509368+00', 'oauth', '6871edd5-e3e4-4112-b687-64e96a2390f6'),
+	('412a945e-8497-4481-a02c-9027e02fc2cb', '2025-04-02 09:37:36.306903+00', '2025-04-02 09:37:36.306903+00', 'oauth', 'a1b5f8dd-3e03-45c2-bb97-c1a24bc23833'),
+	('2cfc4f9e-f974-457a-abfe-0caa4348da6c', '2025-04-02 09:48:46.569394+00', '2025-04-02 09:48:46.569394+00', 'oauth', '163514ee-1ae6-4b68-84df-aa741f2af494'),
+	('42a15e1a-78c9-496a-a4c7-d7ea95abf260', '2025-04-02 09:50:13.009845+00', '2025-04-02 09:50:13.009845+00', 'oauth', '84b714bd-9d6e-4842-a998-28496303768a'),
+	('0f53c4af-cdf9-4c5d-8028-9a18eabecf5a', '2025-04-02 09:51:18.056345+00', '2025-04-02 09:51:18.056345+00', 'oauth', '7939f8d4-a0c1-4d8b-af1d-e437b5801bf0'),
+	('c8726859-2107-47f1-97e9-6ef37cf8bab7', '2025-04-02 09:56:39.083991+00', '2025-04-02 09:56:39.083991+00', 'oauth', 'b4a8aa7e-b755-4393-9aa9-b5e4dc0d34f4'),
+	('00e9eb35-8c83-4cea-8ae0-d5cf483553c5', '2025-04-02 10:03:00.234322+00', '2025-04-02 10:03:00.234322+00', 'oauth', 'ca69eaef-49ea-4096-8a1f-d5f2fc8337c8'),
+	('80c8659f-d1db-4e4e-aae1-dc77a2715b05', '2025-04-02 10:07:46.162484+00', '2025-04-02 10:07:46.162484+00', 'oauth', '2bf8480c-b518-4a14-ba42-3a830f6a782b'),
+	('edd56ffb-ee33-4298-813f-313f48200474', '2025-04-02 16:37:04.984172+00', '2025-04-02 16:37:04.984172+00', 'oauth', 'e668fea6-82e2-44d4-9ba9-67cff88a7338'),
+	('45b9e9c6-52c5-4cae-9a91-6860b73ac864', '2025-04-02 17:50:14.353294+00', '2025-04-02 17:50:14.353294+00', 'password', '760a6f03-816e-4af6-86a1-ab396aefd9ca'),
+	('659d7a25-a9c0-41d6-89f3-3f5c29bd05b4', '2025-04-02 17:54:20.502779+00', '2025-04-02 17:54:20.502779+00', 'password', 'ecea5b63-f284-422d-bb8e-83f0b368211d'),
+	('39de33df-802a-4ea6-88eb-18ab28ec8e1c', '2025-04-02 18:06:40.369282+00', '2025-04-02 18:06:40.369282+00', 'oauth', '8ff28fad-fe5a-44d6-95db-475dedac0692'),
+	('1d3a3fd2-da7c-4dd8-9b60-b247b1a43f80', '2025-04-03 11:49:34.303203+00', '2025-04-03 11:49:34.303203+00', 'oauth', '29fc347c-515e-4806-bd72-2e739f99e93b'),
+	('713f7d80-201a-43d2-b3b1-1c371c74862f', '2025-04-03 11:53:58.931929+00', '2025-04-03 11:53:58.931929+00', 'oauth', '5f6bb667-ed56-4dda-ab30-76d588ee67b9');
 
 
 --
@@ -241,7 +482,86 @@ INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "r
 	('00000000-0000-0000-0000-000000000000', 31, '23HrZv_B_I7Pk-ns-wkiHA', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-03-31 13:38:48.701912+00', '2025-03-31 14:33:48.381632+00', 'ZgB4b8RuOEcywW9m84f5Bg', 'cb35abf2-b06e-4dbf-b0fb-ac6815341e2e'),
 	('00000000-0000-0000-0000-000000000000', 32, 'OB6WFVijJouy27m8QZlLgQ', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-03-31 14:33:48.382273+00', '2025-03-31 15:33:41.379938+00', '23HrZv_B_I7Pk-ns-wkiHA', 'cb35abf2-b06e-4dbf-b0fb-ac6815341e2e'),
 	('00000000-0000-0000-0000-000000000000', 33, '_8oVNsYaMae7dDH4KTk75Q', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-03-31 15:33:41.380859+00', '2025-03-31 15:33:43.248662+00', 'OB6WFVijJouy27m8QZlLgQ', 'cb35abf2-b06e-4dbf-b0fb-ac6815341e2e'),
-	('00000000-0000-0000-0000-000000000000', 34, 'n7PVm-wyDX56c1wcKGiHzg', 'c2d2ed42-60e8-4514-ad26-419274b64f51', false, '2025-03-31 15:33:43.249+00', '2025-03-31 15:33:43.249+00', '_8oVNsYaMae7dDH4KTk75Q', 'cb35abf2-b06e-4dbf-b0fb-ac6815341e2e');
+	('00000000-0000-0000-0000-000000000000', 34, 'n7PVm-wyDX56c1wcKGiHzg', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-03-31 15:33:43.249+00', '2025-03-31 16:24:41.972064+00', '_8oVNsYaMae7dDH4KTk75Q', 'cb35abf2-b06e-4dbf-b0fb-ac6815341e2e'),
+	('00000000-0000-0000-0000-000000000000', 35, '0WNgo9aI7ywet6rZS2iR-Q', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', false, '2025-04-01 09:35:48.838825+00', '2025-04-01 09:35:48.838825+00', NULL, '2df3a6e4-81b8-47de-9dd0-27cc6bd86c17'),
+	('00000000-0000-0000-0000-000000000000', 36, 'pdrCSyXFcFs17KaXj8UOCg', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-01 09:50:28.737065+00', '2025-04-01 09:50:28.737065+00', NULL, '35e8b79c-4f5b-49b8-9db2-ba8872ed46ce'),
+	('00000000-0000-0000-0000-000000000000', 37, 'bgrU1Py5e96Yv6KnI8oWCg', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-01 09:52:11.837679+00', '2025-04-01 09:52:11.837679+00', NULL, 'a639fcb8-0c56-4e60-935c-f1afaedce3e8'),
+	('00000000-0000-0000-0000-000000000000', 38, 'X6KsjIO4p4ZUpzuKI8tbDw', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', false, '2025-04-01 09:57:30.029831+00', '2025-04-01 09:57:30.029831+00', NULL, '3ac12ec5-9f19-4823-b365-7df7df21c7c1'),
+	('00000000-0000-0000-0000-000000000000', 39, 'N4HEmuAdIhtRwzZvHYIggg', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', false, '2025-04-01 10:05:28.333135+00', '2025-04-01 10:05:28.333135+00', NULL, '6cffd239-0e74-46dd-8b4c-006bf4d7c5d1'),
+	('00000000-0000-0000-0000-000000000000', 40, 'vuwjfg0Qrp6NZcn23TqD2Q', '20259212-ba5c-4311-8781-6d249c7e885b', false, '2025-04-01 10:06:15.150739+00', '2025-04-01 10:06:15.150739+00', NULL, 'faca5a4f-0dfc-49cb-81d2-8fc29a681530'),
+	('00000000-0000-0000-0000-000000000000', 41, 'g8chz5MQ076Qm1d6MF8q6A', '20259212-ba5c-4311-8781-6d249c7e885b', true, '2025-04-01 10:11:47.57728+00', '2025-04-01 11:11:50.499605+00', NULL, 'b877255a-ef60-48cf-b21f-90a94f79ea6e'),
+	('00000000-0000-0000-0000-000000000000', 43, 'vGlEzlYMACP20KFWLuc6vg', '20259212-ba5c-4311-8781-6d249c7e885b', false, '2025-04-01 11:11:50.500288+00', '2025-04-01 11:11:50.500288+00', 'g8chz5MQ076Qm1d6MF8q6A', 'b877255a-ef60-48cf-b21f-90a94f79ea6e'),
+	('00000000-0000-0000-0000-000000000000', 42, 'OAcpt9LxSF11RiHr6LYQbQ', '6b28412c-fece-4a00-9d91-24381700e79d', true, '2025-04-01 10:21:25.690518+00', '2025-04-01 11:16:25.368194+00', NULL, 'dd8e8bf4-6cdb-4c12-addd-5fafaca0bf51'),
+	('00000000-0000-0000-0000-000000000000', 44, 'mQr_xZUS1qF4q8Ys-8UFDQ', '6b28412c-fece-4a00-9d91-24381700e79d', false, '2025-04-01 11:16:25.368857+00', '2025-04-01 11:16:25.368857+00', 'OAcpt9LxSF11RiHr6LYQbQ', 'dd8e8bf4-6cdb-4c12-addd-5fafaca0bf51'),
+	('00000000-0000-0000-0000-000000000000', 45, '8B5t-yuPQZr6lRwJtS1X5w', '6b28412c-fece-4a00-9d91-24381700e79d', false, '2025-04-01 12:06:01.201904+00', '2025-04-01 12:06:01.201904+00', NULL, '5c1f100c-10e7-4d95-8040-1479e5116b84'),
+	('00000000-0000-0000-0000-000000000000', 46, 'gy_ebMHS_PyvoFRnrYXFtg', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-01 12:10:03.742664+00', '2025-04-01 13:05:03.441738+00', NULL, 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 47, '5G9v5CdOpKCTm2Xl9DFjsg', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-01 13:05:03.442437+00', '2025-04-01 14:00:03.612268+00', 'gy_ebMHS_PyvoFRnrYXFtg', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 93, 'ljKSF-ba56kjTrrLBNFVaQ', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-02 22:01:00.951515+00', '2025-04-02 22:47:48.576424+00', 'WUZv8SLMxVqteDnQlNNUtw', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 48, 'jznGohQvQD6cBtgWdBahuA', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-01 14:00:03.61298+00', '2025-04-01 14:55:03.385234+00', '5G9v5CdOpKCTm2Xl9DFjsg', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 94, 'a-_pUI3ngnw0K2fklxyj6g', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-02 22:47:48.57766+00', '2025-04-02 22:54:45.57807+00', 'ljKSF-ba56kjTrrLBNFVaQ', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 88, 'PNGAd0sABhRnZW1HFN-QFQ', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 20:03:11.831297+00', '2025-04-03 08:48:27.678377+00', 'b7CJbtUcHhI71WA5hm0iHA', '39de33df-802a-4ea6-88eb-18ab28ec8e1c'),
+	('00000000-0000-0000-0000-000000000000', 49, '0x87xVWe1sBEG8nBv-HprA', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-01 14:55:03.385968+00', '2025-04-01 15:50:03.427422+00', 'jznGohQvQD6cBtgWdBahuA', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 92, 'lM_GahBsCIaD2xQOm5t6ZA', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 21:00:12.931659+00', '2025-04-03 08:50:37.294017+00', 'Af4xIgKOGWXNZxqk6BhheQ', '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 50, 'yGRKjKkjYifJR-pWFgp0rg', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-01 15:24:26.794205+00', '2025-04-01 16:19:26.433458+00', NULL, '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 51, 'ey2H7REi7Vg3VjMOU07ObQ', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-01 15:50:03.428163+00', '2025-04-01 16:45:03.427387+00', '0x87xVWe1sBEG8nBv-HprA', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 53, 'Svpv57LJGjm1CfQIItmR-A', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-01 16:45:03.42823+00', '2025-04-02 06:31:29.918691+00', 'ey2H7REi7Vg3VjMOU07ObQ', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 54, '8KZdPtroeQjAXE_kkQbf7g', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 06:31:29.920279+00', '2025-04-02 07:31:33.139435+00', 'Svpv57LJGjm1CfQIItmR-A', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 55, '-nKf0dQZWhmtg9KDxi990w', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 07:31:33.142179+00', '2025-04-02 08:31:24.894054+00', '8KZdPtroeQjAXE_kkQbf7g', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 56, 'OWfPbphiwpAdaRUF0H1_MA', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 08:31:24.89567+00', '2025-04-02 08:31:26.478449+00', '-nKf0dQZWhmtg9KDxi990w', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 57, 'qGhN3eupUIhQoWbarfJuXA', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 08:31:26.478868+00', '2025-04-02 08:31:56.336019+00', 'OWfPbphiwpAdaRUF0H1_MA', 'aae48c0b-13ae-4b45-a61b-a4b8e034acb5'),
+	('00000000-0000-0000-0000-000000000000', 52, 'eSBtnA-kd8Bgjbrgy7MVXg', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-01 16:19:26.434208+00', '2025-04-02 08:47:16.898969+00', 'yGRKjKkjYifJR-pWFgp0rg', '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 59, 'zYEhrusKnOV8vDCyWt24EQ', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 09:20:59.848222+00', '2025-04-02 09:20:59.848222+00', NULL, 'fa860ed4-0668-4d9f-acfc-20efbae3fece'),
+	('00000000-0000-0000-0000-000000000000', 60, 'yJ8PNzbmxq8WrghkADyvhQ', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 09:24:23.36777+00', '2025-04-02 09:24:23.36777+00', NULL, '6bbbfa4e-a76b-4c39-8916-45e587c77308'),
+	('00000000-0000-0000-0000-000000000000', 61, 'Nba9TNhLO-2q_6I9dbPUmg', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 09:27:18.507229+00', '2025-04-02 09:27:18.507229+00', NULL, 'd4d85934-558c-41e2-8c29-a03433742c59'),
+	('00000000-0000-0000-0000-000000000000', 62, 'nKv2baTCfhxn-n-McjCnyQ', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 09:37:36.303518+00', '2025-04-02 09:37:36.303518+00', NULL, '412a945e-8497-4481-a02c-9027e02fc2cb'),
+	('00000000-0000-0000-0000-000000000000', 63, 'jN2ShCG07gUPNc0S03L_WA', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 09:48:46.56755+00', '2025-04-02 09:48:46.56755+00', NULL, '2cfc4f9e-f974-457a-abfe-0caa4348da6c'),
+	('00000000-0000-0000-0000-000000000000', 64, 'hSUHkd1UebRVdQV7qKY05w', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 09:50:13.008111+00', '2025-04-02 09:50:13.008111+00', NULL, '42a15e1a-78c9-496a-a4c7-d7ea95abf260'),
+	('00000000-0000-0000-0000-000000000000', 65, 'Xa8FucL8kFDmYmEfG9r2oQ', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 09:51:18.054922+00', '2025-04-02 09:51:18.054922+00', NULL, '0f53c4af-cdf9-4c5d-8028-9a18eabecf5a'),
+	('00000000-0000-0000-0000-000000000000', 66, 'qn61TFi8h0IQkrSBHiR-5A', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 09:56:39.081962+00', '2025-04-02 09:56:39.081962+00', NULL, 'c8726859-2107-47f1-97e9-6ef37cf8bab7'),
+	('00000000-0000-0000-0000-000000000000', 68, 'AlvBJXkLjcH5bPTlSy8o8g', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 10:07:46.160534+00', '2025-04-02 11:02:47.06988+00', NULL, '80c8659f-d1db-4e4e-aae1-dc77a2715b05'),
+	('00000000-0000-0000-0000-000000000000', 58, 'z_KonHV4WA7vTQnVA3z62A', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 08:47:16.900566+00', '2025-04-02 11:04:02.902913+00', 'eSBtnA-kd8Bgjbrgy7MVXg', '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 67, 'PvuFJJxj7LgKZT3Kn-mn6Q', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', true, '2025-04-02 10:03:00.231081+00', '2025-04-02 11:25:41.786537+00', NULL, '00e9eb35-8c83-4cea-8ae0-d5cf483553c5'),
+	('00000000-0000-0000-0000-000000000000', 69, 'aeRF9iZ3fWxx3AjbWQX5XQ', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 11:02:47.07131+00', '2025-04-02 11:57:47.103515+00', 'AlvBJXkLjcH5bPTlSy8o8g', '80c8659f-d1db-4e4e-aae1-dc77a2715b05'),
+	('00000000-0000-0000-0000-000000000000', 71, 'nBz0g-wk-dKD9BKtsboHTg', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', true, '2025-04-02 11:25:41.787326+00', '2025-04-02 12:45:39.0523+00', 'PvuFJJxj7LgKZT3Kn-mn6Q', '00e9eb35-8c83-4cea-8ae0-d5cf483553c5'),
+	('00000000-0000-0000-0000-000000000000', 73, 'OteDHBHByA8dJB2kHxooQg', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-02 12:45:39.054656+00', '2025-04-02 12:45:39.054656+00', 'nBz0g-wk-dKD9BKtsboHTg', '00e9eb35-8c83-4cea-8ae0-d5cf483553c5'),
+	('00000000-0000-0000-0000-000000000000', 72, '-7IHR4Xbu3at5KmRpf-6nA', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 11:57:47.104296+00', '2025-04-02 12:52:48.05317+00', 'aeRF9iZ3fWxx3AjbWQX5XQ', '80c8659f-d1db-4e4e-aae1-dc77a2715b05'),
+	('00000000-0000-0000-0000-000000000000', 70, 'XFrsPjfnsbdHrvzZrwyonQ', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 11:04:02.9036+00', '2025-04-02 13:00:55.09664+00', 'z_KonHV4WA7vTQnVA3z62A', '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 74, '1yUzAHLPBDpr9x4GIKVRBQ', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 12:52:48.055184+00', '2025-04-02 13:47:49.332513+00', '-7IHR4Xbu3at5KmRpf-6nA', '80c8659f-d1db-4e4e-aae1-dc77a2715b05'),
+	('00000000-0000-0000-0000-000000000000', 76, 'dXv7HHIN1-j9DqYEQcwScA', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 13:47:49.33406+00', '2025-04-02 14:42:50.053794+00', '1yUzAHLPBDpr9x4GIKVRBQ', '80c8659f-d1db-4e4e-aae1-dc77a2715b05'),
+	('00000000-0000-0000-0000-000000000000', 77, 'DygIfnRK6J9EurqHQHY8TQ', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 14:42:50.054676+00', '2025-04-02 15:37:51.258753+00', 'dXv7HHIN1-j9DqYEQcwScA', '80c8659f-d1db-4e4e-aae1-dc77a2715b05'),
+	('00000000-0000-0000-0000-000000000000', 78, 'E22EmVg0BLv61kHavXIVvg', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 15:37:51.260218+00', '2025-04-02 16:32:52.209978+00', 'DygIfnRK6J9EurqHQHY8TQ', '80c8659f-d1db-4e4e-aae1-dc77a2715b05'),
+	('00000000-0000-0000-0000-000000000000', 79, '5d126JFSfKZHDIiteu3cxw', 'c2d2ed42-60e8-4514-ad26-419274b64f51', false, '2025-04-02 16:32:52.212108+00', '2025-04-02 16:32:52.212108+00', 'E22EmVg0BLv61kHavXIVvg', '80c8659f-d1db-4e4e-aae1-dc77a2715b05'),
+	('00000000-0000-0000-0000-000000000000', 81, 'WSwR_lr7UZEdAiwX_QfQRA', 'f38eee2e-9293-4c3d-ad41-3e4264c826d7', false, '2025-04-02 17:50:14.350526+00', '2025-04-02 17:50:14.350526+00', NULL, '45b9e9c6-52c5-4cae-9a91-6860b73ac864'),
+	('00000000-0000-0000-0000-000000000000', 80, 'fBU1BEjKPjRj_GAqgvFPQA', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 16:37:04.98168+00', '2025-04-02 17:51:02.053835+00', NULL, 'edd56ffb-ee33-4298-813f-313f48200474'),
+	('00000000-0000-0000-0000-000000000000', 82, 'ehjECH9V_3gwJkRP-qoHRw', 'c2d2ed42-60e8-4514-ad26-419274b64f51', false, '2025-04-02 17:51:02.054502+00', '2025-04-02 17:51:02.054502+00', 'fBU1BEjKPjRj_GAqgvFPQA', 'edd56ffb-ee33-4298-813f-313f48200474'),
+	('00000000-0000-0000-0000-000000000000', 84, 'UtOCxwuKrDW-ygXpGm3WCg', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 18:06:40.365878+00', '2025-04-02 19:02:14.652842+00', NULL, '39de33df-802a-4ea6-88eb-18ab28ec8e1c'),
+	('00000000-0000-0000-0000-000000000000', 75, 'oyf0-Pu0a95T6JAel_Wfng', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 13:00:55.099539+00', '2025-04-02 19:10:12.022659+00', 'XFrsPjfnsbdHrvzZrwyonQ', '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 83, '3Mjw-uIafPAOMrMRL4o7Vg', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-02 17:54:20.500774+00', '2025-04-02 19:57:15.086455+00', NULL, '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 85, 'b7CJbtUcHhI71WA5hm0iHA', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-02 19:02:14.653594+00', '2025-04-02 20:03:11.830639+00', 'UtOCxwuKrDW-ygXpGm3WCg', '39de33df-802a-4ea6-88eb-18ab28ec8e1c'),
+	('00000000-0000-0000-0000-000000000000', 86, 'KBAK5GVs0k3pb-CxnRDLZA', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 19:10:12.024444+00', '2025-04-02 20:05:12.949506+00', 'oyf0-Pu0a95T6JAel_Wfng', '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 87, 'VKl3oX4qqKL93-nQkoUkvQ', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-02 19:57:15.088133+00', '2025-04-02 20:52:16.707352+00', '3Mjw-uIafPAOMrMRL4o7Vg', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 90, 'AJGsaQumnVqKqW74LyGHng', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-02 20:52:16.708818+00', '2025-04-02 20:59:13.668529+00', 'VKl3oX4qqKL93-nQkoUkvQ', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 89, 'Af4xIgKOGWXNZxqk6BhheQ', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', true, '2025-04-02 20:05:12.950736+00', '2025-04-02 21:00:12.930205+00', 'KBAK5GVs0k3pb-CxnRDLZA', '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 91, 'WUZv8SLMxVqteDnQlNNUtw', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-02 20:59:13.671909+00', '2025-04-02 22:01:00.94943+00', 'AJGsaQumnVqKqW74LyGHng', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 95, 'bW2OiUHyJyskR17kLfPnEg', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-02 22:54:45.580462+00', '2025-04-03 00:08:27.438149+00', 'a-_pUI3ngnw0K2fklxyj6g', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 96, 'Huon7uPUjD3HXRZTsjkGiA', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 00:08:27.439344+00', '2025-04-03 00:19:49.254396+00', 'bW2OiUHyJyskR17kLfPnEg', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 97, 'so4AhvnmbsdNr7koFYTKTg', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 00:19:49.256279+00', '2025-04-03 00:26:46.251073+00', 'Huon7uPUjD3HXRZTsjkGiA', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 98, 'DiAcM7HZb3TChbOSVgJT_w', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 00:26:46.251738+00', '2025-04-03 01:43:08.134448+00', 'so4AhvnmbsdNr7koFYTKTg', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 99, 'j18Wb1mOp40BM2yw_R84oA', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 01:43:08.135772+00', '2025-04-03 02:49:14.413132+00', 'DiAcM7HZb3TChbOSVgJT_w', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 100, '6l2TimJZoGyI7XOsUkUuEQ', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 02:49:14.413749+00', '2025-04-03 03:25:20.972863+00', 'j18Wb1mOp40BM2yw_R84oA', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 101, 'lIfUAc2sSGtzjwhZvo4R-A', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 03:25:20.973597+00', '2025-04-03 04:35:01.984538+00', '6l2TimJZoGyI7XOsUkUuEQ', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 102, 'nG30OIYIiJjTtgIbpORlwQ', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 04:35:01.98526+00', '2025-04-03 05:46:42.208633+00', 'lIfUAc2sSGtzjwhZvo4R-A', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 103, 'ng_Hs1TkJxIwwMXOpVA1AQ', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 05:46:42.210397+00', '2025-04-03 05:47:02.979182+00', 'nG30OIYIiJjTtgIbpORlwQ', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 104, 'EvcZVfeHAgv7HbdXCVwJGg', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', true, '2025-04-03 05:47:02.979549+00', '2025-04-03 06:53:38.991338+00', 'ng_Hs1TkJxIwwMXOpVA1AQ', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 105, '2b27zErvJv0YqN1JBqmi6w', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', false, '2025-04-03 06:53:39.004257+00', '2025-04-03 06:53:39.004257+00', 'EvcZVfeHAgv7HbdXCVwJGg', '659d7a25-a9c0-41d6-89f3-3f5c29bd05b4'),
+	('00000000-0000-0000-0000-000000000000', 107, 'u4oPZID--Ai5WwuAJgybOQ', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', false, '2025-04-03 08:50:37.295664+00', '2025-04-03 08:50:37.295664+00', 'lM_GahBsCIaD2xQOm5t6ZA', '61d76fbd-ffc4-4d32-9238-e880458e53b7'),
+	('00000000-0000-0000-0000-000000000000', 106, 'p-bus8tG0CIs0lXa36mAHw', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-03 08:48:27.68095+00', '2025-04-03 11:53:36.320916+00', 'PNGAd0sABhRnZW1HFN-QFQ', '39de33df-802a-4ea6-88eb-18ab28ec8e1c'),
+	('00000000-0000-0000-0000-000000000000', 109, 'kweE0tx_isejVxrSo4kQIw', 'c2d2ed42-60e8-4514-ad26-419274b64f51', false, '2025-04-03 11:53:36.324476+00', '2025-04-03 11:53:36.324476+00', 'p-bus8tG0CIs0lXa36mAHw', '39de33df-802a-4ea6-88eb-18ab28ec8e1c'),
+	('00000000-0000-0000-0000-000000000000', 108, 'Y4qIt6MO6V0u0PjvsXX6eA', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', true, '2025-04-03 11:49:34.300448+00', '2025-04-03 12:44:34.748995+00', NULL, '1d3a3fd2-da7c-4dd8-9b60-b247b1a43f80'),
+	('00000000-0000-0000-0000-000000000000', 111, 'ebScM_sZ4BxlXSgN3-8Kzw', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', false, '2025-04-03 12:44:34.750627+00', '2025-04-03 12:44:34.750627+00', 'Y4qIt6MO6V0u0PjvsXX6eA', '1d3a3fd2-da7c-4dd8-9b60-b247b1a43f80'),
+	('00000000-0000-0000-0000-000000000000', 110, 'vW4Z_54UJV1nzNKsMbfekQ', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-03 11:53:58.93058+00', '2025-04-03 12:48:57.261251+00', NULL, '713f7d80-201a-43d2-b3b1-1c371c74862f'),
+	('00000000-0000-0000-0000-000000000000', 112, 'efnme5wThuThDIRkKgQZgw', 'c2d2ed42-60e8-4514-ad26-419274b64f51', true, '2025-04-03 12:48:57.263211+00', '2025-04-03 12:48:57.916226+00', 'vW4Z_54UJV1nzNKsMbfekQ', '713f7d80-201a-43d2-b3b1-1c371c74862f'),
+	('00000000-0000-0000-0000-000000000000', 113, 'eXWYomDMUK6sWxs8Vj3fQQ', 'c2d2ed42-60e8-4514-ad26-419274b64f51', false, '2025-04-03 12:48:57.916545+00', '2025-04-03 12:48:57.916545+00', 'efnme5wThuThDIRkKgQZgw', '713f7d80-201a-43d2-b3b1-1c371c74862f');
 
 
 --
@@ -3485,6 +3805,8 @@ Souhaites-tu maintenant que je transforme cette SWOT en un **doc réutilisable p
 - **Analyse d''impact environnemental** : "Évalue l''empreinte carbone de [nom de l''entreprise] et propose des mesures pour réduire son impact environnemental."
 
 - **Engagement communautaire** : "Identifie des opportunités pour [nom de l''entreprise] de s''engager dans des initiatives communautaires qui renforcent sa réputation et créent de la '),
+	(157, '2025-04-02 10:58:04.864+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed17e1-a0e8-8003-a9f0-66443ec048a5', 'e0447986-17ce-44fb-ba34-e41b6dba53d7', 'user', 'auto', NULL, NULL, 'oui '),
+	(158, '2025-04-02 10:58:55.315+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed17e1-a0e8-8003-a9f0-66443ec048a5', 'a03f8307-1307-4f87-a63e-1553d66f1a71', 'user', 'auto', NULL, NULL, 'oui continue jusqu''à la fin '),
 	(135, '2025-03-31 14:19:10+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ea8921-9584-8000-9fdf-aa6081ba1298', '05a3c760-45a7-4f47-a37a-b87379bdcad7', 'assistant', 'gpt-4o', '3a9dff8b-5edf-4573-86a4-ebd1407062d7', NULL, '{
   "prompt": "A clean, professional visual of a SWOT analysis for a startup called ''Jaydai'' in the HR tech sector. The layout should be a 2x2 quadrant grid labeled as: Strengths (top-left), Weaknesses (top-right), Opportunities (bottom-left), Threats (bottom-right). Each quadrant should include summarized bullet points from the SWOT analysis. Use a modern, business-style design with readable typography. Include a title at the top: ''Analyse SWOT - Jaydai (Coach IA pour les RH)''. The overall tone should be sharp, elegant, and ready to present to investors or in a pitch deck.",
   "size": "1024x1024"
@@ -3857,7 +4179,1476 @@ La méthode des quotas a été utilisée pour garantir la représentativité (se
 
 ---
 
-Souhaites-tu que je te livre ce rendu en **Markdown**, **HTML stylisé**, ou **fichier PDF prêt à intégrer** dans ton extension ?');
+Souhaites-tu que je te livre ce rendu en **Markdown**, **HTML stylisé**, ou **fichier PDF prêt à intégrer** dans ton extension ?'),
+	(150, '2025-04-01 12:06:41.336+00', '6b28412c-fece-4a00-9d91-24381700e79d', '', '9a583533-7d91-4208-92e8-59d92c2f502b', 'user', 'auto', NULL, NULL, 'j''ai envie de des '),
+	(151, '2025-04-01 12:06:42+00', '6b28412c-fece-4a00-9d91-24381700e79d', '67ebd6d1-73ec-8003-91e3-0991d39a7211', '6cad10cf-c7c0-4b85-9249-5b9ff604c1b6', 'assistant', 'gpt-4o', 'b779fed5-0185-466f-bb2b-8fdc35deee87', NULL, 'Tu as envie de quoi ? 😊'),
+	(152, '2025-04-01 12:06:42+00', '6b28412c-fece-4a00-9d91-24381700e79d', '67ebd6d1-73ec-8003-91e3-0991d39a7211', 'b779fed5-0185-466f-bb2b-8fdc35deee87', 'assistant', 'gpt-4o', '9a583533-7d91-4208-92e8-59d92c2f502b', NULL, ''),
+	(153, '2025-04-02 08:50:40.33+00', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', '', 'dbacffed-d28a-4123-af83-bbf009f82bed', 'user', 'auto', NULL, NULL, 'Agis comme un consultant senior en performance d''entreprise spécialisé dans la création de tableaux de bord KPI, avec une expertise approfondie dans mon secteur d''activité. Sur la base des informations que je te fournis ci-dessous, crée un tableau de bord KPI entièrement personnalisé et spécifiquement adapté à la réalité de mon business.
+
+
+## INFORMATIONS SUR MON ENTREPRISE
+
+- **Secteur d''activité**: HR tech  
+- **Produit/Service principal**: Coach IA pour 100% des employés pour constuire sa carrière 
+- **Modèle économique**: Abonnement à 5€ par mois 
+
+- **Canaux de vente**: Online / Marketing Digital 
+
+
+## CE QUE JE VEUX OBTENIR
+
+Un tableau de bord KPI complet et spécifique à mon secteur qui:
+
+1. Réalise une petite analyse de mon business en montrant les points importants 
+2. Identifie les 5 catégories de KPI les plus pertinentes pour mon activité spécifique (sans aucun doublon ou chevauchement entre les catégories)
+3. Pour chaque catégorie:
+    - Une description claire de la catégorie
+    - Une explication de pourquoi cette catégorie est stratégique pour mon business spécifique
+    - OBLIGATOIREMENT au minimum 4 indicateurs clés essentiels adaptés à mon secteur d''activité
+    - Les sources de données et outils où je peux collecter ces informations
+4. Pour chaque indicateur, détaille:
+    - Sa définition précise
+    - Sa formule de calcul exacte
+    - Sa fréquence de mesure recommandée
+    - Son intérêt stratégique spécifique pour mon secteur et modèle économique
+5. Fait une synthèse de mon business 
+
+## IMPORTANTES CONSIGNES SUPPLÉMENTAIRES
+
+- Fournis OBLIGATOIREMENT au moins 4 indicateurs par catégorie, même si certains sont secondaires
+- Assure-toi qu''il n''y a AUCUN doublon entre les catégories - chaque catégorie doit être clairement distincte
+- Adapte SPÉCIFIQUEMENT les KPI à mon secteur d''activité et mon business model précis - ne te contente pas d''indicateurs génériques
+- Identifie les métriques qui ont le plus d''impact sur la performance dans mon secteur spécifique
+- Prends en compte les particularités de mon industrie, la taille de mon entreprise et sa maturité
+- Pour chaque catégorie, indique clairement les systèmes et outils où je peux trouver ou collecter ces données. Ne site pas forcément le nom des logiciels mais plutôt le type de logiciel
+- Priorise les indicateurs ayant un impact direct sur mon objectif prioritaire actuel
+- Vérifie que chaque indicateur proposé est réellement mesurable et pertinent pour mon activité spécifique
+
+## FORMAT DE RÉPONSE
+
+Utilise un format visuellement structuré avec:
+
+- Un résumé exécutif initial avec vue d''ensemble
+- Des tableaux pour présenter les indicateurs par catégorie
+- Des codes de couleur ou symboles pour indiquer la priorité (⭐⭐⭐, ⭐⭐, ⭐)
+- Des sections clairement délimitées et hiérarchisées
+- Pour chaque catégorie:
+    1. Description et importance stratégique
+    2. Tableau des KPI spécifiques (minimum 4 par catégorie)
+    3. Sources de données et outils de collecte
+    
+
+Assure-toi que le résultat final soit non seulement informatif mais aussi directement actionnable et parfaitement adapté à ma réalité business.
+
+ATTENTION - Si tu ne pas aller au bout demande moi “Ecris continuer pour que j’aille au bout de la démarche” 
+
+Utilise des émojis pour rendre cela agréable à la lecture'),
+	(154, '2025-04-02 10:45:37.576+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '0c88a98c-e5d4-4bbd-bf1b-aad4c0eea041', 'user', 'auto', NULL, NULL, 'Agis comme un consultant senior en performance d''entreprise spécialisé dans la création de tableaux de bord KPI, avec une expertise approfondie dans mon secteur d''activité. Sur la base des informations que je te fournis ci-dessous, crée un tableau de bord KPI entièrement personnalisé et spécifiquement adapté à la réalité de mon business.    ## INFORMATIONS SUR MON ENTREPRISE    - **Secteur d''activité**: HR tech   - **Produit/Service principal**: Coach IA pour accompagner 100% des employés   - **Modèle économique**: B2B SaaS avec abonnement   - **Profil de l''entreprise**: 5, 50 k€, 2024  - **Canaux de vente**: MArketing digitale / Présence sur les salons / notoriété    ## CE QUE JE VEUX OBTENIR    Un tableau de bord KPI complet et spécifique à mon secteur qui:    1. Réalise une petite analyse de mon business en montrant les points importants   2. Identifie les 5 catégories de KPI les plus pertinentes pour mon activité spécifique (sans aucun doublon ou chevauchement entre les catégories)  3. Pour chaque catégorie:      - Une description claire de la catégorie      - Une explication de pourquoi cette catégorie est stratégique pour mon business spécifique      - OBLIGATOIREMENT au minimum 4 indicateurs clés essentiels adaptés à mon secteur d''activité      - Les sources de données et outils où je peux collecter ces informations  4. Pour chaque indicateur, détaille:      - Sa définition précise      - Sa formule de calcul exacte      - Sa fréquence de mesure recommandée      - Son intérêt stratégique spécifique pour mon secteur et modèle économique  5. Fait une synthèse de mon business     ## IMPORTANTES CONSIGNES SUPPLÉMENTAIRES    - Fournis OBLIGATOIREMENT au moins 4 indicateurs par catégorie, même si certains sont secondaires  - Assure-toi qu''il n''y a AUCUN doublon entre les catégories - chaque catégorie doit être clairement distincte  - Adapte SPÉCIFIQUEMENT les KPI à mon secteur d''activité et mon business model précis - ne te contente pas d''indicateurs génériques  - Identifie les métriques qui ont le plus d''impact sur la performance dans mon secteur spécifique  - Prends en compte les particularités de mon industrie, la taille de mon entreprise et sa maturité  - Pour chaque catégorie, indique clairement les systèmes et outils où je peux trouver ou collecter ces données. Ne site pas forcément le nom des logiciels mais plutôt le type de logiciel  - Priorise les indicateurs ayant un impact direct sur mon objectif prioritaire actuel  - Vérifie que chaque indicateur proposé est réellement mesurable et pertinent pour mon activité spécifique    ## FORMAT DE RÉPONSE    Utilise un format visuellement structuré avec:    - Un résumé exécutif initial avec vue d''ensemble  - Des tableaux pour présenter les indicateurs par catégorie  - Des codes de couleur ou symboles pour indiquer la priorité (⭐⭐⭐, ⭐⭐, ⭐)  - Des sections clairement délimitées et hiérarchisées  - Pour chaque catégorie:      1. Description et importance stratégique      2. Tableau des KPI spécifiques (minimum 4 par catégorie)      3. Sources de données et outils de collecte          Assure-toi que le résultat final soit non seulement informatif mais aussi directement actionnable et parfaitement adapté à ma réalité business.    ATTENTION - Si tu ne pas aller au bout demande moi “Ecris continuer pour que j’aille au bout de la démarche”     Utilise des émojis pour rendre cela agréable à la lecture'),
+	(155, '2025-04-02 10:45:39.254271+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed1551-bf80-8003-80c7-67ecc324cf85', '88b1aa85-8ca2-4ef9-8e77-543c3c1fea13', 'assistant', 'gpt-4o', '0366ab5d-2a01-4010-8393-48e1ac717de5', NULL, '{"name": "kpi_dashboard_hrtech", "type": "document", "content": "# 📊 TABLEAU DE BORD KPI - HR TECH (COACH IA)\n\n## 🔍 RÉSUMÉ EXÉCUTIF\n### Vue d’ensemble\nTon entreprise évolue dans le secteur HR Tech avec un modèle SaaS B2B basé sur un abonnement à 5€/mois. La clé de ta croissance repose sur l’acquisition de clients via le marketing digital et les salons, la rétention des abonnés et la maximisation de l’usage de ton IA pour démontrer sa valeur. Ce tableau de bord KPI est conçu pour optimiser ces leviers et améliorer la rentabilité.\n\n---\n## 📂 LES 5 CATÉGORIES DE KPI CLÉS\n\n### 1️⃣ **Acquisition & Croissance Client**\n📌 **Pourquoi c’est stratégique ?** \nL’acquisition est le moteur de ton SaaS B2B. Suivre ces métriques permet d’optimiser les canaux d’acquisition et d’augmenter la base d’abonnés.\n\n| 🎯 KPI | 📖 Définition | 🔢 Formule | ⏳ Fréquence | ⭐ Priorité |\n|--------|-------------|------------|-------------|------------|\n| CAC (Coût d’Acquisition Client) | Coût moyen pour acquérir un nouveau client | (Total des dépenses marketing et commerciales) / (Nombre de nouveaux clients) | Mensuel | ⭐⭐⭐ |\n| Taux de conversion lead → client | Pourcentage de leads qualifiés devenant clients | (Clients acquis / Leads qualifiés) * 100 | Mensuel | ⭐⭐⭐ |\n| CPL (Coût par lead) | Coût moyen pour générer un lead qualifié | (Dépenses marketing) / (Nombre de leads générés) | Hebdomadaire | ⭐⭐ |\n| Canaux d’acquisition les plus performants | Identification des canaux les plus efficaces | Analyse des performances des campagnes | Trimestriel | ⭐⭐ |\n\n📌 **Sources de données & outils** : CRM, outils d’analyse marketing, Google Analytics, LinkedIn Ads\n\n---\n\n### 2️⃣ **Rétention & Engagement des Utilisateurs**\n📌 **Pourquoi c’est stratégique ?**\nUn SaaS B2B repose sur la fidélisation des clients. Une rétention forte réduit le churn et maximise la valeur à long terme.\n\n| 🎯 KPI | 📖 Définition | 🔢 Formule | ⏳ Fréquence | ⭐ Priorité |\n|--------|-------------|------------|-------------|------------|\n| Taux de churn | Pourcentage de clients annulant leur abonnement | (Clients perdus / Clients totaux) * 100 | Mensuel | ⭐⭐⭐ |\n| Taux d’activation | Pourcentage des nouveaux clients ayant activement utilisé l’IA | (Clients actifs / Nouveaux abonnés) * 100 | Hebdomadaire | ⭐⭐⭐ |\n| Usage moyen par utilisateur | Nombre moyen d’interactions avec l’IA par client | (Total interactions / Clients actifs) | Mensuel | ⭐⭐ |\n| NPS (Net Promoter Score) | Score de satisfaction client | Enquête client | Trimestriel | ⭐⭐ |\n\n📌 **Sources de données & outils** : CRM, base de données utilisateurs, outils d’analyse produit, enquêtes clients\n\n---\n\n### 3️⃣ **Revenu & Rentabilité**\n📌 **Pourquoi c’est stratégique ?**\nSuivre les revenus et la rentabilité assure la viabilité financière et identifie les opportunités d’optimisation.\n\n| 🎯 KPI | 📖 Définition | 🔢 Formule | ⏳ Fréquence | ⭐ Priorité |\n|--------|-------------|------------|-------------|------------|\n| MRR (Revenu Mensuel Récurrent) | Revenus générés par les abonnements actifs chaque mois | Somme des abonnements actifs * Prix abonnement | Mensuel | ⭐⭐⭐ |\n| LTV (Lifetime Value) | Valeur moyenne générée par un client durant sa durée de vie | ARPU * (1 / Churn rate) | Trimestriel | ⭐⭐⭐ |\n| ARPU (Revenu Moyen par Utilisateur) | Montant moyen payé par un client | MRR / Nombre total d’abonnés | Mensuel | ⭐⭐ |\n| Ratio LTV / CAC | Indicateur de rentabilité de l’acquisition | LTV / CAC | Trimestriel | ⭐⭐ |\n\n📌 **Sources de données & outils** : Comptabilité, outils de facturation, CRM, bases de données financières\n\n---\n\n### 4️⃣ **Adoption & Performance du Produit**\n📌 **Pourquoi c’est stratégique ?**\nL’usage de l’IA est crucial pour prouver sa valeur et favoriser la rétention.\n\n| 🎯 KPI | 📖 Définition | 🔢 Formule | ⏳ Fréquence | ⭐ Priorité |\n|--------|-------------|------------|-------------|------------|\n| Taux d’utilisation active | % de clients utilisant l’IA de manière régulière | (Utilisateurs actifs / Clients totaux) * 100 | Hebdomadaire | ⭐⭐⭐ |\n| Taux d’adoption des nouvelles fonctionnalités | % de clients testant les nouveautés | (Clients ayant testé / Clients totaux) * 100 | Mensuel | ⭐⭐ |\n| Nombre moyen de sessions par utilisateur | Fréquence d’utilisation du produit | Total sessions / Nombre utilisateurs actifs | Mensuel | ⭐⭐ |\n| Temps moyen par session | Durée d’utilisation de l’IA par session | Temps total d’utilisation / Nombre total de sessions | Mensuel | ⭐ |\n\n📌 **Sources de données & outils** : Outils d’analyse produit, base de données utilisateur, Google Analytics\n\n---\n\n### 5️⃣ **Performance Marketing & Notoriété**\n📌 **Pourquoi c’est stratégique ?**\nUn bon marketing accroît la visibilité et génère des leads qualifiés.\n\n| 🎯 KPI | 📖 Définition | 🔢 Formule | ⏳ Fréquence | ⭐ Priorité |\n|--------|-------------|------------|-------------|------------|\n| Trafic web qualifié | Nombre de visiteurs correspondant à la cible | Analyse des sources de trafic | Hebdomadaire | ⭐⭐⭐ |\n| Taux de conversion site → lead | Pourcentage de visiteurs devenant leads | (Leads générés / Visiteurs web) * 100 | Hebdomadaire | ⭐⭐⭐ |\n| Engagement sur les réseaux sociaux | Nombre d’interactions par publication | Moyenne likes + partages + commentaires | Mensuel | ⭐⭐ |\n| Coût d’acquisition par canal | Dépense moyenne pour obtenir un lead par canal | Dépense marketing par canal / Leads générés | Trimestriel | ⭐⭐ |\n\n📌 **Sources de données & outils** : Google Analytics, réseaux sociaux, outils d’automatisation marketing\n\n---\n\n## 🔥 SYNTHÈSE\n✅ Ce tableau de bord te permet d’avoir une vision complète et actionnable de la performance de ton SaaS HR Tech. En optimisant l’acquisition, la rétention, la rentabilité et l’adoption produit, tu maximises tes chances de scaler efficacement tout en garantissant la viabilité financière de ton entreprise.\n\n🎯 **Prochaines étapes :**\n- Mettre en place le suivi de ces KPI via un outil BI ou Google Data Studio\n- Ajuster la stratégie en fonction des tendances observées\n- Expérimenter et optimiser en continu pour maximiser la performance 🚀"}'),
+	(156, '2025-04-02 10:56:33.291+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', 'fd93a97d-a103-4fab-86ae-efe85e3ab100', 'user', 'auto', NULL, NULL, 'Tu es un expert en analyse financière et stratégie d’entreprise.  Ta mission est de produire un **document structuré**, destiné à aider un·e fondateur·rice à se préparer à un échange avec un investisseur exigeant (VC, analyste ou expert en stratégie).  Tu dois **challenger le business model** de l’entreprise Jaydai dans le secteur HR tech , en posant toutes les **questions critiques** qu’un investisseur poserait pour comprendre la viabilité du modèle.  Ta réponse doit être structurée **par grandes thématiques**, et pour **chaque thématique** :  1. Commence par une **courte introduction** (2 à 4 lignes) qui explique **pourquoi cette thématique est essentielle** à analyser dans un business model. 2. Propose **au moins 6 questions clés** que poserait un investisseur expérimenté. 3. Pour chaque question, ajoute une **piste de réflexion** ou un **élément à anticiper** qui aidera l’entrepreneur à formuler sa réponse.  Formate ta réponse avec des titres clairs, des sous-titres si besoin, et une mise en page agréable. Tu peux utiliser des emojis si cela améliore la lisibilité.  Voici les informations de contexte à utiliser :  - Proposition de valeur : Coach IA pour accompagner 100% des employés  - Clients cibles : ETI  / Grand Groupes / Scale UP - Source principale de revenus : Abonnement  - Modèle de distribution : B2B - Stade de développement de l’entreprise : Lancement  - Objectif de l’analyse : Préparer une levée de fonds   Thématiques obligatoires (et ordre recommandé) :  1. Revenus 2. Coûts et marges 3. Scalabilité 4. Croissance & traction 5. Clientèle & marché cible 6. Barrières à l’entrée et différenciation 7. Risques opérationnels et financiers 8. Modèle économique global (synthèse critique)  À la fin, propose une **synthèse en deux colonnes** :  - Forces du business model (3 à 5 bullet points) - Points de vigilance / Faiblesses (3 à 5 bullet points)  Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.'),
+	(159, '2025-04-02 10:58:55.679275+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed17e1-a0e8-8003-a9f0-66443ec048a5', '1642a889-0538-424e-a60c-ef1f694ea0df', 'assistant', 'gpt-4o', '3fdb2813-c901-4034-b927-b6efe2c13f12', NULL, '{"updates": [{"pattern": ".*", "replacement": "# **Préparation à une Levée de Fonds – Jaydai (HR Tech)**\n\n## **1. Revenus 💰**\n### Pourquoi c’est essentiel ?\nLe modèle de revenus détermine la viabilité financière de l’entreprise et son potentiel de rentabilité. Un investisseur voudra comprendre la structure des revenus, leur prévisibilité et leur potentiel d’augmentation.\n\n### Questions clés :\n1. **Comment est structuré l’abonnement (tarification, engagement, upsell) ?**\n   - Anticiper : Justifier le prix en fonction de la valeur perçue et du marché.\n\n2. **Quel est le taux de churn (attrition des clients) attendu ?**\n   - Anticiper : Montrer comment fidéliser les clients et réduire l’attrition.\n\n3. **Quelle est la durée moyenne de vie d’un client (LTV) ?**\n   - Anticiper : Fournir des projections réalistes basées sur les besoins des entreprises.\n\n4. **Comment le revenu moyen par client évoluera-t-il ?**\n   - Anticiper : Expliquer la stratégie d’upselling et d’expansion des comptes.\n\n5. **Quel est le cycle de vente moyen ?**\n   - Anticiper : Montrer comment raccourcir ce cycle et accélérer l’acquisition.\n\n6. **Y a-t-il un risque de concentration des revenus sur peu de clients ?**\n   - Anticiper : Diversifier la clientèle et éviter une dépendance excessive à quelques comptes.\n\n---\n\n## **2. Coûts et marges 📉**\n### Pourquoi c’est essentiel ?\nUne startup doit prouver qu’elle peut générer de la rentabilité à terme. Un investisseur voudra comprendre la structure des coûts et le niveau des marges pour évaluer la soutenabilité du modèle.\n\n### Questions clés :\n1. **Quels sont les principaux coûts fixes et variables ?**\n   - Anticiper : Identifier les coûts liés à la R&D, l’acquisition client et l’infrastructure IT.\n\n2. **Quelle est la marge brute attendue ?**\n   - Anticiper : Montrer comment la marge évolue à mesure que l’entreprise grandit.\n\n3. **À quel niveau de revenus l’entreprise devient-elle rentable (seuil de rentabilité) ?**\n   - Anticiper : Expliquer les hypothèses sous-jacentes et le timing de la rentabilité.\n\n4. **Quel est le coût d’acquisition client (CAC) et comment évolue-t-il ?**\n   - Anticiper : Présenter une stratégie d’optimisation des coûts d’acquisition.\n\n5. **Quel est le ratio LTV/CAC et comment l’améliorer ?**\n   - Anticiper : Montrer que la valeur d’un client est significativement plus élevée que son coût d’acquisition.\n\n6. **Quel est l’impact de la scalabilité sur la structure de coûts ?**\n   - Anticiper : Expliquer comment les coûts fixes se diluent avec la croissance.\n\n---\n\n## **3. Scalabilité 🚀**\n### Pourquoi c’est essentiel ?\nLes investisseurs recherchent des modèles capables de croître rapidement et sans explosion des coûts. La scalabilité mesure la capacité d’une entreprise à croître efficacement.\n\n### Questions clés :\n1. **Quels sont les freins à la scalabilité du modèle ?**\n   - Anticiper : Identifier les limites techniques, RH et commerciales.\n\n2. **Quelle part du processus de vente et d’onboarding peut être automatisée ?**\n   - Anticiper : Démontrer l’efficacité des outils et des workflows en place.\n\n3. **L’offre peut-elle s’adapter à l’international ?**\n   - Anticiper : Analyser les barrières linguistiques, réglementaires et culturelles.\n\n4. **Le modèle nécessite-t-il une forte croissance des effectifs ?**\n   - Anticiper : Montrer que la croissance peut être soutenue sans une explosion des coûts RH.\n\n5. **Quels sont les investissements technologiques nécessaires pour scaler ?**\n   - Anticiper : Présenter un plan d’investissement clair en IT et en infrastructure.\n\n6. **Quelle est la dépendance aux intégrations avec des solutions tierces ?**\n   - Anticiper : Expliquer comment l’entreprise gère ces dépendances et leurs risques.\n\n---\n\n## **4. Croissance & Traction 📊**\n### Pourquoi c’est essentiel ?\nLes investisseurs veulent voir des preuves tangibles d’adoption et de croissance. Les KPIs de traction sont des indicateurs clés de la viabilité du modèle.\n\n### Questions clés :\n1. **Quels sont les KPIs clés démontrant l’adoption du produit ?**\n   - Anticiper : Mettre en avant le nombre d’utilisateurs actifs, le taux de rétention, etc.\n\n2. **Quels sont les résultats des premiers clients ?**\n   - Anticiper : Présenter des études de cas et témoignages clients.\n\n3. **Quelle est la vitesse de croissance du nombre de clients ?**\n   - Anticiper : Montrer les projections et les taux d’acquisition.\n\n4. **Quels canaux d’acquisition sont les plus performants ?**\n   - Anticiper : Identifier les stratégies marketing les plus efficaces.\n\n5. **Quelle est la roadmap de développement produit ?**\n   - Anticiper : Présenter les prochaines évolutions et leurs impacts.\n\n6. **Quels sont les objectifs de croissance pour les 12-24 mois ?**\n   - Anticiper : Fixer des objectifs clairs et réalistes.\n\n---\n\n## **5. Clientèle & Marché Cible 🎯**\n### Pourquoi c’est essentiel ?\nL’adéquation produit-marché est un facteur clé de succès. Un investisseur veut s’assurer que l’entreprise adresse un marché suffisamment vaste et accessible.\n\n### Questions clés :\n1. **Quelle est la taille du marché adressable ?**\n   - Anticiper : Fournir des données chiffrées sur le marché HR Tech.\n\n2. **Qui sont les principaux clients cibles et quels sont leurs besoins spécifiques ?**\n   - Anticiper : Démontrer une compréhension fine des attentes des ETI et grands groupes.\n\n3. **Quels sont les concurrents directs et indirects ?**\n   - Anticiper : Analyser le positionnement par rapport aux alternatives existantes.\n\n4. **Quelle est la différenciation clé du produit ?**\n   - Anticiper : Mettre en avant l’IA comme levier unique.\n\n5. **Comment l’entreprise prévoit-elle de conquérir ces clients ?**\n   - Anticiper : Expliquer la stratégie commerciale et marketing.\n\n6. **Quel est le taux de conversion des prospects en clients ?**\n   - Anticiper : Montrer l’efficacité des stratégies d’acquisition.\n\n---\n\n## **Synthèse : Forces et Points de Vigilance 🔎**\n\n| **Forces du Business Model** 🚀 | **Points de Vigilance / Faiblesses** ⚠️ |\n|---------------------------------|----------------------------------|\n| 🔹 Modèle SaaS avec revenus récurrents | 🔸 Concurrence féroce sur le marché HR Tech |\n| 🔹 Forte demande des entreprises pour l’IA | 🔸 Adoption et rétention clients encore à prouver |\n| 🔹 Scalabilité élevée via automatisation | 🔸 Dépendance aux intégrations tierces |\n| 🔹 Opportunité d’expansion internationale | 🔸 Coût d’acquisition client potentiellement élevé |\n| 🔹 Différenciation par l’IA et l’accompagnement RH | 🔸 Rentabilité encore incertaine à court terme |"}]}'),
+	(160, '2025-04-02 11:33:14.376+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '9ccd67dd-62a0-4992-a1c4-e11a7feac848', 'user', 'auto', NULL, NULL, 'Tu es un expert en analyse financière et stratégie d’entreprise.  Ta mission est de produire un **document structuré**, destiné à aider un·e fondateur·rice à se préparer à un échange avec un investisseur exigeant (VC, analyste ou expert en stratégie).  Tu dois **challenger le business model** de l’entreprise Propple dans le secteur Recrutement en entreprise, en posant toutes les **questions critiques** qu’un investisseur poserait pour comprendre la viabilité du modèle.  Ta réponse doit être structurée **par grandes thématiques**, et pour **chaque thématique** : 0. Explique que le document présente les principales questions que peux poser une personne qui challenge le modèle économique de l''entreprise. 1. Commence par une **courte introduction** (2 à 4 lignes) qui explique **pourquoi cette thématique est essentielle** à analyser dans un business model. 2. Propose **au moins 6 questions clés** que poserait un investisseur expérimenté. 3. Pour chaque question, ajoute une **piste de réflexion** ou un **élément à anticiper** qui aidera l’entrepreneur à formuler sa réponse.  Formate ta réponse avec des titres clairs, des sous-titres si besoin, et une mise en page agréable. Tu peux utiliser des emojis si cela améliore la lisibilité.  Voici les informations de contexte à utiliser :  - Proposition de valeur : Recrutement via de la mise en relation de particuliers (cooptation mais réalisé par des personnes en dehors de l''entreprise) - Clients cibles : ETI  / Grand Groupes / Scale UP - Source principale de revenus : Commission à la réussite + pack de publication des offres - Stade de développement de l’entreprise : MVP   Thématiques obligatoires (et ordre recommandé) :  1. Revenus 2. Coûts et marges 3. Scalabilité 4. Croissance & traction 5. Clientèle & marché cible 6. Barrières à l’entrée et différenciation 7. Risques opérationnels et financiers 8. Modèle économique global (synthèse critique)    Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.'),
+	(161, '2025-04-02 11:34:16.717+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed207a-884c-8003-8b2d-faa0502d2fa7', 'f674d20c-0b00-472b-9f44-1b20a29114c8', 'user', 'auto', NULL, NULL, 'Je veux que tu finisses avec toutes les problématiques'),
+	(162, '2025-04-02 11:33:14+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed207a-884c-8003-8b2d-faa0502d2fa7', '448d0ace-ef80-4636-beaf-d98276f3d3ad', 'assistant', 'gpt-4o', '0c693dae-5cf5-4765-86c3-0c56be694785', NULL, '{"name": "business_model_challenge", "type": "document", "content": "# Challenge du Business Model de Propple\n\nCe document présente les principales questions qu''un investisseur exigeant pourrait poser pour challenger le business model de l''entreprise **Propple**, qui évolue dans le secteur du recrutement via cooptation externe. Ces questions visent \u00e0 \u00e9valuer la viabilit\u00e9 du mod\u00e8le, ses forces et ses faiblesses.\n\n---\n\n## 1. Revenus 💰\n### Pourquoi cette th\u00e9matique est essentielle ?\nLa structure des revenus est cruciale pour comprendre si l''entreprise peut atteindre une rentabilit\u00e9 durable. Un investisseur cherchera \u00e0 s''assurer que les sources de revenus sont solides, r\u00e9currentes et pr\u00e9visibles.\n\n### Questions critiques\n1. **Comment justifiez-vous la structure de vos revenus (commission + pack de publication) ?**  \n   👉 Anticiper la question en expliquant pourquoi ce mod\u00e8le est le plus adapt\u00e9 \u00e0 la cooptation externe et comment il est per\u00e7u par les clients.\n\n2. **Quel est le revenu moyen par client et sa r\u00e9partition entre les diff\u00e9rentes sources ?**  \n   👉 Montrer des donn\u00e9es pr\u00e9cises pour d\u00e9montrer une strat\u00e9gie de mon\u00e9tisation efficace.\n\n3. **Quelle part de vos revenus est r\u00e9currente ?**  \n   👉 Expliquer si certains clients reviennent et comment vous favorisez cette r\u00e9currence.\n\n4. **Quels sont les d\u00e9lais moyens de paiement et comment g\u00e9rez-vous la tr\u00e9sorerie ?**  \n   👉 Montrer comment les flux financiers sont anticip\u00e9s pour \u00e9viter un manque de liquidit\u00e9.\n\n5. **Comment comptez-vous \u00e9voluer vers un mod\u00e8le plus pr\u00e9visible ?**  \n   👉 Aborder la strat\u00e9gie pour stabiliser et augmenter la part des revenus fixes.\n\n6. **Comment vous positionnez-vous face aux concurrents en termes de tarification ?**  \n   👉 Justifier la valeur ajout\u00e9e par rapport \u00e0 d''autres mod\u00e8les de recrutement.\n\n---\n\n## 2. Co\u00fbts et marges 📊\n### Pourquoi cette th\u00e9matique est essentielle ?\nUne analyse pr\u00e9cise des co\u00fbts est essentielle pour s''assurer que l''entreprise peut atteindre la rentabilit\u00e9 et ne pas d\u00e9pendre uniquement d''une lev\u00e9e de fonds.\n\n### Questions critiques\n1. **Quels sont vos principaux postes de co\u00fbts ?**  \n   👉 Identifier si les co\u00fbts sont variables ou fixes et comment ils \u00e9volueront avec la croissance.\n\n2. **Quelle est votre marge brute et nette sur chaque transaction ?**  \n   👉 Expliquer comment vous assurez une rentabilit\u00e9 \u00e0 chaque mise en relation.\n\n3. **Comment optimisez-vous l''acquisition et la gestion des \"cooptants\" pour r\u00e9duire les co\u00fbts d''interm\u00e9diation ?**  \n   👉 Montrer une strat\u00e9gie pour limiter les d\u00e9penses tout en maintenant la qualit\u00e9.\n\n4. **Quels sont les co\u00fbts cach\u00e9s li\u00e9s \u00e0 la gestion des candidatures ?**  \n   👉 Anticiper d''\u00e9ventuels co\u00fbts sous-estim\u00e9s.\n\n5. **Quel est votre seuil de rentabilit\u00e9 et dans quel d\u00e9lai pensez-vous l''atteindre ?**  \n   👉 Donner une vision claire de l''atteinte de la profitabilit\u00e9.\n\n6. **Comment votre structure de co\u00fbts \u00e9voluera avec la croissance ?**  \n   👉 Identifier les potentielles \u00e9conomies d''\u00e9chelle.\n\n---\n\n## 3. Scalabilit\u00e9 🚀\n### Pourquoi cette th\u00e9matique est essentielle ?\nUn business model scalable est crucial pour les investisseurs car il d\u00e9termine le potentiel de croissance rapide avec une augmentation limit\u00e9e des co\u00fbts.\n\n### Questions critiques\n1. **Le mod\u00e8le de cooptation externe est-il r\u00e9plicable \u00e0 grande \u00e9chelle ?**  \n   👉 Identifier les freins potentiels \u00e0 l''expansion.\n\n2. **Comment automatisez-vous le processus de mise en relation et de validation des candidatures ?**  \n   👉 Montrer que la technologie r\u00e9duit la d\u00e9pendance aux ressources humaines.\n\n3. **Quels march\u00e9s internationaux sont accessibles avec ce mod\u00e8le ?**  \n   👉 Expliquer si le concept peut s''exporter facilement.\n\n4. **Comment g\u00e9rez-vous l''offre et la demande sur votre plateforme ?**  \n   👉 Pr\u00e9voir des m\u00e9canismes pour \u00e9viter un d\u00e9s\u00e9quilibre.\n\n5. **Votre technologie est-elle suffisamment robuste pour soutenir une forte croissance ?**  \n   👉 Anticiper les probl\u00e8mes techniques \u00e0 l''extension.\n\n6. **Quels indicateurs suivez-vous pour mesurer la scalabilit\u00e9 ?**  \n   👉 Montrer une strat\u00e9gie pilot\u00e9e par les donn\u00e9es.\n\n---\n\n## Suite de l''analyse\nSouhaitez-vous que je continue avec les th\u00e9matiques suivantes ?\n- Croissance & traction 📈\n- Client\u00e8le & march\u00e9 cible 🎯\n- Barri\u00e8res \u00e0 l''entr\u00e9e et diff\u00e9renciation 🔑\n- Risques op\u00e9rationnels et financiers ⚠️\n- Mod\u00e8le \u00e9conomique global 🏛️"}'),
+	(163, '2025-04-02 11:33:26+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed207a-884c-8003-8b2d-faa0502d2fa7', '0c693dae-5cf5-4765-86c3-0c56be694785', 'assistant', 'gpt-4o', '9ccd67dd-62a0-4992-a1c4-e11a7feac848', NULL, ''),
+	(164, '2025-04-02 11:33:46+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed207a-884c-8003-8b2d-faa0502d2fa7', '9dca229b-27ed-4c3a-a2a6-d763cf075ea3', 'assistant', 'gpt-4o', 'bced977a-75a0-402c-a434-bbb630fa916a', NULL, 'J''ai rédigé les trois premières sections de l''analyse. Souhaites-tu que je continue avec les autres thématiques ? 📊💡'),
+	(165, '2025-04-02 11:34:17+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed207a-884c-8003-8b2d-faa0502d2fa7', 'ce9d16ef-4459-4ab9-938c-83d8bcfe51e3', 'assistant', 'gpt-4o', 'a469d186-16be-4dda-b480-2e216718e1a2', NULL, '{"updates": [{"pattern": ".*", "replacement": "# Challenge du Business Model de Propple\n\nCe document présente les principales questions qu''un investisseur exigeant pourrait poser pour challenger le business model de l''entreprise **Propple**, qui évolue dans le secteur du recrutement via cooptation externe. Ces questions visent à évaluer la viabilité du modèle, ses forces et ses faiblesses.\n\n---\n\n## 1. Revenus 💰\n### Pourquoi cette thématique est essentielle ?\nLa structure des revenus est cruciale pour comprendre si l''entreprise peut atteindre une rentabilité durable. Un investisseur cherchera à s''assurer que les sources de revenus sont solides, récurrentes et prévisibles.\n\n### Questions critiques\n1. **Comment justifiez-vous la structure de vos revenus (commission + pack de publication) ?**  \n   👉 Anticiper la question en expliquant pourquoi ce modèle est le plus adapté à la cooptation externe et comment il est perçu par les clients.\n\n2. **Quel est le revenu moyen par client et sa répartition entre les différentes sources ?**  \n   👉 Montrer des données précises pour démontrer une stratégie de monétisation efficace.\n\n3. **Quelle part de vos revenus est récurrente ?**  \n   👉 Expliquer si certains clients reviennent et comment vous favorisez cette récurrence.\n\n4. **Quels sont les délais moyens de paiement et comment gérez-vous la trésorerie ?**  \n   👉 Montrer comment les flux financiers sont anticipés pour éviter un manque de liquidité.\n\n5. **Comment comptez-vous évoluer vers un modèle plus prévisible ?**  \n   👉 Aborder la stratégie pour stabiliser et augmenter la part des revenus fixes.\n\n6. **Comment vous positionnez-vous face aux concurrents en termes de tarification ?**  \n   👉 Justifier la valeur ajoutée par rapport à d''autres modèles de recrutement.\n\n---\n\n## 2. Coûts et marges 📊\n### Pourquoi cette thématique est essentielle ?\nUne analyse précise des coûts est essentielle pour s''assurer que l''entreprise peut atteindre la rentabilité et ne pas dépendre uniquement d''une levée de fonds.\n\n### Questions critiques\n1. **Quels sont vos principaux postes de coûts ?**  \n   👉 Identifier si les coûts sont variables ou fixes et comment ils évolueront avec la croissance.\n\n2. **Quelle est votre marge brute et nette sur chaque transaction ?**  \n   👉 Expliquer comment vous assurez une rentabilité à chaque mise en relation.\n\n3. **Comment optimisez-vous l''acquisition et la gestion des \"cooptants\" pour réduire les coûts d''intermédiation ?**  \n   👉 Montrer une stratégie pour limiter les dépenses tout en maintenant la qualité.\n\n4. **Quels sont les coûts cachés liés à la gestion des candidatures ?**  \n   👉 Anticiper d''éventuels coûts sous-estimés.\n\n5. **Quel est votre seuil de rentabilité et dans quel délai pensez-vous l''atteindre ?**  \n   👉 Donner une vision claire de l''atteinte de la profitabilité.\n\n6. **Comment votre structure de coûts évoluera avec la croissance ?**  \n   👉 Identifier les potentielles économies d''échelle.\n\n---\n\n## 3. Scalabilité 🚀\n### Pourquoi cette thématique est essentielle ?\nUn business model scalable est crucial pour les investisseurs car il détermine le potentiel de croissance rapide avec une augmentation limitée des coûts.\n\n### Questions critiques\n1. **Le modèle de cooptation externe est-il réplicable à grande échelle ?**  \n   👉 Identifier les freins potentiels à l''expansion.\n\n2. **Comment automatisez-vous le processus de mise en relation et de validation des candidatures ?**  \n   👉 Montrer que la technologie réduit la dépendance aux ressources humaines.\n\n3. **Quels marchés internationaux sont accessibles avec ce modèle ?**  \n   👉 Expliquer si le concept peut s''exporter facilement.\n\n4. **Comment gérez-vous l''offre et la demande sur votre plateforme ?**  \n   👉 Prévoir des mécanismes pour éviter un déséquilibre.\n\n5. **Votre technologie est-elle suffisamment robuste pour soutenir une forte croissance ?**  \n   👉 Anticiper les problèmes techniques à l''extension.\n\n6. **Quels indicateurs suivez-vous pour mesurer la scalabilité ?**  \n   👉 Montrer une stratégie pilotée par les données.\n\n---\n\n## 4. Croissance & traction 📈\n### Pourquoi cette thématique est essentielle ?\nUn investisseur cherchera à comprendre si l’entreprise a déjà prouvé son marché et comment elle prévoit d’accélérer son adoption.\n\n### Questions critiques\n1. **Quels sont vos principaux indicateurs de traction ?**  \n   👉 Présenter les KPIs les plus pertinents (nombre d’utilisateurs, taux de conversion, etc.).\n\n2. **Quels sont vos canaux d’acquisition et leur coût ?**  \n   👉 Expliquer la rentabilité des stratégies d’acquisition.\n\n3. **Quelle est votre stratégie pour fidéliser vos clients ?**  \n   👉 Détailler les actions mises en place pour maximiser la rétention.\n\n4. **Quels sont vos objectifs de croissance à 12 et 24 mois ?**  \n   👉 Présenter une roadmap claire.\n\n5. **Quel est votre taux de churn et comment l’améliorer ?**  \n   👉 Identifier les points faibles du modèle actuel.\n\n6. **Avez-vous des références clients ou des études de cas solides ?**  \n   👉 Fournir des preuves de l’impact du service.\n\n---\n\n## 5. Clientèle & marché cible 🎯\n### Pourquoi cette thématique est essentielle ?\nUn bon alignement produit-marché est essentiel pour éviter une adoption limitée.\n\n### Questions critiques\n1. **Pourquoi vos clients choisissent-ils votre solution ?**\n2. **Quelle est la taille de votre marché total adressable ?**\n3. **Quel est votre client idéal et comment l’atteindre ?**\n4. **Comment évolue le secteur du recrutement et quels sont les risques ?**\n5. **Quels sont vos principaux concurrents et comment vous différenciez-vous ?**\n6. **Comment adaptez-vous votre offre aux besoins des grands groupes ?**\n\n---\n\n## 6. Barrières à l’entrée et différenciation 🔑\n### Pourquoi cette thématique est essentielle ?\nLes investisseurs cherchent à savoir si l’entreprise peut se protéger de la concurrence.\n\n### Questions critiques\n1. **Qu’est-ce qui rend votre modèle difficile à copier ?**\n2. **Avez-vous des brevets, une technologie propriétaire ?**\n3. **Comment créez-vous un avantage compétitif durable ?**\n4. **Quels sont les coûts de changement pour vos clients ?**\n5. **Comment empêchez-vous la désintermédiation ?**\n6. **Quels partenariats stratégiques renforcent votre position ?**\n\n---\n\n## 7. Risques opérationnels et financiers ⚠️\n1. **Quels sont les risques juridiques liés à votre activité ?**\n2. **Comment gérez-vous le risque de fraude ou de mauvaise qualité des candidats ?**\n3. **Comment assurez-vous la stabilité financière en cas de ralentissement économique ?**\n\n---\n\n## 8. Modèle économique global 🏛️\n### Synthèse critique\nL’objectif est ici de démontrer que le modèle est viable, résilient et rentable.\n\n👉 Préparez une réponse claire et convaincante à chaque question pour convaincre un investisseur potentiel !"}]}'),
+	(166, '2025-04-02 11:34:42+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed207a-884c-8003-8b2d-faa0502d2fa7', 'e27b61dc-b56b-4f22-abd5-9a3e5778cce0', 'assistant', 'gpt-4o', '938926fd-6716-4d7f-9034-e4550cdf9b24', NULL, 'J''ai complété l''analyse avec toutes les thématiques demandées. 📊🚀 Dis-moi si tu veux des ajustements ou des précisions sur certains points !'),
+	(167, '2025-04-02 11:37:27.732+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '9b8fcc4c-d01b-407b-94b6-5760449924d1', 'user', 'auto', NULL, NULL, 'Tu es un expert en analyse financière et stratégie d’entreprise.  Ta mission est de produire une analyse structurée destinée à aider un·e fondateur·rice à se préparer à un échange avec un investisseur exigeant (VC, analyste ou expert en stratégie).  Tu dois **challenger le business model** de l’entreprise Prople dans le secteur Recrutement, en posant toutes les **questions critiques** qu’un investisseur poserait pour comprendre la viabilité du modèle.  Ta réponse doit être structurée **par grandes thématiques**, et pour **chaque thématique** : 0. Explique que le document présente les principales questions que peux poser une personne qui challenge le modèle économique de l''entreprise. 1. Commence par une **courte introduction** (2 à 4 lignes) qui explique **pourquoi cette thématique est essentielle** à analyser dans un business model. 2. Propose **au moins 6 questions clés** que poserait un investisseur expérimenté. 3. Pour chaque question, ajoute une **piste de réflexion** ou un **élément à anticiper** qui aidera l’entrepreneur à formuler sa réponse.  Formate ta réponse avec des titres clairs, des sous-titres si besoin, et une mise en page agréable. Tu peux utiliser des emojis si cela améliore la lisibilité.  Voici les informations de contexte à utiliser :  - Proposition de valeur : Cooptation externalisé , on créé un pool d''experts qui sont en capacité de recommander des profils high levels pour les annonces de nos clients  - Clients cibles : PME - ETI - Startup  - Source principale de revenus : Commission + abonnement de nos clients - Stade de développement de l’entreprise : MVP   Thématiques obligatoires (et ordre recommandé) :  1. Revenus 2. Coûts et marges 3. Scalabilité 4. Croissance &amp; traction 5. Clientèle &amp; marché cible 6. Barrières à l’entrée et différenciation 7. Risques opérationnels et financiers  Répond directement dans la conversation     Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.'),
+	(168, '2025-04-02 11:38:20.204+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2177-e678-8003-b039-aab53ad54105', 'b0f21492-c7b6-420b-b1e8-7e62dbd5ec15', 'user', 'auto', NULL, NULL, 'Je veux que tu finisses l''analyse '),
+	(169, '2025-04-02 11:38:20.809461+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2177-e678-8003-b039-aab53ad54105', 'd5ceed3b-ee48-4823-a857-354481eb0b7a', 'assistant', 'gpt-4o', 'b0f21492-c7b6-420b-b1e8-7e62dbd5ec15', NULL, 'Suite de l’analyse des questions critiques qu’un investisseur poserait pour challenger le business model de **Prople**.  
+
+---
+
+## 📊 4. Croissance & Traction  
+### Pourquoi c’est essentiel ?  
+Les investisseurs recherchent des entreprises capables d’atteindre une croissance rapide et soutenue. La traction est un signal clé de l’adéquation produit-marché et de la demande pour l’offre.  
+
+### 🔍 Questions clés & pistes de réflexion  
+1️⃣ **Quels sont les principaux indicateurs de traction aujourd’hui ?**  
+   - Nombre de clients signés ? Nombre de recommandations faites ?  
+   - Taux de conversion des recommandations en recrutements effectifs ?  
+
+2️⃣ **Quel a été le taux de croissance des revenus ces derniers mois ?**  
+   - L’évolution est-elle linéaire, exponentielle ou stagnante ?  
+   - Quels événements ont accéléré ou freiné la croissance ?  
+
+3️⃣ **Comment l’entreprise acquiert-elle ses premiers clients et quelle est la stratégie d’expansion ?**  
+   - Le bouche-à-oreille et la cooptation suffisent-ils pour scaler ?  
+   - Quels canaux d’acquisition sont les plus efficaces ?  
+
+4️⃣ **Quels sont les retours clients sur l’offre actuelle ?**  
+   - Existe-t-il des métriques comme le NPS (Net Promoter Score) ?  
+   - Quels ajustements ont été faits en fonction des feedbacks ?  
+
+5️⃣ **Quel est le coût d’acquisition client (CAC) et combien de temps pour le rentabiliser ?**  
+   - Est-ce que le coût d’acquisition est optimisé par rapport à la valeur générée ?  
+   - Quel est le temps moyen pour qu’un client devienne profitable ?  
+
+6️⃣ **Quels sont les leviers pour accélérer la croissance ?**  
+   - Recrutement plus actif d’experts ? Expansion vers d’autres segments de clients ?  
+   - Développement d’outils technologiques pour fluidifier les recommandations ?  
+
+---
+
+## 🎯 5. Clientèle & Marché Cible  
+### Pourquoi c’est essentiel ?  
+L’investisseur veut savoir si le marché adressable est suffisamment grand et si l’offre répond réellement à un besoin fort et récurrent des clients.  
+
+### 🔍 Questions clés & pistes de réflexion  
+1️⃣ **Quel est la taille du marché adressable et son potentiel de croissance ?**  
+   - Quelle est la valeur totale du marché du recrutement en cooptation/externalisé ?  
+   - La demande pour ce type de service est-elle en croissance ou en stagnation ?  
+
+2️⃣ **Quels sont les segments de clientèle les plus réceptifs aujourd’hui ?**  
+   - Les PME, ETI et startups ont-elles le même niveau d’intérêt ?  
+   - Quels sont les pain points spécifiques de chaque type d’entreprise ?  
+
+3️⃣ **Quelle est la stratégie pour conquérir de nouveaux clients ?**  
+   - Focus sur un segment clé ou expansion large dès le départ ?  
+   - Quels canaux d’acquisition sont les plus performants ?  
+
+4️⃣ **Quelle est la fréquence d’utilisation des clients existants ?**  
+   - Le modèle fonctionne-t-il sur des besoins ponctuels ou récurrents ?  
+   - Comment fidéliser et encourager une utilisation continue ?  
+
+5️⃣ **Quelle est la dépendance aux premiers clients ?**  
+   - Si un client important se retire, quel est l’impact sur les revenus ?  
+   - Existe-t-il une diversification suffisante pour réduire les risques ?  
+
+6️⃣ **Quelles sont les objections les plus fréquentes des prospects ?**  
+   - Prix ? Manque de confiance dans le pool d’experts ?  
+   - Comment les objections sont-elles traitées et dépassées ?  
+
+---
+
+## 🛡️ 6. Barrières à l’entrée & Différenciation  
+### Pourquoi c’est essentiel ?  
+Un modèle facilement copiable ou sans différenciation forte est un signal d’alarme pour un investisseur. Il cherche à comprendre comment l’entreprise peut défendre son avantage compétitif.  
+
+### 🔍 Questions clés & pistes de réflexion  
+1️⃣ **Qu’est-ce qui empêche un concurrent d’adopter le même modèle ?**  
+   - Les experts sont-ils exclusifs à Prople ?  
+   - L’algorithme de mise en relation est-il un avantage compétitif clé ?  
+
+2️⃣ **Quels sont les principaux concurrents directs et indirects ?**  
+   - Job boards, cabinets de recrutement classiques, autres solutions de cooptation ?  
+   - Quelle est la proposition de valeur unique de Prople par rapport à eux ?  
+
+3️⃣ **Quels éléments rendent votre offre difficilement réplicable ?**  
+   - Base de données d’experts unique ? Effet de réseau ?  
+   - Technologie propriétaire ou système de matching avancé ?  
+
+4️⃣ **Comment l’entreprise empêche ses clients de partir vers un concurrent ?**  
+   - Existe-t-il un effet de lock-in (contrats, avantages liés à la fidélité) ?  
+   - Comment maintenir un niveau de service et une valeur perçue élevés ?  
+
+5️⃣ **Comment l’entreprise prévoit-elle d’augmenter son moat (avantage compétitif) ?**  
+   - Expansion vers de nouvelles industries ? Développement de nouvelles fonctionnalités ?  
+   - Stratégie de marque forte et notoriété accrue ?  
+
+6️⃣ **Quel est le rôle de la technologie dans la différenciation ?**  
+   - Un investisseur voudra savoir si l’innovation technologique est un facteur clé de succès.  
+   - Quels outils sont développés pour automatiser, accélérer et fiabiliser le processus de recrutement ?  
+
+---
+
+## ⚠️ 7. Risques Opérationnels et Financiers  
+### Pourquoi c’est essentiel ?  
+Tout business comporte des risques, et un investisseur veut comprendre où sont les failles potentielles et comment elles sont anticipées.  
+
+### 🔍 Questions clés & pistes de réflexion  
+1️⃣ **Quels sont les risques liés à la dépendance aux experts du pool ?**  
+   - Que se passe-t-il si le taux de participation des experts diminue ?  
+   - Y a-t-il un mécanisme d’incitation solide pour les fidéliser ?  
+
+2️⃣ **Quels sont les risques financiers les plus critiques aujourd’hui ?**  
+   - Burn rate trop élevé ? Marges trop faibles ?  
+   - Dépendance forte à un nombre limité de clients ?  
+
+3️⃣ **Quels sont les principaux défis opérationnels ?**  
+   - Automatisation des processus ? Gestion de la qualité des recommandations ?  
+   - Suivi des candidats placés et satisfaction des clients ?  
+
+4️⃣ **Quelles sont les barrières réglementaires ou juridiques potentielles ?**  
+   - Problèmes liés à la confidentialité des données des candidats ?  
+   - Réglementation sur l’intermédiation dans le recrutement ?  
+
+5️⃣ **Quel est le plan de financement pour soutenir la croissance ?**  
+   - L’entreprise a-t-elle une roadmap financière claire ?  
+   - Combien de temps avant d’atteindre la rentabilité ou de lever des fonds ?  
+
+6️⃣ **Quels scénarios de crise ont été envisagés ?**  
+   - Et si le taux de churn augmente brutalement ?  
+   - Et si un concurrent majeur arrive avec une offre similaire à moindre coût ?  
+
+---
+
+## 🏁 Conclusion  
+Un investisseur va challenger **Prople** sur sa capacité à générer des revenus durables, à scaler efficacement et à se différencier dans un marché concurrentiel. Anticiper ces questions permettra de renforcer la crédibilité du projet et d’aborder les discussions avec confiance. 🚀  
+
+Si tu veux approfondir un point spécifique ou simuler une session d’investisseur, dis-moi ! 😊'),
+	(170, '2025-04-02 11:46:31.083+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '0195ddcf-9e96-4f45-9b09-6a8ba1204dc0', 'user', 'auto', NULL, NULL, '### **Analyse juridique avec recherche de sources fiables**  &gt; Tu es un expert juridique spécialisé en droit Droit de la propriété intellectuelle. &gt;  &gt;  &gt; Rédige une **analyse structurée, claire et pédagogique** sur la réglementation en vigueur concernant **Création d''une plateforme de tests de personnalité avec un coach IA qui analyse les résultats et conseillent l''utilisateur **. &gt;  &gt; ⚠️ Tu dois effectuer des **recherches en ligne** pour vérifier l’actualité des textes de loi, des réformes en cours et des pratiques du secteur. &gt;  &gt; Utilise **exclusivement des sources fiables** telles que : &gt;  &gt; - Légifrance, vie-publique.fr, service-public.fr &gt; - France Compétences, Caisse des Dépôts, DREETS, INSEE &gt; - Sites gouvernementaux (.gouv.fr) ou publications juridiques reconnues &gt;  &gt; L’objectif est de produire un **document synthétique mais complet**, accessible à un public non juriste, pouvant servir de support à une présentation ou à une décision stratégique. &gt;  &gt; Structure de l’analyse attendue : &gt;  &gt; 1. **Contexte général et enjeux** &gt;     - Pourquoi ce sujet est-il important aujourd’hui ? &gt;     - Quelles sont les implications pratiques pour les acteurs concernés ? &gt; 2. **Sources juridiques applicables** &gt;     - Quelles lois, règlements ou jurisprudences encadrent ce sujet ? &gt;     - Mentionner les textes exacts avec leur **date** et inclure des **liens** si possible. &gt; 3. **Analyse détaillée de la réglementation** &gt;     - Obligations, droits, limites ou incertitudes juridiques. &gt;     - Cas concrets ou exemples si pertinents. &gt; 4. **Risques et sanctions** &gt;     - Que risque-t-on en cas de non-respect ? &gt;     - Quels sont les acteurs du contrôle et leurs pouvoirs ? &gt; 5. **Perspectives et réformes à venir** &gt;     - Recherches à faire sur les projets de loi, annonces officielles ou tendances sectorielles. &gt;     - Intégrer des sources datées pour appuyer tes propos. &gt; 6. **Recommandations stratégiques** &gt;     - Conseils pratiques à destination de CEO - Comprendre les étapes à faire . &gt;     - Mesures à prendre pour être en conformité et anticiper les évolutions. &gt;  &gt; ✅ Le rendu doit être **professionnel, lisible et crédible**, avec des titres clairs, un style fluide, et des **références sourcées** en pied de page ou à la fin du document. Utilise des listes si cela améliore la lisibilité. '),
+	(235, '2025-04-03 09:24:28.553342+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee5383-af1c-8003-9e53-44825b6e5107', '43e304e4-623c-42ca-a370-7e233437afc3', 'assistant', 'gpt-4o', '6aecead9-7877-4fb5-b163-bef35489e71c', NULL, 'Yes, je le vois bien ! Tu avais un doute ? 😊'),
+	(171, '2025-04-02 11:49:17.363+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', 'd0839e7c-d83b-45dd-8b29-c470181775a2', 'user', 'auto', NULL, NULL, '### **Analyse juridique avec recherche de sources fiables**  > Tu es un expert juridique spécialisé en droit Droit du travail . >  >  > Rédige une **analyse structurée, claire et pédagogique** sur la réglementation en vigueur concernant **Création d''une plateforme de recrutement via la cooptation externe - des individus recommendent des gens de leurs réseaux sur ma plateforme à des offres de postes publiées par mes entreprises clientes**. >  > ⚠️ Tu dois effectuer des **recherches en ligne** pour vérifier l’actualité des textes de loi, des réformes en cours et des pratiques du secteur. >  > Utilise **exclusivement des sources fiables** telles que : >  > - Légifrance, vie-publique.fr, service-public.fr > - France Compétences, Caisse des Dépôts, DREETS, INSEE > - Sites gouvernementaux (.gouv.fr) ou publications juridiques reconnues >  > L’objectif est de produire un **document synthétique mais complet**, accessible à un public non juriste, pouvant servir de support à une présentation ou à une décision stratégique. >  > Structure de l’analyse attendue : >  > 1. **Contexte général et enjeux** >     - Pourquoi ce sujet est-il important aujourd’hui ? >     - Quelles sont les implications pratiques pour les acteurs concernés ? > 2. **Sources juridiques applicables** >     - Quelles lois, règlements ou jurisprudences encadrent ce sujet ? >     - Mentionner les textes exacts avec leur **date** et inclure des **liens** si possible. > 3. **Analyse détaillée de la réglementation** >     - Obligations, droits, limites ou incertitudes juridiques. >     - Cas concrets ou exemples si pertinents. > 4. **Risques et sanctions** >     - Que risque-t-on en cas de non-respect ? >     - Quels sont les acteurs du contrôle et leurs pouvoirs ? > 5. **Perspectives et réformes à venir** >     - Recherches à faire sur les projets de loi, annonces officielles ou tendances sectorielles. >     - Intégrer des sources datées pour appuyer tes propos. > 6. **Recommandations stratégiques** >     - Conseils pratiques à destination de CEO - Comprendre les étapes à faire . >     - Mesures à prendre pour être en conformité et anticiper les évolutions. >  > ✅ Le rendu doit être **professionnel, lisible et crédible**, avec des titres clairs, un style fluide, et des **références sourcées** en pied de page ou à la fin du document. Utilise des listes si cela améliore la lisibilité. '),
+	(172, '2025-04-02 11:46:31+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', '821fc188-d7b9-43d4-9c38-6d93658df316', 'assistant', 'gpt-4o', 'd32d3e43-47d1-48e3-8be0-d59249922bc2', NULL, ''),
+	(173, '2025-04-02 11:46:31+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', '9a2dd8c0-0872-4bd1-af3f-b5c8ad1ccbea', 'assistant', 'gpt-4o', '6615d473-d881-45de-90b9-f1368674f6ed', NULL, '# Analyse juridique de la création d''une plateforme de tests de personnalité avec un coach IA
+
+## 1. Contexte général et enjeux
+
+Le développement de plateformes en ligne proposant des tests de personnalité assistés par une intelligence artificielle (IA) soulève des questions juridiques majeures, notamment en matière de protection des données personnelles et de propriété intellectuelle. Ces plateformes collectent et traitent des informations sensibles sur les utilisateurs, ce qui nécessite une conformité stricte avec la réglementation en vigueur. Les implications pratiques concernent la nécessité pour les développeurs et exploitants de telles plateformes de garantir la transparence, la sécurité et le respect des droits des utilisateurs.
+
+## 2. Sources juridiques applicables
+
+Plusieurs textes encadrent la création et l''exploitation de telles plateformes :
+
+- **Règlement Général sur la Protection des Données (RGPD)** : Ce règlement européen, applicable depuis le 25 mai 2018, définit les obligations relatives au traitement des données personnelles. citeturn0search8
+
+- **Loi n° 78-17 du 6 janvier 1978 modifiée** relative à l''informatique, aux fichiers et aux libertés : Cette loi adapte le droit français au RGPD et précise certaines dispositions nationales.
+
+- **Loi n° 2024-449 du 21 mai 2024 visant à sécuriser et à réguler l''espace numérique** : Cette loi récente introduit des mesures spécifiques pour encadrer l''utilisation de l''IA et renforcer la protection des données dans l''espace numérique. citeturn0search16
+
+- **Code de la propriété intellectuelle** : Il régit les droits relatifs aux créations intellectuelles, notamment les logiciels et les bases de données utilisés par l''IA. citeturn0search13
+
+## 3. Analyse détaillée de la réglementation
+
+### a. Protection des données personnelles
+
+Les tests de personnalité impliquent la collecte de données personnelles, voire sensibles si elles révèlent des informations sur la santé mentale ou l''orientation sexuelle des utilisateurs. Selon la CNIL, les données sensibles incluent celles relatives à la santé ou à la vie sexuelle d''une personne. citeturn0search14
+
+**Obligations principales** :
+
+- **Consentement explicite** : Obtenir le consentement clair et éclairé des utilisateurs avant de collecter et traiter leurs données sensibles.
+
+- **Transparence** : Informer les utilisateurs sur la finalité du traitement, les destinataires des données et leurs droits.
+
+- **Sécurité** : Mettre en place des mesures techniques et organisationnelles pour protéger les données contre les accès non autorisés.
+
+- **Durée de conservation limitée** : Ne pas conserver les données au-delà de la période nécessaire aux finalités pour lesquelles elles ont été collectées. citeturn0search2
+
+### b. Propriété intellectuelle
+
+Le développement d''un coach IA repose sur des logiciels et des bases de données protégés par le droit d''auteur. L''article L122-6-1 du Code de la propriété intellectuelle précise les conditions d''utilisation des logiciels sans l''autorisation de l''auteur. citeturn0search13
+
+**Points clés** :
+
+- **Licences** : S''assurer que les licences des logiciels utilisés permettent leur intégration et modification dans le cadre du projet.
+
+- **Créations originales** : Protéger les développements spécifiques réalisés pour la plateforme en les déposant auprès des organismes compétents.
+
+## 4. Risques et sanctions
+
+**En cas de non-respect des obligations en matière de protection des données** :
+
+- **Sanctions administratives** : La CNIL peut infliger des amendes allant jusqu''à 20 millions d''euros ou 4% du chiffre d''affaires annuel mondial.
+
+- **Sanctions pénales** : Des peines d''emprisonnement et des amendes sont prévues en cas de violation grave des dispositions relatives aux données personnelles.
+
+**En matière de propriété intellectuelle** :
+
+- **Contrefaçon** : L''utilisation non autorisée de logiciels protégés peut entraîner des peines allant jusqu''à 3 ans d''emprisonnement et 300 000 euros d''amende. citeturn0search19
+
+## 5. Perspectives et réformes à venir
+
+Le cadre juridique de l''IA est en constante évolution. Le règlement européen sur l''intelligence artificielle, adopté le 13 juin 2024, vise à harmoniser les règles applicables aux systèmes d''IA au sein de l''Union européenne. citeturn0search1 Il est essentiel de suivre les évolutions législatives et réglementaires pour adapter en permanence la conformité de la plateforme.
+
+## 6. Recommandations stratégiques
+
+Pour assurer la conformité et la pérennité de la plateforme, il est recommandé :
+
+- **Audit juridique préalable** : Évaluer les risques liés à la collecte et au traitement des données personnelles, ainsi qu''à l''utilisation des logiciels et bases de données.
+
+- **Désignation d''un Délégué à la Protection des Données (DPO)** : Ce professionnel accompagnera l''entreprise dans la mise en conformité avec le RGPD et assurera une veille réglementaire.
+
+- **Formation des équipes** : Sensibiliser les collaborateurs aux enjeux de la protection des données et de la propriété intellectuelle.
+
+- **Documentation des processus** : Tenir à jour un registre des activités de traitement et conserver les preuves du consentement des utilisateurs.
+
+- **Surveillance des évolutions législatives** : Mettre en place une veille pour anticiper les changements réglementaires et adapter la plateforme en conséquence.
+
+En adoptant ces mesures, l''entreprise pourra non seulement se conformer aux exigences légales actuelles, mais également anticiper les évolutions futures et renforcer la confiance des utilisateurs. '),
+	(174, '2025-04-02 11:46:43+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', 'd32d3e43-47d1-48e3-8be0-d59249922bc2', 'assistant', 'gpt-4o', '0195ddcf-9e96-4f45-9b09-6a8ba1204dc0', NULL, ''),
+	(175, '2025-04-02 11:49:17+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', 'b4927f33-fd21-4723-ade5-3c30097d3da4', 'assistant', 'gpt-4o', 'd0839e7c-d83b-45dd-8b29-c470181775a2', NULL, ''),
+	(176, '2025-04-02 11:49:18+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', '5dbbf7b2-c134-4156-8eb2-c9489e966404', 'assistant', 'gpt-4o', 'f73e1f37-5996-40e5-bd67-56d4665ab0a1', NULL, '# Analyse juridique de la création d''une plateforme de recrutement via la cooptation externe
+
+## 1. Contexte général et enjeux
+
+Le recrutement par cooptation, ou "parrainage", consiste à ce que des individus recommandent des candidats de leur réseau pour des postes à pourvoir. Avec l''essor des technologies numériques, des plateformes dédiées facilitent cette pratique, offrant aux entreprises un accès élargi à des talents potentiels. Cette approche présente plusieurs avantages, notamment la réduction des coûts de recrutement et l''amélioration de la qualité des candidatures. Cependant, elle soulève également des questions juridiques, notamment en matière de protection des données personnelles, de non-discrimination et de respect des réglementations relatives au travail.
+
+## 2. Sources juridiques applicables
+
+Plusieurs textes législatifs et réglementaires encadrent la création et l''utilisation de telles plateformes :
+
+- **Code du travail** :
+
+  - *Article L1221-6* : Les méthodes et techniques d''aide au recrutement doivent être pertinentes au regard de la finalité poursuivie et ne peuvent être utilisées qu''à des fins de recrutement. citeturn0search1
+
+  - *Article L1221-8* : Aucune information concernant personnellement un candidat ne peut être collectée par un dispositif qui n''a pas été porté préalablement à sa connaissance. citeturn0search1
+
+- **Règlement Général sur la Protection des Données (RGPD)** : Ce règlement européen encadre le traitement des données personnelles et impose des obligations strictes en matière de consentement, de transparence et de sécurité des données.
+
+- **Loi n° 2016-1691 du 9 décembre 2016** relative à la transparence, à la lutte contre la corruption et à la modernisation de la vie économique : Elle interdit toute discrimination dans les procédures de recrutement. citeturn0search18
+
+## 3. Analyse détaillée de la réglementation
+
+### a. Protection des données personnelles
+
+La mise en place d''une plateforme de cooptation implique la collecte et le traitement de données personnelles des candidats recommandés. Conformément au RGPD et à la loi "Informatique et Libertés", les principes suivants doivent être respectés :
+
+- **Licéité, loyauté et transparence** : Les candidats doivent être informés de manière claire sur la collecte de leurs données, les finalités du traitement et leurs droits. citeturn0search2
+
+- **Pertinence des données collectées** : Seules les informations strictement nécessaires à l''évaluation des compétences et qualifications du candidat doivent être collectées.
+
+- **Sécurité des données** : Des mesures techniques et organisationnelles appropriées doivent être mises en place pour protéger les données contre les accès non autorisés ou les pertes.
+
+### b. Non-discrimination dans le recrutement
+
+La cooptation peut, si elle n''est pas encadrée, conduire à des pratiques discriminatoires, en favorisant par exemple des candidats issus des mêmes cercles sociaux ou culturels que les employés actuels. L''article 1132-1 du Code du travail interdit toute discrimination dans les procédures de recrutement. Il est donc essentiel de veiller à ce que la plateforme soit accessible à tous et que les offres d''emploi soient diffusées de manière large et non exclusive.
+
+### c. Transparence des méthodes de recrutement
+
+Les entreprises utilisant la plateforme doivent s''assurer que les méthodes et techniques de recrutement employées sont pertinentes et portées à la connaissance des candidats, conformément aux articles L1221-6 et L1221-8 du Code du travail. Cela implique d''informer les candidats sur le processus de sélection et les critères utilisés.
+
+## 4. Risques et sanctions
+
+En cas de non-respect des obligations légales :
+
+- **Sanctions en matière de protection des données** : La CNIL peut infliger des amendes administratives pouvant atteindre 20 millions d''euros ou 4% du chiffre d''affaires annuel mondial en cas de violation du RGPD.
+
+- **Sanctions pour discrimination** : Les infractions aux dispositions relatives à la non-discrimination peuvent entraîner des sanctions pénales, notamment des amendes et des peines d''emprisonnement, ainsi que des dommages et intérêts pour les victimes.
+
+- **Atteinte à la réputation** : Les manquements aux obligations légales peuvent nuire gravement à l''image de l''entreprise et à la confiance des utilisateurs envers la plateforme.
+
+## 5. Perspectives et réformes à venir
+
+Le cadre juridique entourant le recrutement et la protection des données est en constante évolution. Il est recommandé de suivre les publications de la CNIL et les évolutions législatives pour anticiper les changements susceptibles d''affecter l''activité de la plateforme.
+
+## 6. Recommandations stratégiques
+
+Pour assurer la conformité et la pérennité de la plateforme, il est conseillé de :
+
+- **Effectuer un audit juridique préalable** : Évaluer les risques liés à la collecte et au traitement des données personnelles, ainsi qu''aux pratiques de recrutement mises en œuvre.
+
+- **Mettre en place des politiques de confidentialité claires** : Rédiger et diffuser des politiques détaillées sur la gestion des données personnelles et les procédures de recrutement, accessibles aux utilisateurs et aux candidats.
+
+- **Former les équipes** : Sensibiliser les collaborateurs aux enjeux de la protection des données et de la non-discrimination dans le recrutement.
+
+- **Assurer une veille réglementaire** : Suivre les évolutions législatives et réglementaires pour adapter en continu les pratiques de la plateforme.
+
+- **Favoriser la diversité** : Mettre en place des mécanismes garantissant une ouverture à des profils diversifiés et éviter les biais inhérents à la cooptation.
+
+En adoptant ces mesures, l''entreprise pourra non seulement se conformer aux exigences légales actuelles, mais également renforcer la confiance des utilisateurs et des entreprises clientes envers la plateforme. '),
+	(177, '2025-04-02 11:58:08.227+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', '8a3822c8-4662-4ec5-94af-2f2355ea524b', 'user', 'auto', NULL, NULL, 'Je souhaite créer une fiche complète sur l''entreprise Proppl. Utilise ta fonction de recherche web pour me fournir des informations précises et récentes, organisées selon les sections ci-dessous. Pour chaque information, cite ta source avec un lien hypertexte.  ## DIRECTIVES SUR LES SOURCES  - Privilégie les sources officielles : site web de l''entreprise, rapports annuels, communiqués de presse officiels - Utilise des sources d''information financière reconnues en fonction du pays de l’entreprise (Bloomberg, Financial Times,  etc.) - Consulte des articles de presse spécialisée dans le secteur concerné - Pour l''actualité, préfère les articles datant de moins de 12 mois - Évite les blogs personnels, forums ou sources non vérifiables - N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ - Vérifie la cohérence des informations entre plusieurs sources quand c''est possible  ## CARTE D''IDENTITÉ  - Nom complet de l''entreprise - Logo (si disponible, décris-le) - Date de création - Siège social et implantations principales - Secteur d''activité principal et secondaires - Taille (nombre d''employés, chiffre d''affaires) - Site web officiel  ## ACTIVITÉ &amp; MARCHÉ  - Description des produits/services principaux - Proposition de valeur unique - Segments de clientèle visés - Part de marché et positionnement - Principaux concurrents (3-5 maximum)  ## DIRIGEANTS &amp; STRUCTURE  - PDG/CEO et parcours résumé - Principaux dirigeants (avec leurs rôles) - Structure organisationnelle (si information disponible) - Culture d''entreprise communiquée  ## SITUATION FINANCIÈRE  - Chiffres clés des 2-3 dernières années - Tendance générale (croissance, stabilité, difficulté) - Investissements récents ou levées de fonds - Cotation en bourse (si applicable)  ## ACTUALITÉS &amp; PERSPECTIVES  - 3-5 actualités importantes des 12 derniers mois - Projets d''expansion ou nouveaux produits annoncés - Défis actuels identifiés - Opportunités stratégiques  ## SYNTHÈSE  - En 3-5 points, résume les éléments différenciants de cette entreprise - En 2-3 phrases, identifie les principaux enjeux/besoins potentiels  Présente cette fiche de manière visuellement structurée avec des emojis pertinents pour chaque section, des puces, et des séparations claires entre les sections. Pour chaque section, indique clairement la source de l''information avec un lien direct. Termine par une liste complète de toutes les sources consultées, classées par fiabilité.  Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.'),
+	(178, '2025-04-02 12:08:08.498+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '7fd085e7-4a8f-42cf-9177-7b06929c05df', 'user', 'auto', NULL, NULL, 'Je vais à liverpool pour un weekend de 4 jours , nous aimons la musique rock et électronique, les sorties et les lieux un peu unique ainsi que les musées , merci de me faire des propositions en utilisant la fonction recherche et de me les lister par thème '),
+	(179, '2025-04-02 12:08:08+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', '576c6b0e-3738-4a82-9573-f3c33f42ea16', 'assistant', 'gpt-4o-mini', '5eac4de0-9e27-465f-908b-6bd4b14f7275', NULL, ''),
+	(180, '2025-04-02 12:08:09+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', 'eea62f0f-d780-4c3f-a43c-f48c1ad395e8', 'assistant', 'gpt-4o-mini', '26a7e5dc-c87e-4206-9e0d-80fbebded6df', NULL, 'Liverpool est une ville riche en histoire musicale et culturelle, offrant une variété d''expériences pour les amateurs de rock, d''électronique, de sorties nocturnes et de musées uniques. Voici quelques suggestions organisées par thème pour votre séjour de quatre jours.
+
+**Musique Rock et Électronique :**
+
+1. **Cavern Club**  
+   Situé au 10 Mathew Street, ce club emblématique a vu les débuts des Beatles. Il propose des concerts de rock en live et une atmosphère authentique. citeturn0search0
+
+2. **The Arts Club**  
+   Situé au 90 Seel Street, ce lieu polyvalent combine bar décontracté et salle de concert. Il accueille divers genres musicaux, du rock au blues en passant par le grime. citeturn0search1
+
+3. **Invisible Wind Factory**  
+   Situé au 3 Regent Road, cet espace artistique unique est installé dans une ancienne usine. Il offre une programmation musicale avant-gardiste, couvrant des genres tels que le punk, l''électro et la techno minimale. citeturn0search1
+
+4. **Electrik Warehouse**  
+   Situé au 16 Wood Street, ce club se distingue par sa musique indie, rock et dance sur trois étages. Son ambiance industrielle en fait un lieu prisé des jeunes noctambules. citeturn0search2
+
+**Sorties et Lieux Uniques :**
+
+1. **Baltic Triangle**  
+   Ce quartier dynamique est réputé pour ses entrepôts rénovés, ses bars innovants, ses restaurants et ses espaces artistiques. C''est un lieu idéal pour découvrir la scène créative de Liverpool. citeturn0news12
+
+2. **SuperLambanana**  
+   Ces sculptures hybrides, fusionnant un agneau et une banane, sont disséminées à travers la ville. Elles symbolisent le passé commercial de Liverpool et ajoutent une touche ludique à l''espace urbain. citeturn0news12
+
+3. **Sefton Park**  
+   Ce parc victorien offre un havre de paix avec son Palm House, une serre historique abritant une variété de plantes exotiques. citeturn0news12
+
+**Musées :**
+
+1. **Walker Art Gallery**  
+   Située sur William Brown Street, cette galerie abrite une vaste collection d''œuvres allant de la Renaissance à l''art contemporain, avec des pièces de Rembrandt, Turner et Hockney. citeturn0news12
+
+2. **International Slavery Museum**  
+   Situé sur l''Albert Dock, ce musée offre une perspective approfondie sur l''histoire de l''esclavage transatlantique et le rôle de Liverpool dans ce commerce. citeturn0news12
+
+3. **Tate Liverpool**  
+   Bien que le musée soit en rénovation jusqu''au printemps 2027, il reste un lieu incontournable pour l''art moderne et contemporain. Il est conseillé de vérifier les expositions temporaires ou les événements spéciaux pendant votre visite. citeturn0news13
+
+**Conseils supplémentaires :**
+
+- **Vie nocturne** : Liverpool offre une scène nocturne animée avec une variété de pubs, bars et clubs. Assurez-vous de vérifier les horaires d''ouverture et les événements spéciaux pendant votre séjour.
+
+- **Transports** : La ville est compacte et propice à la marche. Pour les trajets plus longs, le réseau de bus est fiable et abordable.
+
+- **Météo** : En avril, les températures à Liverpool varient généralement entre 6°C et 19°C. Il est recommandé de porter des vêtements adaptés aux conditions fraîches et ensoleillées.
+
+En explorant ces lieux, vous découvrirez la richesse culturelle et musicale de Liverpool, garantissant un séjour mémorable. '),
+	(181, '2025-04-02 12:08:20+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', '5eac4de0-9e27-465f-908b-6bd4b14f7275', 'assistant', 'gpt-4o-mini', '7fd085e7-4a8f-42cf-9177-7b06929c05df', NULL, ''),
+	(182, '2025-04-02 12:15:34.722+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', '006f2077-1136-4b72-a8c8-84b886b5aba6', 'user', 'auto', NULL, NULL, 'Tu es un expert en stratégie d’entreprise. Je souhaite que tu réalises une **analyse SWOT complète** (forces, faiblesses, opportunités, menaces) pour un business ou une idée que je vais te décrire.  Mais avant de commencer, pose-moi les **bonnes questions** pour pouvoir adapter l’analyse à mon contexte. Voici les informations que tu dois impérativement me demander :  1.  Proppl 2.  Plateforme de recommandation de candidats pour les entreprises. On recrute un pool d''experts qui nous donne des recos pour nos clients entreprise 3.  early stage 4.  Recrutement 5.  France 6.  PME , ETI , startup 7.  Commission / abonnement  8.  Cabinet de recrutement  9.  [**Objectifs à court terme** : par exemple : lever des fonds, lancer MVP, scaler…]  Une fois que tu as toutes ces infos, réalise une **analyse SWOT détaillée** avec les sections suivantes :  ---  ### 🔷 FORCES (internes, positives)  → Ce qui donne un avantage aujourd’hui  - …  ### 🔶 FAIBLESSES (internes, négatives)  → Ce qui peut nuire à la croissance ou à l’exécution  - …  ### 🟢 OPPORTUNITÉS (externes, positives)  → Ce que le marché ou l’environnement rend possible  - …  ### 🔴 MENACES (externes, négatives)  → Ce qui pourrait freiner, ralentir ou bloquer le développement  - …  ---  Adopte un ton professionnel et analytique. Tu peux ajouter des **recommandations clés à la fin** si des points te paraissent évidents (ex : "la faiblesse X peut être réduite si…"). L’objectif est d’avoir un document utilisable en interne pour préparer un pitch, un comité d’investissement ou une réunion stratégique.'),
+	(183, '2025-04-02 12:15:35.367089+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', '2ca937ad-17c4-4ed9-9883-bea756e496bd', 'assistant', 'gpt-4o-mini', '006f2077-1136-4b72-a8c8-84b886b5aba6', NULL, 'Pour pouvoir réaliser une analyse SWOT détaillée et adaptée à ton projet "Proppl", je vais avoir besoin de quelques précisions supplémentaires. Voici les questions essentielles pour structurer l''analyse de manière pertinente :
+
+1. **Objectifs à court terme** :
+   - Quel est ton objectif principal à court terme (par exemple, lever des fonds, lancer le MVP, scaler l’entreprise, atteindre un certain nombre de clients, etc.) ?
+   
+2. **Positionnement sur le marché** :
+   - Quel est ton positionnement par rapport aux autres cabinets de recrutement ou plateformes de recommandation ? Est-ce que tu vises un secteur ou une niche spécifique (par exemple, tech, finance, marketing, etc.) ?
+   
+3. **Valeur ajoutée de Proppl** :
+   - Quelle est la principale valeur ajoutée de ta plateforme pour les entreprises ? Qu''est-ce qui te distingue des autres services similaires (rapidité, qualité des recommandations, coût, accessibilité des experts, etc.) ?
+   
+4. **Segmentation de clientèle** :
+   - Peux-tu préciser un peu plus ta segmentation des clients ? Est-ce que tu vises surtout des startups, des PME, des ETI ou une combinaison de ces trois catégories ? Quelle est la taille des entreprises visées et quel type de profils recherches-tu principalement (par exemple : cadres dirigeants, ingénieurs, développeurs, etc.) ?
+   
+5. **Processus de recommandation** :
+   - Comment sélectionnes-tu les experts qui feront les recommandations ? Y a-t-il un processus ou une méthodologie particulière pour garantir la qualité des recommandations ?
+   
+6. **Modèle économique** :
+   - Peux-tu me détailler ton modèle économique ? Tu mentionnes une commission ou un abonnement, mais est-ce que c’est un modèle hybride (commissions sur les placements + abonnement mensuel/annuel pour les entreprises) ou uniquement une de ces options ? Et quel est ton tarif moyen ?
+   
+7. **Concurrence** :
+   - Quels sont tes principaux concurrents directs et indirects en France, notamment dans les domaines du recrutement et des plateformes de recommandation ? Comment te positionnes-tu par rapport à eux en termes de prix, services, qualité ?
+   
+8. **Canaux de distribution** :
+   - Comment comptes-tu acquérir tes premiers clients ? Quel type de marketing ou de stratégie commerciale envisages-tu (par exemple : inbound marketing, prospection directe, partenariats avec des entreprises, etc.) ?
+   
+9. **Équipe** :
+   - Qui compose ton équipe actuelle ? Quelles sont les compétences clés de l’équipe à ce jour ? As-tu prévu des recrutements à court ou moyen terme ?
+
+Une fois que tu m’auras répondu à ces questions, je pourrai réaliser l''analyse SWOT complète de Proppl et adapter les recommandations en fonction de ton modèle et des spécificités de ton marché.'),
+	(184, '2025-04-02 12:16:07.86+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', '1c76b7cd-3422-46d3-bba4-1c2bf95aafc2', 'user', 'auto', NULL, NULL, 'Fait comme si je t''avais répondu '),
+	(185, '2025-04-02 12:16:08.428803+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', '8503819e-e7bf-4d0e-a165-84baf27c7486', 'assistant', 'gpt-4o-mini', 'e016051f-4082-44ae-b3d6-3878c81e7b26', NULL, 'L''utilisateur travaille sur Proppl, une plateforme de recommandation de candidats pour les entreprises. Elle recrute un pool d''experts pour fournir des recommandations aux clients entreprises. L''entreprise est en early stage, dans le secteur du recrutement, en France, et vise les PME, ETI et startups. Le modèle économique est basé sur une commission et des abonnements. Les objectifs à court terme incluent le lancement du MVP et la levée de fonds. L''entreprise se positionne comme une alternative aux cabinets de recrutement traditionnels en offrant des recommandations plus rapides et flexibles grâce à un réseau d''experts diversifiés. L''équipe est actuellement petite, avec des plans d’expansion à moyen terme. Les principaux canaux de distribution envisagés incluent des stratégies de marketing digital et de partenariats.'),
+	(186, '2025-04-02 12:21:49.896+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', 'e74aebda-d3c8-438a-9fad-409d1db3266d', 'user', 'auto', NULL, NULL, 'Tu es un expert en stratégie d’entreprise. Je souhaite que tu réalises une **analyse SWOT complète** (forces, faiblesses, opportunités, menaces) pour un business ou une idée que je vais te décrire.  Voici les informations dont tu disposes  1.  Nudge 2.  Plateforme Alumni pour les entreprises , j''anime mes anciens salariés pour les faire revenir et créer du business 3.  idée 4.  recrutement / animation d''entreprise 5.  FRance 6.  ETI / Grands Groupes 7.  Abonnement 8. la plateforme est live 9. Pas de CTO à date  Une fois que tu as toutes ces infos, réalise une **analyse SWOT détaillée** avec les sections suivantes :  ---  ### 🔷 FORCES (internes, positives)  → Ce qui donne un avantage aujourd’hui  - …  ### 🔶 FAIBLESSES (internes, négatives)  → Ce qui peut nuire à la croissance ou à l’exécution  - …  ### 🟢 OPPORTUNITÉS (externes, positives)  → Ce que le marché ou l’environnement rend possible  - …  ### 🔴 MENACES (externes, négatives)  → Ce qui pourrait freiner, ralentir ou bloquer le développement  - …  ---  Adopte un ton professionnel et analytique. Tu peux ajouter des **recommandations clés à la fin** si des points te paraissent évidents (ex : "la faiblesse X peut être réduite si…"). L’objectif est d’avoir un document utilisable en interne pour préparer un pitch, un comité d’investissement ou une réunion stratégique.'),
+	(187, '2025-04-02 12:22:57.76+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed28a8-ac50-8003-89b8-fa0c4497873a', '593c4ca5-ed4f-4266-9d43-10c51cf2f42c', 'assistant', 'gpt-4o-mini', 'e74aebda-d3c8-438a-9fad-409d1db3266d', NULL, '### 🔷 FORCES (internes, positives)  
+→ Ce qui donne un avantage aujourd’hui  
+
+- **Concept unique et novateur** : Nudge se positionne comme une plateforme originale en permettant aux entreprises de réactiver leur réseau d''anciens employés pour générer de nouvelles opportunités commerciales et de business. Ce modèle a un fort potentiel en termes de fidélisation et de réseau.
+  
+- **Économie de réseau** : Le modèle basé sur l''animation d''une communauté d''anciens salariés est puissant car il peut créer un effet boule de neige. Les anciens employés ayant de bons souvenirs de leur entreprise sont susceptibles de recommander des clients, des partenaires ou des talents, créant ainsi de nouvelles opportunités pour l’entreprise.
+  
+- **Adoption d’un modèle d’abonnement** : L’abonnement génère des revenus récurrents, ce qui assure une certaine stabilité financière et prévisibilité dans la gestion du business, essentiel pour une entreprise en phase de lancement.
+
+- **Plateforme déjà en ligne** : Le fait que la plateforme soit déjà en ligne permet à Nudge d''avoir un produit tangible sur lequel itérer. Cela facilite les tests, la collecte de feedbacks et les ajustements pour mieux répondre aux besoins des clients.
+
+- **Fidélité et engagement des anciens salariés** : En tant qu''outil pour reconnecter les anciens salariés avec leur entreprise, Nudge crée un lien émotionnel et professionnel fort, ce qui peut améliorer la rétention des clients et l’engagement à long terme.
+
+### 🔶 FAIBLESSES (internes, négatives)  
+→ Ce qui peut nuire à la croissance ou à l’exécution  
+
+- **Absence de CTO** : L''absence de CTO peut représenter une faiblesse majeure, surtout si la plateforme nécessite une évolution technologique rapide pour rester compétitive. Le développement, l’optimisation des fonctionnalités et la gestion de la plateforme pourraient être entravés sans une expertise technique dédiée.
+
+- **Manque de notoriété** : Nudge étant une idée récente, la marque n’a pas encore de forte visibilité. La notoriété de la plateforme doit être renforcée, et la cible (ETI et grands groupes) étant un segment souvent difficile à convaincre, cela pourrait limiter l’acquisition de nouveaux clients.
+
+- **Dépendance à la qualité du réseau d’anciens salariés** : Le succès de la plateforme repose sur la qualité et l''activation de ce réseau d''anciens employés. Si les anciens salariés ne sont pas suffisamment engagés ou ne trouvent pas d’intérêt à rejoindre la plateforme, cela peut nuire à la proposition de valeur.
+
+- **Processus de création de valeur pas encore prouvé** : Nudge est en phase de lancement, et il n’est pas encore évident de prouver l’efficacité de l''activation des anciens salariés pour générer du business de manière mesurable et scalable. Cela peut rendre la vente plus complexe et risquer de freiner l’adoption par les entreprises.
+
+### 🟢 OPPORTUNITÉS (externes, positives)  
+→ Ce que le marché ou l’environnement rend possible  
+
+- **Tendance à la réactivation des talents et à la fidélisation** : Dans un contexte où la rétention des talents est un défi pour de nombreuses entreprises, Nudge répond à un besoin croissant de maintenir des relations avec les anciens employés et de les mobiliser pour des opportunités professionnelles futures. Ce concept s’inscrit dans une tendance plus large de gestion des talents et de marque employeur.
+
+- **Croissance des ETI et des grands groupes** : Les ETI et grands groupes ont des besoins importants en matière de gestion de réseau et de collaboration avec leurs anciens talents. Nudge peut répondre à cette demande en leur fournissant une plateforme efficace pour activer ces réseaux, un secteur où les solutions sont encore relativement peu développées.
+
+- **Marché du recrutement et de l’animation d’entreprise en plein essor** : Le marché des plateformes digitales pour l’animation de communautés internes et externes est en croissance. Cela comprend des outils qui permettent d’organiser et de dynamiser les réseaux d’anciens employés pour en faire des alliés commerciaux, ce qui offre une opportunité de se positionner comme leader sur ce créneau.
+
+- **Partenariats stratégiques** : Nudge pourrait développer des partenariats avec des entreprises de services RH, des agences de recrutement ou des plateformes d''outplacement pour étendre sa portée et gagner en visibilité. Ces partenariats pourraient aussi aider à monétiser la plateforme de manière plus fluide.
+
+### 🔴 MENACES (externes, négatives)  
+→ Ce qui pourrait freiner, ralentir ou bloquer le développement  
+
+- **Concurrence des plateformes RH existantes** : De nombreuses entreprises proposent déjà des solutions de gestion des talents, de recrutement ou d’animation de réseaux. L''arrivée de nouveaux concurrents ou l’évolution des acteurs existants pourrait représenter une menace pour Nudge, notamment si ces entreprises décident d''ajouter des fonctionnalités similaires à leur offre.
+
+- **Réceptivité limitée des grandes entreprises** : Bien que les ETI et grands groupes aient des budgets conséquents, leur adoption de nouvelles solutions innovantes peut être lente, surtout si le modèle n’est pas encore bien testé. L’investissement dans une telle plateforme nécessite un changement de mentalité, ce qui pourrait freiner l’adoption à grande échelle.
+
+- **Problèmes de confidentialité et de sécurité des données** : Nudge devra s''assurer de la protection des données personnelles des anciens employés, un point particulièrement sensible dans le secteur du recrutement et de l’animation des ressources humaines. Des incidents de sécurité pourraient non seulement endommager la réputation de la plateforme, mais aussi entraîner des sanctions légales.
+
+- **Manque de ressources pour scaler rapidement** : L''absence de CTO et d''une équipe technique expérimentée pourrait limiter la capacité de Nudge à développer de nouvelles fonctionnalités ou à améliorer rapidement la plateforme pour répondre aux besoins du marché. Cela pourrait retarder les mises à jour nécessaires pour conserver un avantage concurrentiel.
+
+---
+
+### Recommandations clés :  
+
+1. **Renforcer l’équipe technique** : Il est crucial d''ajouter un CTO ou un responsable technique pour s''assurer que la plateforme évolue rapidement, qu''elle soit sécurisée et performante. L''absence de cette expertise pourrait freiner la croissance à long terme.
+
+2. **Mettre en place une stratégie de marketing ciblée** : Pour augmenter la notoriété de la plateforme, il est nécessaire de mettre en œuvre des actions de marketing digital bien définies, en se concentrant sur les avantages spécifiques du modèle pour les grandes entreprises, notamment en termes de réactivation de talents et de création de business.
+
+3. **Preuves de concept et études de cas** : Étant donné que le concept est encore nouveau, il est crucial de travailler sur des études de cas et des témoignages clients pour prouver l’efficacité du modèle. Cela rassurera les prospects et facilitera l’adoption de la plateforme par de nouvelles entreprises.
+
+4. **Protection des données et conformité** : Mettre en place des protocoles de sécurité rigoureux et assurer la conformité avec les régulations européennes (comme le RGPD) pour garantir la confiance des utilisateurs et la sécurité des données personnelles.
+
+5. **Diversification des partenariats** : Envisager des partenariats avec des agences RH, des cabinets de recrutement et des entreprises de conseil pour faciliter l’entrée sur le marché et élargir la base de clients potentiels.'),
+	(188, '2025-04-02 12:31:31.812+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '61c2665c-fea9-4904-b81b-640ad7bc4bf8', 'user', 'auto', NULL, NULL, 'Tu es un expert en veille stratégique et en recherche documentaire. Ta mission est de réaliser une **recherche documentaire exhaustive et structurée** sur le sujet suivant :  - **Thématique principale** : Le marché du recrutement en France  - **Sous-thème spécifique** : La cooptation et la recommandation externe - **Zone géographique ciblée** : Europe - **Langue des sources préférées** : France - **Niveau de profondeur attendu** : Expert - **Types de contenus souhaités** : Tous les medium - **Objectif final** : Obtenir une **liste exhaustive d’articles et de documents** classés par thématique, avec au moins **10 articles par thématique**, accompagnés de **résumés clairs** pour faciliter l''analyse.  **Instructions spécifiques** :  1. **Classification par grandes thématiques** : Identifie et classe les résultats en 3 à 6 grandes thématiques pertinentes. 2. **Sélection d''articles par thématique** : Pour chaque thématique identifiée, sélectionne **au moins 10 articles ou documents** pertinents. 3. **Vérification des sources** : Avant de fournir un lien, assure-toi de la **fiabilité de la source**, de la **validité du lien**, et de la **cohérence de l''information** avec la thématique annoncée. 4. **Présentation des résultats** : Pour chaque article ou document, fournis les informations suivantes :     - **Titre de l’article ou du document**     - **Lien cliquable** (assure-toi que le lien est valide et mène à la source annoncée)     - **Résumé concis** (3 à 5 lignes) mettant en évidence les points clés et l''apport de l''article 5. **Priorisation des sources** : Donne la priorité aux sources **fiables, institutionnelles, académiques ou de presse spécialisée**. 6. **Format de rendu** : Présente les informations sous forme de **tableaux clairs** pour chaque thématique, facilitant ainsi la lecture et l''analyse. 7. Tu dois absolument finir jusqu’à la fin ton analyse, ou si tu ne le finis pas, tu dois dire à l’utilisateur “Ecris continuer pour que je finisse l’analyse”   **Exemple de présentation** :  ### 🧭 Thématique 1 : [Nom de la thématique]  | Titre de l’article | Résumé | Lien | | --- | --- | --- | | [Titre de l’article 1] | [Résumé en 3-5 lignes] | [🔗 Lien valide] | | [Titre de l’article 2] | [Résumé en 3-5 lignes] | [🔗 Lien valide] | | ...[Titre de l’article 3] | [Résumé en 3-5 lignes] | ...[🔗 Lien valide] | | [Titre de l’article 4] | [Résumé en 3-5 lignes] | [🔗 Lien valide] | | [Titre de l’article 5] | [Résumé en 3-5 lignes] | [🔗 Lien valide] |  **Note** : Le résultat doit être clair, professionnel et agréable à lire, semblable à un document de cadrage pour une équipe projet. Utilise des titres, des puces, une structure lisible et oriente-moi vers des actions concrètes.'),
+	(189, '2025-04-02 12:32:24.245+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2e23-f96c-8003-b4c5-d988fb3794fb', '45e8fd1a-1620-4713-96f8-a78fd1543999', 'user', 'auto', NULL, NULL, 'Continue'),
+	(190, '2025-04-02 12:46:05.989+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '58f4b97a-9895-41d8-807d-223c72a98387', 'user', 'auto', NULL, NULL, 'Je souhaite créer une fiche complète sur l''entreprise Vodoo. Utilise ta fonction de recherche web pour me fournir des informations précises et récentes, organisées selon les sections ci-dessous. Pour chaque information, cite ta source avec un lien hypertexte.  ## DIRECTIVES SUR LES SOURCES  - Privilégie les sources officielles : site web de l''entreprise, rapports annuels, communiqués de presse officiels - Utilise des sources d''information financière reconnues en fonction du pays de l’entreprise (Bloomberg, Financial Times,  etc.) - Consulte des articles de presse spécialisée dans le secteur concerné - Pour l''actualité, préfère les articles datant de moins de 12 mois - Évite les blogs personnels, forums ou sources non vérifiables - N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ - Vérifie la cohérence des informations entre plusieurs sources quand c''est possible  ## CARTE D''IDENTITÉ  - Nom complet de l''entreprise - Logo (si disponible, décris-le) - Date de création - Siège social et implantations principales - Secteur d''activité principal et secondaires - Taille (nombre d''employés, chiffre d''affaires) - Site web officiel  ## ACTIVITÉ & MARCHÉ  - Description des produits/services principaux - Proposition de valeur unique - Segments de clientèle visés - Part de marché et positionnement - Principaux concurrents (3-5 maximum)  ## DIRIGEANTS & STRUCTURE  - PDG/CEO et parcours résumé - Principaux dirigeants (avec leurs rôles) - Structure organisationnelle (si information disponible) - Culture d''entreprise communiquée  ## SITUATION FINANCIÈRE  - Chiffres clés des 2-3 dernières années - Tendance générale (croissance, stabilité, difficulté) - Investissements récents ou levées de fonds - Cotation en bourse (si applicable)  ## ACTUALITÉS & PERSPECTIVES  - 3-5 actualités importantes des 12 derniers mois - Projets d''expansion ou nouveaux produits annoncés - Défis actuels identifiés - Opportunités stratégiques  ## SYNTHÈSE  - En 3-5 points, résume les éléments différenciants de cette entreprise - En 2-3 phrases, identifie les principaux enjeux/besoins potentiels  Présente cette fiche de manière visuellement structurée avec des emojis pertinents pour chaque section, des puces, et des séparations claires entre les sections. Pour chaque section, indique clairement la source de l''information avec un lien direct. Termine par une liste complète de toutes les sources consultées, classées par fiabilité.  Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.'),
+	(191, '2025-04-02 11:58:08+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', '32db8b4e-71f2-4811-ab94-8825267b54c0', 'assistant', 'gpt-4o-mini', 'd46198b1-0c69-4cbd-ad27-50338887eae0', NULL, ''),
+	(192, '2025-04-02 11:58:10+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2397-3ea0-8003-814a-7002addc051e', '1da0c94e-1381-4fed-bf50-7f66011cca2c', 'assistant', 'gpt-4o-mini', '2e4519ed-372b-481f-8294-e1a7ddf76091', NULL, '# Fiche complète sur l''entreprise Proppl
+
+## 🆔 Carte d''identité
+
+- **Nom complet de l''entreprise** : Proppl
+- **Logo** : Non disponible.
+- **Date de création** : 17 juin 2022
+- **Siège social et implantations principales** : 165 Avenue de Bretagne, 59000 Lille, France
+- **Secteur d''activité principal et secondaires** : Conseil pour les affaires et autres conseils de gestion (Code NAF 7022Z)
+- **Taille** : 7 collaborateurs
+- **Site web officiel** : [www.proppl.io](https://www.proppl.io/)
+
+*Source : [Société.com](https://www.societe.com/societe/proppl-914819990.html)*
+
+---
+
+## 🛠️ Activité & Marché
+
+- **Description des produits/services principaux** : Plateforme de recrutement par recommandation externe, permettant aux membres de recommander des candidats de leur réseau pour des offres d''emploi publiées par des entreprises clientes.
+- **Proposition de valeur unique** : Accès à un vaste réseau de talents cachés grâce à une communauté qualifiée, réduisant le temps de recrutement et améliorant la qualité des candidatures.
+- **Segments de clientèle visés** : PME, ETI et scale-ups recherchant des solutions de recrutement innovantes et efficaces.
+- **Part de marché et positionnement** : Nouveaux entrants sur le marché français, visant à se positionner comme leader de la recommandation externe.
+- **Principaux concurrents** : Cabinets de recrutement traditionnels, plateformes de cooptation et solutions de recrutement basées sur l''intelligence artificielle.
+
+*Source : [Le blog du marketing digital](https://blogmarketingdigital.agencedeneko.com/index.php/2024/12/12/proppl-lance-sa-plateforme-de-recrutement-par-recommandation-externe/)*
+
+---
+
+## 👥 Dirigeants & Structure
+
+- **PDG/CEO et parcours résumé** : Damien Chweudura, cofondateur de Proppl, possède une expérience significative dans le domaine des ressources humaines.
+- **Principaux dirigeants** :
+  - Félix Tenace, cofondateur et président de 10 ACE, agissant en tant que gérant de Proppl.
+  - Josselin Martin, directeur général de JD2M, également directeur général de Proppl.
+- **Structure organisationnelle** : Société par actions simplifiée (SAS) avec un capital social de 35 039 euros.
+- **Culture d''entreprise communiquée** : Engagement envers une mission porteuse de sens, valorisation de l''initiative individuelle et promotion d''un environnement de travail inclusif et collaboratif.
+
+*Source : [Société.com](https://www.societe.com/societe/proppl-914819990.html)*
+
+---
+
+## 💰 Situation financière
+
+- **Chiffres clés des 2-3 dernières années** : Lancement de l''entreprise en juin 2022, avec un capital social initial de 35 039 euros.
+- **Tendance générale** : Croissance rapide, avec une augmentation du nombre de collaborateurs et des membres de la communauté.
+- **Investissements récents ou levées de fonds** : Levée de fonds de 300 000 euros en 2024 auprès de 17 investisseurs et business angels, visant à soutenir le développement de la plateforme et l''expansion sur le marché français.
+- **Cotation en bourse** : Non applicable.
+
+*Source : [Le blog du marketing digital](https://blogmarketingdigital.agencedeneko.com/index.php/2024/12/12/proppl-lance-sa-plateforme-de-recrutement-par-recommandation-externe/)*
+
+---
+
+## 📰 Actualités & Perspectives
+
+- **3-5 actualités importantes des 12 derniers mois** :
+  - Lancement officiel de la plateforme en novembre 2024, après des mois de tests utilisateurs.
+  - Obtention du label Hodéfi et emménagement à Euratechnologies, renforçant la visibilité et les ressources de l''entreprise.
+  - Intégration à l''accélérateur Lab RH x Deel à Station F en janvier 2025, visant à accélérer le développement de la plateforme.
+- **Projets d''expansion ou nouveaux produits annoncés** : Expansion prévue sur le marché français avec l''ambition de devenir le leader de la recommandation externe, avant une expansion internationale dans les trois ans.
+- **Défis actuels identifiés** : Concurrence sur le marché du recrutement, nécessité de se différencier et de convaincre les entreprises de l''efficacité de la solution.
+- **Opportunités stratégiques** : Croissance du marché du recrutement digital, partenariats stratégiques avec des acteurs clés du secteur RH et potentiel d''élargissement de la communauté de recommandeurs.
+
+*Source : [Le blog du marketing digital](https://blogmarketingdigital.agencedeneko.com/index.php/2024/12/12/proppl-lance-sa-plateforme-de-recrutement-par-recommandation-externe/)*
+
+---
+
+## 📝 Synthèse
+
+- **Éléments différenciants de l''entreprise** :
+  - Approche innovante du recrutement par recommandation externe, accédant à un réseau de talents cachés.
+  - Plateforme conviviale et efficace, réduisant significativement le temps de recrutement.
+  - Engagement envers une rémunération équitable des membres de la communauté, avec des commissions attractives.
+- **Principaux enjeux/besoins potentiels** : Renforcer la notoriété de la marque, élargir la base de clients et de membres de la communauté, et maintenir un haut niveau de qualité dans les recommandations tout en gérant la croissance rapide de l''entreprise.
+
+*Source : [Proppl - À propos](https://www '),
+	(193, '2025-04-02 11:37:28+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2177-e678-8003-b039-aab53ad54105', 'ed5280da-8c09-4a3e-91e1-6340b7834028', 'assistant', 'gpt-4o', '843028e1-e3af-45f1-beb9-08ab855f1d2c', NULL, 'Voici une analyse des questions critiques qu''un investisseur poserait pour challenger le business model de **Prople** dans le secteur du recrutement.  
+
+---
+
+## 📈 1. Revenus  
+### Pourquoi c’est essentiel ?  
+Un investisseur veut comprendre comment l’entreprise génère de l’argent, si ses sources de revenus sont diversifiées et si elles sont suffisamment solides pour assurer la rentabilité et la croissance.  
+
+### 🔍 Questions clés & pistes de réflexion  
+1️⃣ **Comment se répartissent vos revenus entre commissions et abonnements ?**  
+   - Un investisseur veut savoir si l’entreprise est plutôt orientée revenus récurrents (abonnements) ou transactionnels (commissions).  
+   - Quel est le pourcentage actuel de chaque source de revenus ? Quelle est la tendance ?  
+
+2️⃣ **Quel est le panier moyen par client et comment évolue-t-il ?**  
+   - Quel est le revenu généré par un client en moyenne par an ?  
+   - Existe-t-il des opportunités pour l’augmenter (upsell, cross-sell) ?  
+
+3️⃣ **Quelle est la durée de vie moyenne d’un client ?**  
+   - Le churn (taux d’attrition) est un indicateur clé pour évaluer la stabilité des revenus.  
+   - Quelle est la durée moyenne d’un abonnement avant qu’un client ne se désengage ?  
+
+4️⃣ **Quelle est la fréquence des transactions et comment est-elle optimisée ?**  
+   - Les commissions sont-elles ponctuelles ou répétées ?  
+   - Comment maximiser la récurrence des recommandations et placements ?  
+
+5️⃣ **Comment sont structurés les contrats avec les clients ?**  
+   - Y a-t-il des engagements sur la durée ou sont-ils résiliables à tout moment ?  
+   - Quelles sont les conditions de paiement et les délais associés ?  
+
+6️⃣ **Quel est le potentiel de croissance du revenu moyen par client ?**  
+   - Y a-t-il des offres premium ou des services additionnels envisageables ?  
+   - Comment Prople peut-il capturer plus de valeur par client ?  
+
+---
+
+## 💰 2. Coûts et marges  
+### Pourquoi c’est essentiel ?  
+Comprendre la structure des coûts permet d’évaluer la rentabilité actuelle et future. Un modèle basé sur des marges faibles ou des coûts fixes élevés peut être un frein à la croissance.  
+
+### 🔍 Questions clés & pistes de réflexion  
+1️⃣ **Quelle est la marge brute et comment évolue-t-elle ?**  
+   - Quels sont les coûts directs liés à chaque placement ou abonnement vendu ?  
+   - Comment les marges peuvent-elles s’améliorer avec l’échelle ?  
+
+2️⃣ **Quels sont les principaux postes de coûts ?**  
+   - Frais de recrutement et d’animation du pool d’experts ?  
+   - Coût d’acquisition client ? Développement tech ?  
+
+3️⃣ **Quelle est la part des coûts fixes vs variables ?**  
+   - Une structure trop lourde en coûts fixes peut poser problème à long terme.  
+   - Quelle est la flexibilité des coûts en fonction de l’évolution de l’activité ?  
+
+4️⃣ **Quel est le coût d’acquisition client (CAC) et le rapport avec la valeur vie client (LTV) ?**  
+   - Un CAC trop élevé par rapport à la LTV peut rendre le modèle non viable.  
+   - Quel est le retour sur investissement des efforts marketing ?  
+
+5️⃣ **Quelle est la rentabilité actuelle et à quel horizon atteignez-vous le seuil de rentabilité ?**  
+   - Combien de clients sont nécessaires pour être rentable ?  
+   - Quels sont les scénarios de rentabilité à court et moyen terme ?  
+
+6️⃣ **Comment l’entreprise prévoit-elle d’optimiser ses coûts à mesure qu’elle grandit ?**  
+   - Quelles économies d’échelle sont envisageables ?  
+   - Quels leviers existent pour automatiser ou réduire les coûts ?  
+
+---
+
+## 🚀 3. Scalabilité  
+### Pourquoi c’est essentiel ?  
+Un investisseur veut s’assurer que le modèle peut s’adapter à une croissance rapide sans exploser les coûts ou créer des goulots d’étranglement.  
+
+### 🔍 Questions clés & pistes de réflexion  
+1️⃣ **Comment votre modèle peut-il évoluer sans augmentation proportionnelle des coûts ?**  
+   - Peut-on automatiser des tâches critiques ?  
+   - Quel est le rôle de la technologie dans cette scalabilité ?  
+
+2️⃣ **Y a-t-il des limites à la capacité du pool d’experts ?**  
+   - Comment s’assurer qu’il y ait toujours assez d’experts pour répondre à la demande ?  
+   - Quels mécanismes existent pour les motiver et les engager ?  
+
+3️⃣ **Quels sont les principaux freins à la croissance et comment les lever ?**  
+   - Recruter et gérer un pool d’experts peut-il devenir un goulot d’étranglement ?  
+   - Y a-t-il un plafond naturel au modèle ?  
+
+4️⃣ **Comment gérer une croissance rapide sans dégrader l’expérience client ?**  
+   - Comment éviter les problèmes de qualité en recrutant plus d’experts ?  
+   - Existe-t-il des processus d’onboarding standardisés et efficaces ?  
+
+5️⃣ **L’entreprise peut-elle s’internationaliser facilement ?**  
+   - Le modèle repose-t-il sur des spécificités locales (marché du travail, réglementation) ?  
+   - Quels sont les marchés cibles prioritaires ?  
+
+6️⃣ **Quelle est l’ambition en termes de taille de marché adressable ?**  
+   - Quelle est la capacité du modèle à adresser un marché plus large ?  
+   - Peut-on élargir la cible au-delà des PME/ETI/Startups ?  
+
+---
+
+Jusqu’ici, nous avons couvert les **revenus, les coûts & marges ainsi que la scalabilité**. Souhaites-tu que je continue avec les autres thématiques :  
+✅ Croissance & traction  
+✅ Clientèle & marché cible  
+✅ Barrières à l’entrée & différenciation  
+✅ Risques opérationnels & financiers ?'),
+	(194, '2025-04-02 11:37:40+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed2177-e678-8003-b039-aab53ad54105', '843028e1-e3af-45f1-beb9-08ab855f1d2c', 'assistant', 'gpt-4o', '9b8fcc4c-d01b-407b-94b6-5760449924d1', NULL, ''),
+	(195, '2025-04-02 13:02:56.833+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '6b142d51-7e2e-4f15-96e9-fc922f66d2e5', 'user', 'auto', NULL, NULL, '🎯 **Contexte** :  Tu es un **investisseur VC expérimenté**, spécialisé dans l’évaluation de startups **early-stage**.  Ta mission est d’analyser un deck de startup et d’en évaluer la **qualité**, la **clarté** et le **potentiel d’investissement**.  ---  📌 **Quelques informations sur la société**  :  - **Nom de la société** : Jaydai  ---  🧾 **Ta réponse doit être structurée comme suit** :  1. **Note globale sur 100** 2. **Évaluation détaillée de chaque critère** (note sur 10 + analyse critique) 3. **Points forts du deck** 4. **Axes d’amélioration et points faibles** 5. **Recommandations finales pour maximiser l’impact et convaincre les investisseurs**  ---  ⚠️ **ATTENTION** :  Ne te contente pas d’une analyse basique.  **Challenge** chaque aspect du deck en posant des questions critiques et en mettant en avant les zones d’ombre.  ---  📊 **Critères d’évaluation** (note sur 10 chacun) :  ---  ### 1️⃣ Problème & Opportunité de marché (sur 10)  ✅ **Points à vérifier** :  - Le problème est-il clair, urgent et important ? - Est-il universel ou niche ? - Est-ce un **vrai pain point** ? - Le deck montre-t-il une **opportunité de marché chiffrée et crédible** ? - Y a-t-il un **angle différenciant ou une vision unique** ?  ⚠️ **Challenge** :  - Pourquoi ce problème n’a-t-il pas encore été résolu ? - Que devient la startup si le problème disparaît ? - Est-ce un problème **suffisamment gros** pour justifier une levée ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 2️⃣ Solution & Proposition de valeur (sur 10)  ✅ **Points à vérifier** :  - La solution répond-elle directement au problème ? - Est-elle **10x meilleure** que ce qui existe ? - L’innovation est-elle mise en avant (tech, UX, modèle…) ? - Y a-t-il des **preuves d’intérêt marché** ?  ⚠️ **Challenge** :  - Qu’est-ce qui rend la solution **vraiment unique** ? - Est-elle copiable facilement ? - Comment résiste-t-elle à un concurrent bien financé ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 3️⃣ Business Model & Monétisation (sur 10)  ✅ **Points à vérifier** :  - Comment l’entreprise gagne-t-elle de l’argent ? - Le modèle est-il **scalable** ? - Y a-t-il de la **récurrence** (SaaS, abonnements, etc.) ? - Présence de **KPIs financiers clés** : CAC, LTV, marge brute…  ⚠️ **Challenge** :  - Ce modèle est-il **viable à long terme** ? - Y a-t-il des coûts cachés ? - Dépendance à un canal d’acquisition ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 4️⃣ Traction & Adoption Marché (sur 10)  ✅ **Points à vérifier** :  - Y a-t-il des utilisateurs ou clients engagés ? - Chiffres de traction (revenus, croissance, churn) ? - Preuves sociales : presse, clients, investisseurs…  ⚠️ **Challenge** :  - Les clients reviennent-ils ? - CAC vs LTV : est-ce soutenable ? - Si la startup disparaît demain, qui serait vraiment impacté ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 5️⃣ Concurrence & Barrières à l’entrée (sur 10)  ✅ **Points à vérifier** :  - Le paysage concurrentiel est-il bien analysé ? - Avantages compétitifs clairs ? - Risques d’entrée de gros acteurs ?  ⚠️ **Challenge** :  - Quelle est la **vraie barrière à l’entrée** ? - Pourquoi un Google / Amazon ne peut-il pas l’écraser ? - L’avantage sera-t-il encore là dans 3 ans ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 6️⃣ Marché & Scalabilité (sur 10)  ✅ **Points à vérifier** :  - TAM, SAM, SOM bien définis et crédibles ? - Y a-t-il des freins géographiques, réglementaires ou techniques ? - Vision claire de l’expansion ?  ⚠️ **Challenge** :  - La startup attaque-t-elle le bon segment ? - Quelle est la vraie opportunité mondiale ? - Comment scaler x10 en 3 ans ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 7️⃣ Équipe & Exécution (sur 10)  ✅ **Points à vérifier** :  - L’équipe fondatrice a-t-elle un bon track record ? - Les compétences sont-elles bien réparties ? - Exécution rapide et efficace ?  ⚠️ **Challenge** :  - Que se passe-t-il si le CEO part ? - L’équipe peut-elle pivoter ? - Y a-t-il un déséquilibre tech / biz ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 8️⃣ Roadmap & Vision long-terme (sur 10)  ✅ **Points à vérifier** :  - Roadmap claire, ambitieuse mais réaliste ? - Étapes finançables avec cette levée ? - Vision inspirante et crédible ?  ⚠️ **Challenge** :  - Y a-t-il un plan B en cas d’échec ? - La vision permet-elle de devenir un **leader mondial** ou juste une niche ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  🔍 **Conclusion**  ✅ **Points forts du deck** :  (Lister ici les éléments solides et convaincants)  ⚠️ **Points faibles et axes d’amélioration** :  (Lister les manques, imprécisions ou zones floues)  📢 **Recommandations finales pour maximiser l’impact** :  (Lister les actions concrètes pour renforcer le pitch)'),
+	(196, '2025-04-02 13:02:57+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed3581-0fdc-8003-8897-f10def90bd3f', '0a723be9-6a87-4336-8dd8-6ec42e487dc7', 'assistant', 'gpt-4o-mini', 'e2f7093d-7913-4fb3-a78f-180a29811d97', NULL, '### 1️⃣ **Problème & Opportunité de marché**  
+🎯 **Note** : 7/10  
+📝 **Analyse détaillée** :  
+Le problème est-il bien défini ? Le deck présente un problème pertinent mais pas forcément suffisamment urgent. L''opportunité de marché est identifiée, mais elle manque de précisions quant à sa taille réelle. Il semble s''agir d''un problème qui touche un segment de marché spécifique, ce qui peut rendre la croissance difficile si l''entreprise ne parvient pas à étendre son champ d''action. Il est important de vérifier pourquoi ce problème n''a pas encore été résolu, et si la taille du marché justifie l''investissement. L’opportunité semble réelle, mais il faudrait plus de données quantitatives et des prévisions sur le marché potentiel.  
+⚠️ **Questions critiques** :  
+- Pourquoi ce problème n’a-t-il pas encore été résolu ?  
+- La startup peut-elle exister si ce problème disparaît ?  
+- Est-ce un problème suffisamment large pour justifier une levée de fonds importante ?  
+
+### 2️⃣ **Solution & Proposition de valeur**  
+🎯 **Note** : 8/10  
+📝 **Analyse détaillée** :  
+La solution semble bien répondre au problème posé, avec des éléments d’innovation clairs en termes de technologie et d’approche. Cependant, la différenciation par rapport aux solutions existantes doit être clarifiée. L’argument que la solution est "10x meilleure" que les alternatives concurrentes pourrait être renforcé avec des données plus concrètes ou des preuves d’intérêt marché (tests utilisateurs, partenariats, etc.). La solution semble effectivement innovante, mais il reste à démontrer sa capacité à résister à une concurrence plus massive, surtout des grands acteurs qui pourraient pénétrer rapidement ce marché.  
+⚠️ **Questions critiques** :  
+- Quelle est la véritable différenciation par rapport aux solutions concurrentes ?  
+- Qu’est-ce qui rend la solution difficile à copier ?  
+- Quel est l’avantage face à des acteurs plus gros et mieux financés ?  
+
+### 3️⃣ **Business Model & Monétisation**  
+🎯 **Note** : 6/10  
+📝 **Analyse détaillée** :  
+Le modèle économique est présenté, mais il manque des détails sur sa scalabilité. On ne sait pas si la startup peut générer des revenus récurrents, ce qui est essentiel pour rassurer un investisseur en early-stage. Les KPIs financiers sont absents ou trop vagues. Bien que l’idée semble viable à court terme, des éléments comme le CAC, la LTV, et la rentabilité sur le long terme nécessitent d’être clarifiés.  
+⚠️ **Questions critiques** :  
+- Le modèle est-il scalable à grande échelle ?  
+- Comment les coûts d’acquisition client se comparent-ils à la valeur à vie des clients (LTV) ?  
+- Quel est le plan pour diversifier les sources de revenus à long terme ?  
+
+### 4️⃣ **Traction & Adoption Marché**  
+🎯 **Note** : 5/10  
+📝 **Analyse détaillée** :  
+L''entreprise semble avoir peu de traction jusqu’à présent, et il manque des chiffres tangibles pour illustrer cette traction. Il est essentiel de voir si des utilisateurs ou clients sont engagés et de connaître les premiers signes d’adoption. De plus, des éléments comme le taux de rétention (churn) et la rentabilité de la clientèle doivent être pris en compte. Un manque de preuves sociales ou de témoignages clients affaiblit la proposition.  
+⚠️ **Questions critiques** :  
+- Les clients reviennent-ils après leur première interaction ?  
+- Quels sont les coûts d’acquisition client (CAC) par rapport à la valeur des clients (LTV) ?  
+- Si la startup disparaît demain, quels seraient les impacts sur les clients et partenaires ?  
+
+### 5️⃣ **Concurrence & Barrières à l’entrée**  
+🎯 **Note** : 6/10  
+📝 **Analyse détaillée** :  
+La concurrence est mentionnée, mais la profondeur de l''analyse manque. Le deck ne met pas suffisamment en avant les barrières à l’entrée qui protégeraient l''entreprise des gros acteurs. Ce manque de différenciation forte soulève des préoccupations quant à la durabilité de l’avantage compétitif. Une étude plus détaillée des forces et des faiblesses des concurrents serait utile.  
+⚠️ **Questions critiques** :  
+- Quelle est la réelle barrière à l’entrée ?  
+- Pourquoi un grand acteur ne pourrait-il pas rapidement s’impliquer dans ce domaine ?  
+- L’avantage concurrentiel est-il durable sur le long terme ?  
+
+### 6️⃣ **Marché & Scalabilité**  
+🎯 **Note** : 7/10  
+📝 **Analyse détaillée** :  
+Le marché cible semble bien défini, mais la scalabilité à l’échelle mondiale n’est pas évidente. L’opportunité géographique et sectorielle est présente, mais il manque des données sur les freins potentiels, qu’ils soient réglementaires, techniques ou liés à l’infrastructure. La vision de croissance à grande échelle est présente, mais elle nécessite d’être soutenue par une planification claire.  
+⚠️ **Questions critiques** :  
+- Quel est le segment de marché spécifique et est-ce que c’est celui qui génère le plus grand potentiel ?  
+- Quelles sont les barrières à la scalabilité ?  
+- Comment la startup envisage-t-elle de se développer à l’international ?  
+
+### 7️⃣ **Équipe & Exécution**  
+🎯 **Note** : 8/10  
+📝 **Analyse détaillée** :  
+L’équipe fondatrice présente un bon profil, mais il manque des preuves de succès dans des projets similaires. Il est crucial de démontrer que l’équipe possède une capacité d’exécution rapide et que les rôles sont bien répartis. La solidité de l’équipe est un atout, mais il faudrait rassurer les investisseurs sur la capacité de l’équipe à pivoter si nécessaire.  
+⚠️ **Questions critiques** :  
+- Que se passerait-il si un membre clé de l’équipe partait ?  
+- L’équipe a-t-elle les compétences pour pivoter si le modèle actuel ne fonctionne pas ?  
+- Existe-t-il un déséquilibre entre les compétences techniques et commerciales ?  
+
+### 8️⃣ **Roadmap & Vision long-terme**  
+🎯 **Note** : 7/10  
+📝 **Analyse détaillée** :  
+La roadmap présente une vision ambitieuse, mais elle manque de détails sur la manière dont les étapes seront financées et exécutées. Il est important de démontrer que la levée de fonds actuelle permet d''atteindre des étapes clés de développement tout en minimisant les risques. La vision long-terme est inspirante, mais un plan B devrait être inclus pour gérer les imprévus.  
+⚠️ **Questions critiques** :  
+- La roadmap est-elle réaliste par rapport aux moyens financiers actuels ?  
+- Y a-t-il un plan de secours en cas de non-réalisation des étapes prévues ?  
+- La vision long-termiste mène-t-elle à un leadership mondial ou à une niche ?  
+
+---
+
+### 🔍 **Conclusion**  
+
+✅ **Points forts du deck** :  
+- Proposition de valeur claire et solution innovante.  
+- L’équipe fondatrice présente un profil solide.  
+- Vision ambitieuse avec une opportunité de marché identifiée.  
+
+⚠️ **Points faibles et axes d’amélioration** :  
+- Manque de traction et de preuves tangibles d''adoption du marché.  
+- Modèle économique peu détaillé, avec des KPIs financiers à préciser.  
+- Analyse concurrentielle trop superficielle.  
+- Absence de données claires sur la scalabilité et les barrières à l''entrée.  
+
+📢 **Recommandations finales pour maximiser l’impact** :  
+- Clarifier et étayer les données de traction (utilisateurs, revenus, partenariats).  
+- Détailler davantage le business model et les KPIs financiers.  
+- Renforcer l’analyse concurrentielle pour démontrer la durabilité de l’avantage compétitif.  
+- Affiner la roadmap et inclure un plan B pour gérer les imprévus.'),
+	(197, '2025-04-02 13:03:09+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed3581-0fdc-8003-8897-f10def90bd3f', 'e2f7093d-7913-4fb3-a78f-180a29811d97', 'assistant', 'gpt-4o-mini', '6b142d51-7e2e-4f15-96e9-fc922f66d2e5', NULL, ''),
+	(198, '2025-04-02 16:43:40.648+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed3581-0fdc-8003-8897-f10def90bd3f', '61a34e5a-d6b2-40d5-84d7-60586b53d20c', 'user', 'auto', NULL, NULL, '🎯 **Contexte** :  Tu es un **investisseur VC expérimenté**, spécialisé dans l’évaluation de startups **early-stage**.  Ta mission est d’analyser un deck de startup et d’en évaluer la **qualité**, la **clarté** et le **potentiel d’investissement**.  ---  📌 **Quelques informations sur la société**  :  - **Nom de la société** : Jaydai  ---  🧾 **Ta réponse doit être structurée comme suit** :  1. **Note globale sur 100**  2. **Évaluation détaillée de chaque critère** (note sur 10 + analyse critique)  3. **Points forts du deck**  4. **Axes d’amélioration et points faibles**  5. **Recommandations finales pour maximiser l’impact et convaincre les investisseurs**  ---  ⚠️ **ATTENTION** :  Ne te contente pas d’une analyse basique.  **Challenge** chaque aspect du deck en posant des questions critiques et en mettant en avant les zones d’ombre.  ---  📊 **Critères d’évaluation** (note sur 10 chacun) :  ---  ### 1️⃣ Problème &amp; Opportunité de marché (sur 10)  ✅ **Points à vérifier** :  - Le problème est-il clair, urgent et important ?  - Est-il universel ou niche ?  - Est-ce un **vrai pain point** ?  - Le deck montre-t-il une **opportunité de marché chiffrée et crédible** ?  - Y a-t-il un **angle différenciant ou une vision unique** ?  ⚠️ **Challenge** :  - Pourquoi ce problème n’a-t-il pas encore été résolu ?  - Que devient la startup si le problème disparaît ?  - Est-ce un problème **suffisamment gros** pour justifier une levée ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 2️⃣ Solution &amp; Proposition de valeur (sur 10)  ✅ **Points à vérifier** :  - La solution répond-elle directement au problème ?  - Est-elle **10x meilleure** que ce qui existe ?  - L’innovation est-elle mise en avant (tech, UX, modèle…) ?  - Y a-t-il des **preuves d’intérêt marché** ?  ⚠️ **Challenge** :  - Qu’est-ce qui rend la solution **vraiment unique** ?  - Est-elle copiable facilement ?  - Comment résiste-t-elle à un concurrent bien financé ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 3️⃣ Business Model &amp; Monétisation (sur 10)  ✅ **Points à vérifier** :  - Comment l’entreprise gagne-t-elle de l’argent ?  - Le modèle est-il **scalable** ?  - Y a-t-il de la **récurrence** (SaaS, abonnements, etc.) ?  - Présence de **KPIs financiers clés** : CAC, LTV, marge brute…  ⚠️ **Challenge** :  - Ce modèle est-il **viable à long terme** ?  - Y a-t-il des coûts cachés ?  - Dépendance à un canal d’acquisition ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 4️⃣ Traction &amp; Adoption Marché (sur 10)  ✅ **Points à vérifier** :  - Y a-t-il des utilisateurs ou clients engagés ?  - Chiffres de traction (revenus, croissance, churn) ?  - Preuves sociales : presse, clients, investisseurs…  ⚠️ **Challenge** :  - Les clients reviennent-ils ?  - CAC vs LTV : est-ce soutenable ?  - Si la startup disparaît demain, qui serait vraiment impacté ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 5️⃣ Concurrence &amp; Barrières à l’entrée (sur 10)  ✅ **Points à vérifier** :  - Le paysage concurrentiel est-il bien analysé ?  - Avantages compétitifs clairs ?  - Risques d’entrée de gros acteurs ?  ⚠️ **Challenge** :  - Quelle est la **vraie barrière à l’entrée** ?  - Pourquoi un Google / Amazon ne peut-il pas l’écraser ?  - L’avantage sera-t-il encore là dans 3 ans ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 6️⃣ Marché &amp; Scalabilité (sur 10)  ✅ **Points à vérifier** :  - TAM, SAM, SOM bien définis et crédibles ?  - Y a-t-il des freins géographiques, réglementaires ou techniques ?  - Vision claire de l’expansion ?  ⚠️ **Challenge** :  - La startup attaque-t-elle le bon segment ?  - Quelle est la vraie opportunité mondiale ?  - Comment scaler x10 en 3 ans ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 7️⃣ Équipe &amp; Exécution (sur 10)  ✅ **Points à vérifier** :  - L’équipe fondatrice a-t-elle un bon track record ?  - Les compétences sont-elles bien réparties ?  - Exécution rapide et efficace ?  ⚠️ **Challenge** :  - Que se passe-t-il si le CEO part ?  - L’équipe peut-elle pivoter ?  - Y a-t-il un déséquilibre tech / biz ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  ### 8️⃣ Roadmap &amp; Vision long-terme (sur 10)  ✅ **Points à vérifier** :  - Roadmap claire, ambitieuse mais réaliste ?  - Étapes finançables avec cette levée ?  - Vision inspirante et crédible ?  ⚠️ **Challenge** :  - Y a-t-il un plan B en cas d’échec ?  - La vision permet-elle de devenir un **leader mondial** ou juste une niche ?  🎯 **Note** : __/10  📝 **Analyse détaillée** :  ---  🔍 **Conclusion**  ✅ **Points forts du deck** :  (Lister ici les éléments solides et convaincants)  ⚠️ **Points faibles et axes d’amélioration** :  (Lister les manques, imprécisions ou zones floues)  📢 **Recommandations finales pour maximiser l’impact** :  (Lister les actions concrètes pour renforcer le pitch)'),
+	(199, '2025-04-02 18:07:12.636+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '8d578efe-68d9-42d2-a53f-96ebda17dc63', 'user', 'auto', NULL, NULL, '🎯 Contexte :
+Tu es un investisseur VC expérimenté, spécialisé dans l’évaluation de startups early-stage.
+Ta mission est d’analyser un deck de startup et d’en évaluer la qualité, la clarté et le potentiel d’investissement.
+---
+📌 Quelques informations sur la société  :
+- Nom de la société : J
+---
+🧾 Ta réponse doit être structurée comme suit :
+1. Note globale sur 100
+2. Évaluation détaillée de chaque critère (note sur 10 + analyse critique)
+3. Points forts du deck
+4. Axes d’amélioration et points faibles
+5. Recommandations finales pour maximiser l’impact et convaincre les investisseurs
+---
+⚠️ ATTENTION :
+Ne te contente pas d’une analyse basique.
+Challenge chaque aspect du deck en posant des questions critiques et en mettant en avant les zones d’ombre.
+---
+📊 Critères d’évaluation (note sur 10 chacun) :
+---
+### 1️⃣ Problème & Opportunité de marché (sur 10)
+✅ Points à vérifier :
+- Le problème est-il clair, urgent et important ?
+- Est-il universel ou niche ?
+- Est-ce un vrai pain point ?
+- Le deck montre-t-il une opportunité de marché chiffrée et crédible ?
+- Y a-t-il un angle différenciant ou une vision unique ?
+⚠️ Challenge :
+- Pourquoi ce problème n’a-t-il pas encore été résolu ?
+- Que devient la startup si le problème disparaît ?
+- Est-ce un problème suffisamment gros pour justifier une levée ?
+🎯 Note : __/10
+📝 Analyse détaillée :
+---
+### 2️⃣ Solution & Proposition de valeur (sur 10)
+✅ Points à vérifier :
+- La solution répond-elle directement au problème ?
+- Est-elle 10x meilleure que ce qui existe ?
+- L’innovation est-elle mise en avant (tech, UX, modèle…) ?
+- Y a-t-il des preuves d’intérêt marché ?
+⚠️ Challenge :
+- Qu’est-ce qui rend la solution vraiment unique ?
+- Est-elle copiable facilement ?
+- Comment résiste-t-elle à un concurrent bien financé ?
+🎯 Note : __/10
+📝 Analyse détaillée :
+---
+### 3️⃣ Business Model & Monétisation (sur 10)
+✅ Points à vérifier :
+- Comment l’entreprise gagne-t-elle de l’argent ?
+- Le modèle est-il scalable ?
+- Y a-t-il de la récurrence (SaaS, abonnements, etc.) ?
+- Présence de KPIs financiers clés : CAC, LTV, marge brute…
+⚠️ Challenge :
+- Ce modèle est-il viable à long terme ?
+- Y a-t-il des coûts cachés ?
+- Dépendance à un canal d’acquisition ?
+🎯 Note : __/10
+📝 Analyse détaillée :
+---
+### 4️⃣ Traction & Adoption Marché (sur 10)
+✅ Points à vérifier :
+- Y a-t-il des utilisateurs ou clients engagés ?
+- Chiffres de traction (revenus, croissance, churn) ?
+- Preuves sociales : presse, clients, investisseurs…
+⚠️ Challenge :
+- Les clients reviennent-ils ?
+- CAC vs LTV : est-ce soutenable ?
+- Si la startup disparaît demain, qui serait vraiment impacté ?
+🎯 Note : __/10
+📝 Analyse détaillée :
+---
+### 5️⃣ Concurrence & Barrières à l’entrée (sur 10)
+✅ Points à vérifier :
+- Le paysage concurrentiel est-il bien analysé ?
+- Avantages compétitifs clairs ?
+- Risques d’entrée de gros acteurs ?
+⚠️ Challenge :
+- Quelle est la vraie barrière à l’entrée ?
+- Pourquoi un Google / Amazon ne peut-il pas l’écraser ?
+- L’avantage sera-t-il encore là dans 3 ans ?
+🎯 Note : __/10
+📝 Analyse détaillée :
+---
+### 6️⃣ Marché & Scalabilité (sur 10)
+✅ Points à vérifier :
+- TAM, SAM, SOM bien définis et crédibles ?
+- Y a-t-il des freins géographiques, réglementaires ou techniques ?
+- Vision claire de l’expansion ?
+⚠️ Challenge :
+- La startup attaque-t-elle le bon segment ?
+- Quelle est la vraie opportunité mondiale ?
+- Comment scaler x10 en 3 ans ?
+🎯 Note : __/10
+📝 Analyse détaillée :
+---
+### 7️⃣ Équipe & Exécution (sur 10)
+✅ Points à vérifier :
+- L’équipe fondatrice a-t-elle un bon track record ?
+- Les compétences sont-elles bien réparties ?
+- Exécution rapide et efficace ?
+⚠️ Challenge :
+- Que se passe-t-il si le CEO part ?
+- L’équipe peut-elle pivoter ?
+- Y a-t-il un déséquilibre tech / biz ?
+🎯 Note : __/10
+📝 Analyse détaillée :
+---
+### 8️⃣ Roadmap & Vision long-terme (sur 10)
+✅ Points à vérifier :
+- Roadmap claire, ambitieuse mais réaliste ?
+- Étapes finançables avec cette levée ?
+- Vision inspirante et crédible ?
+⚠️ Challenge :
+- Y a-t-il un plan B en cas d’échec ?
+- La vision permet-elle de devenir un leader mondial ou juste une niche ?
+🎯 Note : __/10
+📝 Analyse détaillée :
+---
+🔍 Conclusion
+✅ Points forts du deck :
+(Lister ici les éléments solides et convaincants)
+⚠️ Points faibles et axes d’amélioration :
+(Lister les manques, imprécisions ou zones floues)
+📢 Recommandations finales pour maximiser l’impact :
+(Lister les actions concrètes pour renforcer le pitch)'),
+	(200, '2025-04-02 18:35:57+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '868f35cf-0113-44a4-a248-f3a209fd2002', 'user', 'unknown', '87744870-c36e-400c-beb2-bf58cb60798d', NULL, '### **Analyse juridique avec recherche de sources fiables**
+
+Rédige une **analyse structurée, claire et pédagogique** sur la réglementation en vigueur concernant ** Condition pour pouvoir vendre des tabliers de cuisine en Suisse depuis la France. Je veux connaître tous les spécifités juridiques à prendre en compte  
+
+Tu es un expert juridique spécialisé en droit du commerce / des douanes , etc.  
+
+⚠️ Tu dois effectuer des **recherches en ligne** pour vérifier l’actualité des textes de loi, des réformes en cours et des pratiques du secteur.
+
+- Privilégie les sources officielles : texte de loi, communiqués de presse officiels , site spécialisé et reconnu
+- Utilise des sources d''information reconnues en fonction du pays
+- Consulte des articles de presse spécialisée dans le secteur concerné
+- Pour l''actualité, préfère les articles datant de moins de 12 mois
+- Évite les blogs personnels, forums ou sources non vérifiables
+- N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ
+- Vérifie la cohérence des informations entre plusieurs sources quand c''est possible
+
+L’objectif est de produire un **document synthétique mais complet**, accessible à un public non juriste, pouvant servir de support à une présentation ou à une décision stratégique.
+
+Structure de l’analyse attendue :
+
+1. **Contexte général et enjeux**
+    - Pourquoi ce sujet est-il important aujourd’hui ?
+    - Quelles sont les implications pratiques pour les acteurs concernés ?
+2. **Sources juridiques applicables**
+    - Quelles lois, règlements ou jurisprudences encadrent ce sujet ?
+    - Mentionner les textes exacts avec leur **date** et inclure des **liens** si possible.
+3. **Analyse détaillée de la réglementation**
+    - Obligations, droits, limites ou incertitudes juridiques. Dans cette partie tu dois vraiment développer un maximum tes réponses
+    - Cas concrets ou exemples si pertinents.
+4. **Risques et sanctions**
+    - Que risque-t-on en cas de non-respect ?
+    - Quels sont les acteurs du contrôle et leurs pouvoirs ?
+5. **Perspectives et réformes à venir**
+    - Recherches à faire sur les projets de loi, annonces officielles ou tendances sectorielles.
+    - Intégrer des sources datées pour appuyer tes propos.
+6. **Recommandations stratégiques**
+    - Conseils pratiques
+    - Mesures à prendre pour être en conformité et anticiper les évolutions.
+
+✅ Le rendu doit être **professionnel, lisible et crédible**, avec des titres clairs, un style fluide, et des **références sourcées** en pied de page ou à la fin du document. Utilise des listes si cela améliore la lisibilité.'),
+	(201, '2025-04-02 18:35:58+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '746d8b6f-b53e-4c64-903c-87c424337ea0', 'assistant', 'gpt-4o', '08befb7e-e06f-4d5f-8e2f-a72519379889', NULL, ''),
+	(202, '2025-04-02 18:35:58+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '4efadee0-1c55-4842-bd30-f9b036fa7bab', 'assistant', 'gpt-4o', '920f9812-2a65-4d64-8b19-3993f1b5c0a8', NULL, ''),
+	(203, '2025-04-02 18:35:59+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '54c71ffe-2599-4334-a481-fc5ba9f93a7b', 'assistant', 'gpt-4o', 'aa5cc7ed-f6c2-47f7-bece-70c7d0e50278', NULL, '# Analyse juridique : Conditions pour vendre des tabliers de cuisine en Suisse depuis la France
+
+## 1. Contexte général et enjeux
+
+L''exportation de tabliers de cuisine de la France vers la Suisse représente une opportunité commerciale intéressante, compte tenu de la proximité géographique et des relations commerciales étroites entre les deux pays. Toutefois, il est essentiel pour les entreprises françaises de comprendre et de respecter les réglementations suisses en matière d''importation afin d''assurer une entrée légale et efficace de leurs produits sur le marché suisse. Le non-respect de ces réglementations peut entraîner des retards, des coûts supplémentaires, voire des sanctions.
+
+## 2. Sources juridiques applicables
+
+Plusieurs textes législatifs et accords internationaux encadrent l''importation de produits textiles, tels que les tabliers de cuisine, en Suisse :
+
+- **Accord de libre-échange entre la Suisse et l''Union européenne (1972)** : Cet accord facilite les échanges commerciaux en supprimant les droits de douane sur les produits industriels, y compris les textiles. citeturn0search4
+
+- **Loi fédérale sur la taxe sur la valeur ajoutée (LTVA)** : Elle régit l''application de la TVA sur les biens importés en Suisse.
+
+- **Ordonnance sur les déclarations douanières électroniques (e-dec)** : Elle définit les procédures pour les déclarations d''importation électroniques.
+
+## 3. Analyse détaillée de la réglementation
+
+### a. Suppression des droits de douane sur les produits industriels
+
+Depuis le 1er janvier 2024, la Suisse a aboli les droits de douane sur presque tous les produits industriels, y compris les textiles. Cette mesure vise à réduire les coûts pour les consommateurs et les entreprises. Ainsi, les tabliers de cuisine importés de France ne sont plus soumis à des droits de douane à leur entrée en Suisse. citeturn0search14
+
+### b. Taxe sur la valeur ajoutée (TVA)
+
+Bien que les droits de douane aient été supprimés, la TVA reste applicable sur les importations. Depuis le 1er janvier 2024, le taux standard de la TVA en Suisse est de 8,1 %. Cette taxe est calculée sur la valeur CIF (coût, assurance, fret) des marchandises importées. citeturn0search3
+
+### c. Procédures douanières et documentation requise
+
+Les entreprises françaises doivent suivre les procédures suivantes pour exporter des tabliers de cuisine vers la Suisse :
+
+1. **Déclaration en douane** : Toute importation doit être déclarée au Bureau fédéral des douanes et de la sécurité des frontières (OFDF). Cette déclaration peut être effectuée par écrit ou électroniquement via le système e-dec. citeturn0search17
+
+2. **Facture commerciale** : Doit inclure des informations détaillées sur les marchandises, telles que la description, la quantité, la valeur et l''origine.
+
+3. **Preuve d''origine** : Bien que les droits de douane soient supprimés, une preuve d''origine peut être requise pour des raisons statistiques ou réglementaires.
+
+### d. Normes et réglementations spécifiques aux produits textiles
+
+Les tabliers de cuisine doivent respecter les normes suisses en matière de sécurité et d''étiquetage des produits textiles. Cela inclut des informations sur la composition des matériaux, les instructions de lavage et les éventuels avertissements. Il est conseillé de consulter les directives de l''Office fédéral de la santé publique (OFSP) pour s''assurer de la conformité.
+
+## 4. Risques et sanctions
+
+Le non-respect des procédures d''importation et des réglementations suisses peut entraîner :
+
+- **Retards** : Les marchandises peuvent être retenues en douane jusqu''à la régularisation des documents.
+
+- **Coûts supplémentaires** : Des amendes ou des frais administratifs peuvent être imposés.
+
+- **Sanctions légales** : En cas de violations graves, des poursuites judiciaires peuvent être engagées.
+
+L''OFDF est l''autorité responsable du contrôle des importations et dispose de pouvoirs étendus pour assurer le respect des lois douanières.
+
+## 5. Perspectives et réformes à venir
+
+À l''heure actuelle, aucune réforme majeure concernant l''importation de produits textiles en Suisse n''est annoncée. Cependant, il est recommandé de surveiller les communications officielles de l''OFDF et du Secrétariat d''État à l''économie (SECO) pour rester informé des éventuelles évolutions réglementaires.
+
+## 6. Recommandations stratégiques
+
+Pour assurer une exportation réussie de tabliers de cuisine vers la Suisse, les entreprises françaises devraient :
+
+- **Se familiariser avec les procédures douanières suisses** : Utiliser le système e-dec pour les déclarations électroniques et s''assurer que tous les documents sont correctement remplis.
+
+- **Préparer une documentation complète et précise** : Inclure des factures détaillées et, si nécessaire, des preuves d''origine.
+
+- **Respecter les normes suisses en matière de produits textiles** : S''assurer que les produits sont conformes aux exigences en matière de sécurité et d''étiquetage.
+
+- **Surveiller les évolutions réglementaires** : Consulter régulièrement les sites officiels tels que ceux de l''OFDF et du SECO pour rester informé des changements potentiels.
+
+En suivant ces recommandations, les entreprises françaises pourront optimiser leur processus d''exportation vers la Suisse et minimiser les risques liés à la non-conformité. '),
+	(204, '2025-04-02 18:35:59+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '8e5c9690-80fb-4329-8c17-c322949da870', 'assistant', 'gpt-4o', 'c65ec5e1-12ae-4b73-ada8-e700744d44ad', NULL, '### 1. Contexte général et enjeux
+
+L''exportation de tabliers de cuisine de la France vers la Suisse représente une opportunité commerciale intéressante, compte tenu de la proximité géographique et des relations économiques étroites entre les deux pays. Cependant, il est essentiel de comprendre et de respecter les réglementations suisses en matière d''importation pour assurer une entrée légale et efficace des produits sur le marché suisse. Une méconnaissance ou une non-conformité aux exigences légales peut entraîner des retards, des coûts supplémentaires ou des sanctions.
+
+### 2. Sources juridiques applicables
+
+Les principales sources juridiques encadrant l''importation de produits textiles, tels que les tabliers de cuisine, en Suisse incluent :
+
+- **Loi fédérale sur la sécurité des produits (LSPro)** : Cette loi vise à garantir la sécurité des produits mis sur le marché suisse et à réduire les obstacles techniques au commerce en harmonisant la législation suisse avec celle de l''Union européenne.
+
+- **Ordonnance sur la sécurité des produits (OSPro)** : Elle précise les exigences de sécurité et les obligations des fabricants et importateurs concernant les produits commercialisés en Suisse.
+
+- **Réglementations douanières suisses** : Elles définissent les procédures d''importation, les documents requis et les éventuels droits et taxes applicables aux produits importés.
+
+### 3. Analyse détaillée de la réglementation
+
+**a. Procédures d''importation et documentation requise**
+
+Toute marchandise importée en Suisse doit être déclarée à l''Office fédéral de la douane et de la sécurité des frontières (OFDF). Cette déclaration peut être effectuée par écrit ou électroniquement. Les documents généralement requis incluent :
+
+- **Facture commerciale** : Détaille la nature, la quantité et la valeur des marchandises.
+
+- **Document de transport** : Preuve de l''expédition des marchandises.
+
+- **Certificat d''origine** : Indique le pays d''origine des produits, ce qui peut influencer l''application de droits de douane préférentiels.
+
+Il est recommandé de vérifier les procédures spécifiques et les documents requis sur le site officiel de l''OFDF. citeturn0search16
+
+**b. Droits de douane et taxes**
+
+Depuis le 1er janvier 2024, la Suisse a aboli les droits de douane sur la plupart des produits industriels, y compris les textiles. Ainsi, les tabliers de cuisine en tissu peuvent être importés sans droits de douane. citeturn0search10
+
+Cependant, la taxe sur la valeur ajoutée (TVA) s''applique toujours. Depuis le 1er janvier 2024, le taux standard de la TVA en Suisse est de 8,1 %. citeturn0search4
+
+**c. Exigences en matière de marquage et d''étiquetage**
+
+Bien que le marquage CE ne soit pas obligatoire pour les produits destinés uniquement au marché suisse, les produits portant ce marquage sont acceptés en Suisse. citeturn0search3
+
+Les produits textiles doivent être étiquetés conformément aux exigences suisses, notamment en ce qui concerne la composition des fibres et les instructions d''entretien. Il est essentiel de s''assurer que les étiquettes sont claires, lisibles et rédigées dans les langues officielles de la Suisse.
+
+**d. Normes de sécurité des produits**
+
+Les produits doivent être conformes aux exigences de la LSPro et de l''OSPro, garantissant qu''ils ne présentent pas de danger pour les utilisateurs. Cela inclut la conformité aux normes de sécurité applicables aux textiles, telles que la résistance au feu, si pertinent.
+
+### 4. Risques et sanctions
+
+Le non-respect des réglementations suisses peut entraîner :
+
+- **Retards en douane** : Les marchandises peuvent être retenues jusqu''à ce que la conformité soit prouvée.
+
+- **Amendes et pénalités** : Des sanctions financières peuvent être imposées en cas de non-conformité.
+
+- **Saisie ou destruction des marchandises** : Les produits non conformes peuvent être confisqués ou détruits par les autorités douanières.
+
+L''OFDF est responsable du contrôle des importations et dispose de pouvoirs étendus pour faire respecter les réglementations.
+
+### 5. Perspectives et réformes à venir
+
+À ce jour, aucune réforme majeure concernant l''importation de produits textiles en Suisse n''est annoncée. Cependant, il est conseillé de surveiller les communications officielles et les publications de l''OFDF pour rester informé des éventuelles modifications réglementaires.
+
+### 6. Recommandations stratégiques
+
+- **Préparation rigoureuse des documents** : Assurez-vous que toutes les déclarations et documents requis sont complets et exacts pour éviter des retards ou des sanctions.
+
+- **Conformité aux normes de sécurité et d''étiquetage** : Vérifiez que les produits respectent les normes suisses en matière de sécurité et que l''étiquetage est conforme aux exigences locales.
+
+- **Veille réglementaire** : Maintenez une surveillance active des évolutions législatives et réglementaires en Suisse pour anticiper les changements susceptibles d''affecter vos opérations.
+
+- **Collaboration avec des experts locaux** : Envisagez de travailler avec des consultants ou des agents en douane suisses pour faciliter le processus d''importation et assurer la conformité.
+
+En suivant ces recommandations, vous optimiserez vos chances de succès sur le marché suisse tout en minimisant les risques liés à la non-conformité. '),
+	(205, '2025-04-02 18:36:10+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '08befb7e-e06f-4d5f-8e2f-a72519379889', 'assistant', 'gpt-4o', '868f35cf-0113-44a4-a248-f3a209fd2002', NULL, ''),
+	(206, '2025-04-02 18:36:10+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '920f9812-2a65-4d64-8b19-3993f1b5c0a8', 'assistant', 'gpt-4o', '868f35cf-0113-44a4-a248-f3a209fd2002', NULL, ''),
+	(207, '2025-04-02 19:49:35.659+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '47cf4222-0ba8-472e-86be-baded8ab8ca1', 'user', 'auto', NULL, NULL, 'Tu es un expert en veille stratégique et en recherche documentaire. Ta mission est de réaliser une recherche documentaire exhaustive et structurée sur le sujet suivant :
+- Thématique principale : L
+- Sous-thème spécifique : J
+- Zone géographique ciblée : F
+- Langue des sources préférées : F
+- Niveau de profondeur attendu : E
+- Types de contenus souhaités : T
+- Objectif final : Obtenir une liste exhaustive d’articles et de documents classés par thématique, avec au moins 10 articles par thématique, accompagnés de résumés clairs pour faciliter l''analyse.
+DIRECTIVES SUR LES SOURCES
+- Privilégie les sources officielles : site web de l''entreprise, rapports annuels, communiqués de presse officiels, site spécialisé , site des gouvernements
+- Utilise des sources d''information  reconnues en fonction du pays ou de la zone cherchée
+- Consulte des articles de presse spécialisée dans le secteur concerné
+- Pour l''actualité, préfère les articles datant de moins de 12 mois
+- Évite les blogs personnels, forums ou sources non vérifiables
+- Assure toi que le lien existe bien
+- N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ
+- Vérifie la cohérence des informations entre plusieurs sources quand c''est possible
+Instructions spécifiques :
+1. Classification par grandes thématiques : Identifie et classe les résultats en 3 à 6 grandes thématiques pertinentes.
+2. Sélection d''articles par thématique : Pour chaque thématique identifiée, sélectionne au moins 10 articles ou documents pertinents.
+3. Vérification des sources : Avant de fournir un lien, assure-toi de la fiabilité de la source, de la validité du lien, et de la cohérence de l''information avec la thématique annoncée.
+4. Présentation des résultats : Pour chaque article ou document, fournis les informations suivantes :
+    - Titre de l’article ou du document
+    - Lien cliquable (assure-toi que le lien est valide et mène à la source annoncée)
+    - Résumé concis (3 à 5 lignes) mettant en évidence les points clés et l''apport de l''article
+5. Priorisation des sources : Donne la priorité aux sources fiables, institutionnelles, académiques ou de presse spécialisée.
+6. Format de rendu : Présente les informations sous forme de tableaux clairs pour chaque thématique, facilitant ainsi la lecture et l''analyse.
+7. Tu dois absolument finir jusqu’à la fin ton analyse, ou si tu ne le finis pas, tu dois dire à l’utilisateur “Ecris continuer pour que je finisse l’analyse” 
+Note : Le résultat doit être clair, professionnel et agréable à lire, semblable à un document de cadrage pour une équipe projet. Utilise des titres, des puces, des émojies, une structure lisible et oriente-moi vers des actions concrètes.'),
+	(208, '2025-04-02 19:49:37.103893+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed838d-a1e8-8003-a287-aa63edacec91', '3999b3c3-18ef-4c28-833e-4f3ff3c57048', 'assistant', 'gpt-4o', '47cf4222-0ba8-472e-86be-baded8ab8ca1', NULL, 'Il semble que certains éléments de ta demande ne soient pas remplis (ex. "L", "J", "F", etc.). Peux-tu préciser la thématique exacte, le sous-thème spécifique, la zone géographique ciblée et le type de contenu souhaité ? Une fois ces précisions apportées, je pourrai réaliser une recherche documentaire exhaustive et bien structurée. 🚀'),
+	(209, '2025-04-03 08:52:47.509+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '6d3bf038-01c1-4670-aebe-a5d2b16beaff', 'user', 'auto', NULL, NULL, 'Hello'),
+	(210, '2025-04-03 08:52:46+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c5e-5da0-8003-b3f2-7e099f7fda74', '21c89bf5-f00a-42e1-b6cc-507521980b45', 'assistant', 'gpt-4o', '16b77ae5-56b5-42b3-ace1-1d982b27c8f4', NULL, 'Hello ! Comment ça va ? 😊'),
+	(211, '2025-04-03 08:52:46+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c5e-5da0-8003-b3f2-7e099f7fda74', '16b77ae5-56b5-42b3-ace1-1d982b27c8f4', 'assistant', 'gpt-4o', '6d3bf038-01c1-4670-aebe-a5d2b16beaff', NULL, ''),
+	(212, '2025-04-03 08:53:29.928+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', 'c77687e6-c1d0-4552-86ec-fde9abc33bff', 'user', 'auto', NULL, NULL, 'j''aime le cchocla'),
+	(213, '2025-04-03 08:53:37.414+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', '83e72e22-d36f-434b-a1fb-e6d5ba66072a', 'user', 'auto', NULL, NULL, 'j''adore '),
+	(214, '2025-04-03 08:53:36.478191+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', '7ef7ae25-0071-4a9b-883b-8f1cf3ad91a9', 'assistant', 'gpt-4o', '83e72e22-d36f-434b-a1fb-e6d5ba66072a', NULL, 'Excellent choix ! 🍫 Team chocolat noir intense, fondant au lait ou douceur du chocolat blanc ? 😋'),
+	(215, '2025-04-03 08:53:29+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', 'e33ad661-dd9b-4699-9bc0-2bdd648d8a9e', 'assistant', 'gpt-4o', '80650289-f9e9-4831-9a54-0c6dd34ca221', NULL, 'On dirait que tu étais pressé d’écrire "chocolat" ! 🍫 Team chocolat noir, lait ou blanc ? 😄'),
+	(216, '2025-04-03 08:53:29+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', '80650289-f9e9-4831-9a54-0c6dd34ca221', 'assistant', 'gpt-4o', 'c77687e6-c1d0-4552-86ec-fde9abc33bff', NULL, ''),
+	(217, '2025-04-03 08:58:32.034+00', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', '', 'f8636667-3fe4-4059-8ac0-1a7cdfe83964', 'user', 'auto', NULL, NULL, 'bonjour'),
+	(218, '2025-04-03 09:00:04.762+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '2e7cdaec-5e06-4453-bf6e-fa84a6c471c3', 'user', 'auto', NULL, NULL, 'bonjour'),
+	(219, '2025-04-02 18:07:13+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed7cd0-e6d8-8003-91a6-d9991d45394f', '7df5e5d9-0689-4f3f-be3a-aafa47b6aa41', 'assistant', 'gpt-4o', 'a28b14a8-41ab-4209-ac7a-b0605c69cea1', NULL, 'Je peux analyser ton deck avec cette grille d’évaluation détaillée. Envoie-moi le fichier, et je te fournirai un retour précis avec une note globale, une analyse détaillée et des recommandations pour maximiser l’impact sur les investisseurs. 🚀'),
+	(220, '2025-04-02 18:07:16+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ed7cd0-e6d8-8003-91a6-d9991d45394f', 'a28b14a8-41ab-4209-ac7a-b0605c69cea1', 'assistant', 'gpt-4o', '8d578efe-68d9-42d2-a53f-96ebda17dc63', NULL, ''),
+	(221, '2025-04-03 09:01:01.401+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', '9de46456-f0b0-4bb0-93f8-24ece7f11836', 'user', 'auto', NULL, NULL, 'Comment ça va ? '),
+	(222, '2025-04-03 09:01:00.537027+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', '13b879c0-b6ad-4625-a79c-870d72dd3598', 'assistant', 'gpt-4o', '9de46456-f0b0-4bb0-93f8-24ece7f11836', NULL, 'Ça va nickel, et toi ? Entre tes boîtes et ton amour pour le chocolat, t’as une journée productive ou plutôt chill ? 😄'),
+	(223, '2025-04-03 09:11:57.534+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', 'a16a2700-9200-462a-9cd3-19fae1f196b0', 'user', 'auto', NULL, NULL, 'bonjour'),
+	(224, '2025-04-03 09:11:56.644282+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', 'b48879ad-a75a-47e8-9607-1a9b54c391dc', 'assistant', 'gpt-4o', 'a16a2700-9200-462a-9cd3-19fae1f196b0', NULL, 'Hello ! Comment va ton jeudi ? Toujours aussi fan de chocolat ? 😆🍫'),
+	(225, '2025-04-03 09:12:18.833+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', 'ca85b81c-ff40-4e3b-8957-8b9a3d03a058', 'user', 'auto', NULL, NULL, 'je ne sais pas '),
+	(226, '2025-04-03 09:12:17.860684+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee4c88-c2ec-8003-9741-db834f5c3fe0', 'a9b4e8c2-60d2-4323-8e17-2bcfc4cf7b86', 'assistant', 'gpt-4o', 'ca85b81c-ff40-4e3b-8957-8b9a3d03a058', NULL, 'Ça sent la petite hésitation ! Journée compliquée ou juste en mode "on verra" ? 😄'),
+	(227, '2025-04-03 09:23:16.331+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '8493045d-36a3-4183-989d-ac94f5e4fa12', 'user', 'auto', NULL, NULL, 'Hello '),
+	(228, '2025-04-03 09:23:15+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee5383-af1c-8003-9e53-44825b6e5107', 'e974dfb0-afad-42c0-962e-09a87962fafc', 'assistant', 'gpt-4o', 'fbc23dc0-5d56-44e2-be41-7bf707f75221', NULL, 'Hello ! Comment ça va ? 😊'),
+	(229, '2025-04-03 09:23:16+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee5383-af1c-8003-9e53-44825b6e5107', 'fbc23dc0-5d56-44e2-be41-7bf707f75221', 'assistant', 'gpt-4o', '8493045d-36a3-4183-989d-ac94f5e4fa12', NULL, ''),
+	(230, '2025-04-03 09:23:54.074+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee5383-af1c-8003-9e53-44825b6e5107', '5ed450a4-fef0-4431-82f6-abbfce43b4c4', 'user', 'auto', NULL, NULL, 'j''aime la galette'),
+	(231, '2025-04-03 09:23:54.326335+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee5383-af1c-8003-9e53-44825b6e5107', '54d78791-e24d-4f12-830b-84b581d57e35', 'assistant', 'gpt-4o', '5ed450a4-fef0-4431-82f6-abbfce43b4c4', NULL, 'Avec du beurre dedans ? 😄 Ou plutôt frangipane team ?'),
+	(232, '2025-04-03 09:24:17.768+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee5383-af1c-8003-9e53-44825b6e5107', '1281052c-0aa7-4be6-8f01-ff9e4d3a45e0', 'user', 'auto', NULL, NULL, 'hello'),
+	(233, '2025-04-03 09:24:17.434601+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee5383-af1c-8003-9e53-44825b6e5107', 'e732c9e9-5fea-4422-9004-f5bd6e7187d8', 'assistant', 'gpt-4o', '1281052c-0aa7-4be6-8f01-ff9e4d3a45e0', NULL, 'Hey ! Comment ça va aujourd’hui ? 🚀'),
+	(234, '2025-04-03 09:24:28.903+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee5383-af1c-8003-9e53-44825b6e5107', '6aecead9-7877-4fb5-b163-bef35489e71c', 'user', 'auto', NULL, NULL, 'mon message est bien parti ? '),
+	(236, '2025-04-03 11:54:24.88+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', '46c502db-a92f-4e07-b1a2-0c3a0981f2ba', 'user', 'auto', NULL, NULL, 'Je souhaite créer une fiche complète sur l''entreprise HR PATH. Utilise ta fonction de recherche web pour me fournir des informations précises et récentes, organisées selon les sections ci-dessous. Pour chaque information, cite ta source avec un lien hypertexte.
+DIRECTIVES SUR LES SOURCES
+- Privilégie les sources officielles : site web de l''entreprise, rapports annuels, communiqués de presse officiels
+- Utilise des sources d''information financière reconnues en fonction du pays de l’entreprise (Bloomberg, Financial Times,  etc.)
+- Consulte des articles de presse spécialisée dans le secteur concerné
+- Pour l''actualité, préfère les articles datant de moins de 12 mois
+- Évite les blogs personnels, forums ou sources non vérifiables
+- N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ
+- Vérifie la cohérence des informations entre plusieurs sources quand c''est possible
+CARTE D''IDENTITÉ
+- Nom complet de l''entreprise
+- Logo (si disponible, décris-le)
+- Date de création
+- Siège social et implantations principales
+- Secteur d''activité principal et secondaires
+- Taille (nombre d''employés, chiffre d''affaires)
+- Site web officiel
+ ACTIVITÉ & MARCHÉ
+- Description des produits/services principaux
+- Proposition de valeur unique
+- Segments de clientèle visés
+- Part de marché et positionnement
+- Principaux concurrents (3-5 maximum)
+DIRIGEANTS & STRUCTURE
+- PDG/CEO et parcours résumé
+- Principaux dirigeants (avec leurs rôles)
+- Structure organisationnelle (si information disponible)
+- Culture d''entreprise communiquée
+SITUATION FINANCIÈRE
+- Chiffres clés des 2-3 dernières années
+- Tendance générale (croissance, stabilité, difficulté)
+- Investissements récents ou levées de fonds
+- Cotation en bourse (si applicable)
+ACTUALITÉS & PERSPECTIVES
+- 3-5 actualités importantes des 12 derniers mois
+- Projets d''expansion ou nouveaux produits annoncés
+- Défis actuels identifiés
+- Opportunités stratégiques
+SYNTHÈSE
+- En 3-5 points, résume les éléments différenciants de cette entreprise
+- En 2-3 phrases, identifie les principaux enjeux/besoins potentiels
+Présente cette fiche de manière visuellement structurée avec des emojis pertinents pour chaque section, des puces, et des séparations claires entre les sections. Pour chaque section, indique clairement la source de l''information avec un lien direct. Termine par une liste complète de toutes les sources consultées, classées par fiabilité.
+Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.'),
+	(237, '2025-04-03 11:54:24+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee76f0-3250-8003-882d-4b629048cfea', 'c6516613-9e66-40e7-a4a0-7480d571ab62', 'assistant', 'gpt-4o', 'c70c07f9-e846-44e6-a699-8a3a97db94e9', NULL, ''),
+	(238, '2025-04-03 11:54:24+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee76f0-3250-8003-882d-4b629048cfea', '8fed371b-ae10-49d6-bf55-4e00f1a76689', 'assistant', 'gpt-4o', '601acbc7-3412-4a54-a7b4-07869b114b5a', NULL, 'Voici une fiche complète sur l''entreprise HR Path, organisée selon les sections demandées :
+
+---
+
+## 🆔 CARTE D''IDENTITÉ
+
+- **Nom complet de l''entreprise :** HR Path
+- **Logo :** Le logo de HR Path est disponible ici : citeturn0search0
+- **Date de création :** 2001
+- **Siège social et implantations principales :** Siège social à Paris, France. Présence dans 22 pays, notamment aux États-Unis, au Canada, en Allemagne, dans les pays nordiques et en Australie. citeturn0search0
+- **Secteur d''activité principal et secondaires :** Conseil en ressources humaines, intégration de systèmes d''information RH (SIRH), externalisation de la paie. citeturn0search0
+- **Taille (nombre d''employés, chiffre d''affaires) :** Plus de 1 800 employés. Chiffre d''affaires de 215 millions d''euros au 31 mars 2024. citeturn0search1
+- **Site web officiel :** [https://www.hr-path.com](https://www.hr-path.com)
+
+---
+
+## 📊 ACTIVITÉ & MARCHÉ
+
+- **Description des produits/services principaux :**
+  - **Advise :** Conseil en transformation, digitalisation et accompagnement SIRH.
+  - **Implement :** Déploiement de solutions SIRH tierces telles que Workday, Oracle, SAP, HR Access Cegid, Cornerstone.
+  - **Run :** Externalisation de la paie et gestion des processus RH. citeturn0search1
+
+- **Proposition de valeur unique :** Approche globale et personnalisée des défis RH, positionnant HR Path comme un véritable "one-stop shop des RH". citeturn0search0
+
+- **Segments de clientèle visés :** Entreprises de toutes tailles et de tous secteurs cherchant à transformer et optimiser leurs fonctions RH. citeturn0search0
+
+- **Part de marché et positionnement :** HR Path s''est imposé parmi les leaders mondiaux du conseil en ressources humaines. citeturn0search0
+
+- **Principaux concurrents :** Les principaux concurrents de HR Path incluent des cabinets de conseil en RH et des intégrateurs de SIRH tels que Accenture, Deloitte, Capgemini, Alight Solutions et NGA Human Resources.
+
+---
+
+## 👥 DIRIGEANTS & STRUCTURE
+
+- **PDG/CEO et parcours résumé :** François Boulet, co-fondateur et président de HR Path. citeturn0search1
+
+- **Principaux dirigeants (avec leurs rôles) :**
+  - Cyril Courtin, co-fondateur et CEO. citeturn0search0
+
+- **Structure organisationnelle :** HR Path est organisé autour de trois lignes de métiers : Advise, Implement et Run, couvrant respectivement le conseil, l''implémentation de systèmes RH et l''externalisation de la paie. citeturn0search1
+
+- **Culture d''entreprise communiquée :** HR Path met l''accent sur l''innovation, l''excellence dans les services RH et l''engagement envers la satisfaction client. citeturn0search0
+
+---
+
+## 💰 SITUATION FINANCIÈRE
+
+- **Chiffres clés des 2-3 dernières années :**
+  - Chiffre d''affaires de 135 millions d''euros en 2023.
+  - Chiffre d''affaires de 215 millions d''euros au 31 mars 2024. citeturn0search1
+
+- **Tendance générale :** Croissance soutenue avec une augmentation annuelle moyenne de 25% depuis 2021. citeturn0search0
+
+- **Investissements récents ou levées de fonds :** Levée de fonds record de 500 millions d''euros auprès d''Ardian en juillet 2024 pour accélérer la stratégie d''acquisition internationale. citeturn0search0
+
+- **Cotation en bourse :** HR Path n''est pas une entreprise cotée en bourse.
+
+---
+
+## 📰 ACTUALITÉS & PERSPECTIVES
+
+- **3-5 actualités importantes des 12 derniers mois :**
+  - Acquisition d''Intelligenza au Brésil, une société de conseil en technologies RH, en 2024.
+  - Acquisition de Three Plus Consulting en Pologne, premier partenaire Workday, en mars 2024.
+  - Acquisition de Fizz Consulting au Royaume-Uni, spécialisé dans le conseil Oracle HCM & Workday HCM, en février 2024. citeturn0search1
+
+- **Projets d''expansion ou nouveaux produits annoncés :** Utilisation des fonds levés pour réaliser de nouvelles acquisitions ciblées aux États-Unis, au Canada, en Allemagne, dans les pays nordiques et en Australie. citeturn0search0
+
+- **Défis actuels identifiés :** Intégration des acquisitions récentes et maintien de la culture d''entreprise tout en poursuivant une croissance rapide.
+
+- **Opportunités stratégiques :** Renforcement de la présence internationale et diversification des services offerts grâce aux acquisitions et à l''innovation continue.
+
+---
+
+## 📝 SYNTHÈSE
+
+- **Éléments différenciants de l''entreprise :**
+  - Offre complète couvrant le '),
+	(239, '2025-04-03 11:54:36+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '67ee76f0-3250-8003-882d-4b629048cfea', 'c70c07f9-e846-44e6-a699-8a3a97db94e9', 'assistant', 'gpt-4o', '46c502db-a92f-4e07-b1a2-0c3a0981f2ba', NULL, ''),
+	(240, '2025-04-03 11:56:08.164+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '', '24929b39-5f4f-42a8-98f8-c6e6b18323ff', 'user', 'gpt-4o', NULL, NULL, 'You are an expert in financial analysis and business strategy.
+Your mission is to produce a structured analysis to help a founder prepare for a conversation with a demanding investor (VC, analyst, or strategy expert).
+You must challenge the business model of the company l;l;l; in the [Industry] sector, by asking all the critical questions an investor would ask to understand the viability of the model.
+Your response must be structured by major themes, and for each theme: 0. Explain that the document presents the main questions that someone challenging the company''s business model might ask.
+Start with a short introduction (2 to 4 lines) explaining why this theme is essential to analyze in a business model.
+Propose at least 6 key questions that an experienced investor would ask.
+For each question, add a line of thinking or an element to anticipate that will help the entrepreneur formulate their response.
+Format your response with clear titles, subtitles if needed, and a pleasant layout. You can use emojis if it improves readability.
+Here is the context information to use:
+Value proposition: [Main value proposition]
+Target customers: [Target customers: Type of customers or market segments]
+Main revenue source: [Revenue sources: Subscription / Commission / Direct sales / Other]
+Company development stage: [Development stage: Idea / MVP / Growth / Maturity]
+Mandatory themes (and recommended order):
+Revenue
+Costs and margins
+Scalability
+Growth & traction
+Customers & target market
+Barriers to entry and differentiation
+Operational and financial risks
+Respond directly in the conversation
+You MUST always maintain the same structure for each point. If you cannot complete the analysis, ask the user if they want you to continue the analysis. You must always ask them this.'),
+	(241, '2025-04-03 09:25:55+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', '72155ade-9a43-43c6-a771-fe42142dd48e', 'user', 'unknown', '43193d10-569a-40a6-8caf-76e8ac094a7c', NULL, ''),
+	(242, '2025-04-03 09:25:55+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', 'a5646e75-d5a4-470b-a6ee-77c6d3bd763c', 'assistant', 'gpt-4o', '21478587-50a4-4f77-8cbc-089621b8ffbd', NULL, 'Voici l’analyse du graphique ainsi que le tableau correspondant prêt à être utilisé dans Excel :
+
+### 📊 Analyse du graphique
+
+Le graphique montre le **taux d''utilisation de l''IA générative par tranche d''âge** en France. Il met en évidence une **corrélation inverse entre l''âge et l''adoption de l''IA générative** :
+- Les **18-24 ans** sont les plus gros utilisateurs (74 %).
+- L’usage diminue progressivement avec l’âge, pour atteindre **seulement 17 % chez les 60-75 ans**.
+- La moyenne nationale est de **39 %**.
+
+---
+
+### 📋 Tableau Excel
+
+Voici les données extraites du graphique, prêtes à être copiées dans Excel :
+
+| Tranche d''âge | Taux d''utilisation (%) |
+|---------------|------------------------|
+| Total des Français | 39 |
+| 18-24 ans         | 74 |
+| 25-34 ans         | 55 |
+| 35-44 ans         | 39 |
+| 45-59 ans         | 35 |
+| 60-75 ans         | 17 |
+
+Tu peux copier ce tableau dans Excel, sélectionner les deux colonnes, puis insérer un graphique (barres verticales ou histogramme) pour visualiser la répartition.
+
+Souhaites-tu que je te génère directement un fichier `.xlsx` prêt à télécharger avec le graphique inclus ?'),
+	(243, '2025-04-03 09:25:59+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', '21478587-50a4-4f77-8cbc-089621b8ffbd', 'assistant', 'gpt-4o', '72155ade-9a43-43c6-a771-fe42142dd48e', NULL, ''),
+	(244, '2025-04-03 09:32:05+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', '1a138da3-ff81-4a2e-8a25-27f40e9bb1ca', 'user', 'unknown', 'a5646e75-d5a4-470b-a6ee-77c6d3bd763c', NULL, ''),
+	(245, '2025-04-03 09:32:06+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', 'c9f05be8-f7fa-4f87-b19d-c9770a14bf9b', 'assistant', 'gpt-4o', '1a138da3-ff81-4a2e-8a25-27f40e9bb1ca', NULL, 'Parfait, voici l’analyse et le tableau Excel correspondant à la **fréquence d’utilisation des IA génératives dans un cadre professionnel / pour les études** :
+
+---
+
+### 📊 Analyse du graphique – Usage professionnel / études
+
+- **30 % des utilisateurs** s''en servent **au moins une fois par jour**.
+- **78 %** les utilisent **au moins une fois par semaine**.
+- Cela montre une **forte intégration dans les usages professionnels et étudiants**.
+
+---
+
+### 📋 Tableau Excel – Utilisation professionnelle
+
+| Fréquence d’utilisation                                 | Pourcentage (%) |
+|----------------------------------------------------------|------------------|
+| Plusieurs fois par jour                                  | 21 %             |
+| Une fois par jour                                        | 9 %              |
+| 4 à 6 fois par semaine                                   | 10 %             |
+| 2 à 3 fois par semaine                                   | 17 %             |
+| Une fois par semaine                                     | 21 %             |
+| 2 à 3 fois par mois                                      | 12 %             |
+| Une fois par mois                                        | 6 %              |
+| Moins souvent                                            | 4 %              |
+| **Total : au moins une fois par jour**                  | **30 %**         |
+| **Total : au moins une fois par semaine**               | **78 %**         |
+
+Tu peux copier ce tableau dans Excel, puis utiliser un graphique en barres ou en camembert pour représenter visuellement les données.
+
+Souhaites-tu que je te génère un fichier `.xlsx` avec ce tableau et un graphique inclus ?'),
+	(246, '2025-04-03 09:49:43+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', 'b3278f7a-fc0c-4698-baa0-a29eb5b5fc07', 'user', 'unknown', 'c9f05be8-f7fa-4f87-b19d-c9770a14bf9b', NULL, ''),
+	(247, '2025-04-03 09:49:44+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', 'e68fc711-1974-46ca-875e-633186888e49', 'assistant', 'gpt-4o', 'b3278f7a-fc0c-4698-baa0-a29eb5b5fc07', NULL, 'Voici l’analyse du graphique ainsi que le tableau prêt à copier dans Excel pour créer ton propre graphique.
+
+---
+
+### 📊 Analyse du graphique – Tâches ou activités avec l’IA générative
+
+Les principales utilisations des IA génératives sont orientées vers :
+- **La recherche d’informations** (48 %)
+- **La rédaction** (textes, documents, emails – 38 %)
+- **La traduction** (36 %)
+- Suivies de **la génération d’idées**, la **correction linguistique** ou la **synthèse de contenu**.
+
+Cela montre un usage centré sur **la productivité et la créativité**, avec des usages plus marginaux comme la génération de musique ou de vidéos.
+
+---
+
+### 📋 Tableau Excel – Tâches réalisées avec l’IA générative
+
+| Tâche ou activité réalisée avec l’IA générative         | Pourcentage (%) |
+|----------------------------------------------------------|------------------|
+| Faire des recherches                                     | 48 %             |
+| Rédiger des textes ou des documents (courriers, emails…)| 38 %             |
+| Traduire des textes                                      | 36 %             |
+| Générer des idées, des inspirations                      | 35 %             |
+| Corriger la grammaire, l’orthographe ou le vocabulaire  | 32 %             |
+| Synthétiser un résumé, un sujet, des données             | 31 %             |
+| Générer des images                                       | 29 %             |
+| Explorer de nouveaux sujets, de nouvelles connaissances  | 28 %             |
+| Discuter pour résoudre un problème, trouver des solutions| 27 %             |
+| Analyser des textes ou des données                       | 25 %             |
+| Déléguer certaines tâches de votre travail               | 14 %             |
+| Vous aider à faire les devoirs                           | 14 %             |
+| Générer de la musique, des vidéos                        | 12 %             |
+
+---
+
+Souhaites-tu que je te rassemble les **trois tableaux précédents** dans un **fichier Excel (.xlsx)** avec un onglet par graphique et des graphiques intégrés directement ?'),
+	(248, '2025-04-03 10:12:25+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', '5e8b7e7b-dda9-4625-a387-8e0ea4cbba41', 'user', 'unknown', 'e68fc711-1974-46ca-875e-633186888e49', NULL, ''),
+	(249, '2025-04-03 10:12:25+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', '67ee5422-9cb0-8000-84cf-58f5cc2abd14', 'f8294c78-3e5e-4682-b251-09bb821bba86', 'assistant', 'gpt-4o', '5e8b7e7b-dda9-4625-a387-8e0ea4cbba41', NULL, 'Parfait ! Voici l’analyse du graphique et le tableau Excel correspondant à l''usage des différentes IA génératives :
+
+---
+
+### 📊 Analyse du graphique – IA génératives les plus utilisées
+
+- **ChatGPT (version gratuite)** domine très largement avec **66 % des utilisateurs**.
+- Suivent **Gemini (30 %)**, **Copilot de Microsoft (17 % et 15 % selon l''intégration)**, et **DeepL (12 %)**.
+- Les outils spécialisés comme **Photoshop AI**, **DALL·E**, **Claude**, ou **Mistral AI** sont moins fréquemment utilisés (sous les 10 %).
+
+---
+
+### 📋 Tableau Excel – IA génératives utilisées
+
+| Outil d’IA générative                                      | Pourcentage (%) |
+|-------------------------------------------------------------|------------------|
+| ChatGPT version gratuite (OpenAI)                           | 66 %             |
+| ChatGPT version payante (OpenAI)                            | 14 %             |
+| Gemini (Google)                                             | 30 %             |
+| Copilot Microsoft Office (Word, Excel…)                     | 17 %             |
+| Copilot version en ligne (Microsoft)                        | 15 %             |
+| DeepL                                                       | 12 %             |
+| Adobe Photoshop AI                                          | 10 %             |
+| DALL·E (OpenAI)                                             | 9 %              |
+| Canva Studio Magic AI                                       | 8 %              |
+| Mistral AI                                                  | 6 %              |
+| Adobe Firefly                                               | 4 %              |
+| Claude (Anthropic)                                          | 4 %              |
+| Perplexity                                                  | 3 %              |
+| Stable Diffusion                                            | 3 %              |
+| Character.ai                                                | 2 %              |
+
+---
+
+Souhaites-tu que je regroupe **les 4 graphiques précédents** (tranche d’âge, fréquence, usages, IA utilisées) dans **un seul fichier `.xlsx`** avec un onglet par thème et des graphiques prêts à l''emploi ?'),
+	(250, '2025-04-03 12:39:33.86+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', 'e8aab551-dc66-4880-b1c7-80c6d71bd4d4', 'user', 'auto', NULL, NULL, 'Je souhaite créer une fiche complète sur l''entreprise HR PATH. Utilise ta fonction de recherche web pour me fournir des informations précises et récentes, organisées selon les sections ci-dessous. Pour chaque information, cite ta source avec un lien hypertexte.
+DIRECTIVES SUR LES SOURCES
+- Privilégie les sources officielles : site web de l''entreprise, rapports annuels, communiqués de presse officiels
+- Utilise des sources d''information financière reconnues en fonction du pays de l’entreprise (Bloomberg, Financial Times,  etc.)
+- Consulte des articles de presse spécialisée dans le secteur concerné
+- Pour l''actualité, préfère les articles datant de moins de 12 mois
+- Évite les blogs personnels, forums ou sources non vérifiables
+- N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ
+- Vérifie la cohérence des informations entre plusieurs sources quand c''est possible
+CARTE D''IDENTITÉ
+- Nom complet de l''entreprise
+- Logo (si disponible, décris-le)
+- Date de création
+- Siège social et implantations principales
+- Secteur d''activité principal et secondaires
+- Taille (nombre d''employés, chiffre d''affaires)
+- Site web officiel
+ ACTIVITÉ & MARCHÉ
+- Description des produits/services principaux
+- Proposition de valeur unique
+- Segments de clientèle visés
+- Part de marché et positionnement
+- Principaux concurrents (3-5 maximum)
+DIRIGEANTS & STRUCTURE
+- PDG/CEO et parcours résumé
+- Principaux dirigeants (avec leurs rôles)
+- Structure organisationnelle (si information disponible)
+- Culture d''entreprise communiquée
+SITUATION FINANCIÈRE
+- Chiffres clés des 2-3 dernières années
+- Tendance générale (croissance, stabilité, difficulté)
+- Investissements récents ou levées de fonds
+- Cotation en bourse (si applicable)
+ACTUALITÉS & PERSPECTIVES
+- 3-5 actualités importantes des 12 derniers mois
+- Projets d''expansion ou nouveaux produits annoncés
+- Défis actuels identifiés
+- Opportunités stratégiques
+SYNTHÈSE
+- En 3-5 points, résume les éléments différenciants de cette entreprise
+- En 2-3 phrases, identifie les principaux enjeux/besoins potentiels
+Présente cette fiche de manière visuellement structurée avec des emojis pertinents pour chaque section, des puces, et des séparations claires entre les sections. Pour chaque section, indique clairement la source de l''information avec un lien direct. Termine par une liste complète de toutes les sources consultées, classées par fiabilité.
+Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.');
 
 
 --
@@ -3870,9 +5661,11 @@ Souhaites-tu que je te livre ce rendu en **Markdown**, **HTML stylisé**, ou **f
 -- Data for Name: official_folders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."official_folders" ("id", "created_at", "type", "tags", "name") VALUES
-	(1, '2025-03-17 18:07:46.17807+00', 'prompts', NULL, 'Start a business'),
-	(2, '2025-03-27 08:14:00.445175+00', 'official', NULL, 'Create a Linkedin post');
+INSERT INTO "public"."official_folders" ("id", "created_at", "type", "tags", "name_en", "name_fr") VALUES
+	(1, '2025-04-02 19:47:12.970466+00', 'official', NULL, 'Startup', 'Startup'),
+	(2, '2025-04-02 19:47:12.970466+00', 'official', NULL, 'Starter', 'Starter'),
+	(3, '2025-04-02 19:47:12.970466+00', 'official', NULL, 'Daily', 'Daily'),
+	(4, '2025-04-02 19:47:12.970466+00', 'official', NULL, 'Marketing', 'Marketing');
 
 
 --
@@ -3891,257 +5684,1129 @@ INSERT INTO "public"."official_folders" ("id", "created_at", "type", "tags", "na
 -- Data for Name: prompt_templates; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."prompt_templates" ("id", "created_at", "folder_id", "tags", "title", "content", "locale", "last_used_at", "path", "type", "usage_count") VALUES
-	(4, '2025-03-21 08:51:02.620467+00', 1, NULL, 'Faire un BP', 'Prompt pour faire un BP', 'fr', '2025-03-31 10:56:38.88454+00', 'GTM', 'official', 11),
-	(1, '2025-03-17 18:10:31.465886+00', 1, NULL, 'Challenger un deck', 'Analyse approfondie d’un deck de startup
+INSERT INTO "public"."prompt_templates" ("id", "created_at", "folder_id", "tags", "last_used_at", "path", "type", "usage_count", "user_id", "content_custom", "content_en", "content_fr", "title_custom", "title_en", "title_fr") VALUES
+	(2, '2025-04-02 19:44:27.165679+00', 1, NULL, NULL, NULL, 'official', NULL, NULL, NULL, 'Act as a senior business performance consultant specialized in creating KPI dashboards, with deep expertise in my industry. Based on the information I provide below, create a fully customized KPI dashboard specifically tailored to the reality of my business.
+INFORMATION ABOUT MY COMPANY
 
-IMPORTANT : Attache ton Deck avec le prompt CHAT GPT Pour obtenir une analyse de ton deck
+Industry: [Industry]
+Main Product/Service: [Product and company offering]
+Business Model: [Business model]
+Company Profile: [Number of employees], [Last Revenue], [NAME]
+Sales Channels: [SALES_CHANNELS]
 
-🎯 Contexte :
+WHAT I WANT TO OBTAIN
+A comprehensive KPI dashboard specific to my industry that:
 
-Tu es un investisseur VC expérimenté spécialisé dans l’évaluation de startups early-stage. Ta mission est d’analyser un deck de startup et d’en évaluer la qualité, la clarté et le potentiel d’investissement.
+Provides a brief analysis of my business highlighting important points
+Identifies the 5 most relevant KPI categories for my specific activity (without any duplication or overlap between categories)
+For each category:
 
-Quelques informations sur la société :
+A clear description of the category
+An explanation of why this category is strategic for my specific business
+MANDATORY minimum of 4 essential key indicators adapted to my industry
+Data sources and tools where I can collect this information
 
-- [Nom de la société]
 
-- [Marché]
+For each indicator, detail:
 
-- [Clients principaux]
+Its precise definition
+Its exact calculation formula
+Its recommended measurement frequency
+Its specific strategic importance for my industry and business model
 
-Ta réponse doit être structurée en plusieurs parties :
 
-Note globale sur 100
+Provides a synthesis of my business
 
-Évaluation détaillée de chaque critère (avec une note sur 10)
+IMPORTANT ADDITIONAL INSTRUCTIONS
 
-Points forts du deck
+MANDATORY provide at least 4 indicators per category, even if some are secondary
+Ensure there are NO duplicates between categories - each category must be clearly distinct
+SPECIFICALLY adapt the KPIs to my industry and precise business model - don''t settle for generic indicators
+Identify metrics that have the most impact on performance in my specific industry
+Take into account the particularities of my industry, the size of my company, and its maturity
+For each category, clearly indicate the systems and tools where I can find or collect this data. Don''t necessarily cite software names but rather the type of software
+Prioritize indicators that have a direct impact on my current priority objective
+Verify that each proposed indicator is actually measurable and relevant to my specific activity
 
-Axes d’amélioration et points faibles
+RESPONSE FORMAT
+Use a visually structured format with:
 
-Recommandations finales pour maximiser l’impact et convaincre les investisseurs
+An initial executive summary with overview
+Tables to present indicators by category
+Color codes or symbols to indicate priority (⭐⭐⭐, ⭐⭐, ⭐)
+Clearly defined and hierarchical sections
+For each category:
 
-⚠️ ATTENTION : Ne te contente pas d’une analyse basique. Challenge réellement chaque aspect du deck, en posant des questions critiques et en mettant en avant ce qui manque ou pourrait être amélioré.
+Description and strategic importance
+Table of specific KPIs (minimum 4 per category)
+Data sources and collection tools
 
-📊 Critères d’évaluation d’un deck de startup
 
-Chaque critère est noté sur 10 et comprend des questions clés pour challenger la startup.
 
-1️⃣ Problème & Opportunité de marché (sur 10)
+Ensure that the final result is not only informative but also directly actionable and perfectly adapted to my business reality.
+ATTENTION - If you cannot complete the task, ask me "Write ''continue'' so I can complete the process"
+Use emojis to make this pleasant to read', 'Agis comme un consultant senior en performance d''entreprise spécialisé dans la création de tableaux de bord KPI, avec une expertise approfondie dans mon secteur d''activité. Sur la base des informations que je te fournis ci-dessous, crée un tableau de bord KPI entièrement personnalisé et spécifiquement adapté à la réalité de mon business.
+
+NFORMATIONS SUR MON ENTREPRISE
+
+- **Secteur d''activité**: [Secteur]
+- **Produit/Service principal**: [Produit et offre de l’entreprise]
+- **Modèle économique**: [Modèle économique]
+- **Profil de l''entreprise**: [Nombre d’employés], [Dernier Chiffre d’Affaire], [NOM]
+- **Canaux de vente**: [CANAUX_VENTE]
+
+CE QUE JE VEUX OBTENIR
+
+Un tableau de bord KPI complet et spécifique à mon secteur qui:
+
+1. Réalise une petite analyse de mon business en montrant les points importants
+2. Identifie les 5 catégories de KPI les plus pertinentes pour mon activité spécifique (sans aucun doublon ou chevauchement entre les catégories)
+3. Pour chaque catégorie:
+    - Une description claire de la catégorie
+    - Une explication de pourquoi cette catégorie est stratégique pour mon business spécifique
+    - OBLIGATOIREMENT au minimum 4 indicateurs clés essentiels adaptés à mon secteur d''activité
+    - Les sources de données et outils où je peux collecter ces informations
+4. Pour chaque indicateur, détaille:
+    - Sa définition précise
+    - Sa formule de calcul exacte
+    - Sa fréquence de mesure recommandée
+    - Son intérêt stratégique spécifique pour mon secteur et modèle économique
+5. Fait une synthèse de mon business
+
+IMPORTANTES CONSIGNES SUPPLÉMENTAIRES
+
+- Fournis OBLIGATOIREMENT au moins 4 indicateurs par catégorie, même si certains sont secondaires
+- Assure-toi qu''il n''y a AUCUN doublon entre les catégories - chaque catégorie doit être clairement distincte
+- Adapte SPÉCIFIQUEMENT les KPI à mon secteur d''activité et mon business model précis - ne te contente pas d''indicateurs génériques
+- Identifie les métriques qui ont le plus d''impact sur la performance dans mon secteur spécifique
+- Prends en compte les particularités de mon industrie, la taille de mon entreprise et sa maturité
+- Pour chaque catégorie, indique clairement les systèmes et outils où je peux trouver ou collecter ces données. Ne site pas forcément le nom des logiciels mais plutôt le type de logiciel
+- Priorise les indicateurs ayant un impact direct sur mon objectif prioritaire actuel
+- Vérifie que chaque indicateur proposé est réellement mesurable et pertinent pour mon activité spécifique
+
+FORMAT DE RÉPONSE
+
+Utilise un format visuellement structuré avec:
+
+- Un résumé exécutif initial avec vue d''ensemble
+- Des tableaux pour présenter les indicateurs par catégorie
+- Des codes de couleur ou symboles pour indiquer la priorité (⭐⭐⭐, ⭐⭐, ⭐)
+- Des sections clairement délimitées et hiérarchisées
+- Pour chaque catégorie:
+    1. Description et importance stratégique
+    2. Tableau des KPI spécifiques (minimum 4 par catégorie)
+    3. Sources de données et outils de collecte
+
+Assure-toi que le résultat final soit non seulement informatif mais aussi directement actionnable et parfaitement adapté à ma réalité business.
+
+ATTENTION - Si tu ne pas aller au bout demande moi “Ecris continuer pour que j’aille au bout de la démarche”
+
+Utilise des émojis pour rendre cela agréable à la lecture', NULL, 'KPI Business', 'KPI Business'),
+	(1, '2025-04-02 19:44:27.165679+00', 1, NULL, '2025-04-02 20:03:30.500061+00', NULL, 'official', 1, NULL, NULL, 'Context:
+
+You are an experienced VC investor, specialized in evaluating early-stage startups.
+
+Your mission is to analyze a startup deck and evaluate its quality, clarity, and investment potential.
+
+---
+
+📌 Some information about the company:
+
+- Company name: [Company name]
+
+---
+
+🧾 Your response must be structured as follows:
+
+1. Overall score out of 100
+2. Detailed evaluation of each criterion (score out of 10 + critical analysis)
+3. Strengths of the deck
+4. Areas for improvement and weaknesses
+5. Final recommendations to maximize impact and convince investors
+
+---
+
+⚠️ ATTENTION:
+
+Don''t settle for a basic analysis.
+
+Challenge each aspect of the deck by asking critical questions and highlighting areas of uncertainty.
+
+---
+
+📊 Evaluation criteria (score out of 10 each):
+
+---
+
+### 1️⃣ Problem & Market Opportunity (out of 10)
+
+✅ Points to check:
+
+- Is the problem clear, urgent, and important?
+- Is it universal or niche?
+- Is it a real pain point?
+- Does the deck show a quantified and credible market opportunity?
+- Is there a differentiating angle or unique vision?
+
+⚠️ Challenge:
+
+- Why hasn''t this problem been solved yet?
+- What happens to the startup if the problem disappears?
+- Is the problem big enough to justify fundraising?
+
+🎯 Score: __/10
+
+📝 Detailed analysis:
+
+---
+
+### 2️⃣ Solution & Value Proposition (out of 10)
+
+✅ Points to check:
+
+- Does the solution directly address the problem?
+- Is it 10x better than what exists?
+- Is innovation highlighted (tech, UX, model...)?
+- Is there proof of market interest?
+
+⚠️ Challenge:
+
+- What makes the solution truly unique?
+- Can it be easily copied?
+- How does it resist a well-funded competitor?
+
+🎯 Score: __/10
+
+📝 Detailed analysis:
+
+---
+
+### 3️⃣ Business Model & Monetization (out of 10)
+
+✅ Points to check:
+
+- How does the company make money?
+- Is the model scalable?
+- Is there recurrence (SaaS, subscriptions, etc.)?
+- Presence of key financial KPIs: CAC, LTV, gross margin...
+
+⚠️ Challenge:
+
+- Is this model viable in the long term?
+- Are there hidden costs?
+- Dependence on an acquisition channel?
+
+🎯 Score: __/10
+
+📝 Detailed analysis:
+
+---
+
+### 4️⃣ Traction & Market Adoption (out of 10)
+
+✅ Points to check:
+
+- Are there engaged users or customers?
+- Traction figures (revenue, growth, churn)?
+- Social proof: press, customers, investors...
+
+⚠️ Challenge:
+
+- Do customers come back?
+- CAC vs LTV: is it sustainable?
+- If the startup disappears tomorrow, who would be truly impacted?
+
+🎯 Score: __/10
+
+📝 Detailed analysis:
+
+---
+
+### 5️⃣ Competition & Barriers to Entry (out of 10)
+
+✅ Points to check:
+
+- Is the competitive landscape well analyzed?
+- Clear competitive advantages?
+- Risks of entry by major players?
+
+⚠️ Challenge:
+
+- What is the real barrier to entry?
+- Why can''t a Google / Amazon crush it?
+- Will the advantage still be there in 3 years?
+
+🎯 Score: __/10
+
+📝 Detailed analysis:
+
+---
+
+### 6️⃣ Market & Scalability (out of 10)
+
+✅ Points to check:
+
+- TAM, SAM, SOM well defined and credible?
+- Are there geographical, regulatory, or technical barriers?
+- Clear vision for expansion?
+
+⚠️ Challenge:
+
+- Is the startup targeting the right segment?
+- What is the real global opportunity?
+- How to scale x10 in 3 years?
+
+🎯 Score: __/10
+
+📝 Detailed analysis:
+
+---
+
+### 7️⃣ Team & Execution (out of 10)
+
+✅ Points to check:
+
+- Does the founding team have a good track record?
+- Are skills well distributed?
+- Fast and efficient execution?
+
+⚠️ Challenge:
+
+- What happens if the CEO leaves?
+- Can the team pivot?
+- Is there an imbalance between tech / business?
+
+🎯 Score: __/10
+
+📝 Detailed analysis:
+
+---
+
+### 8️⃣ Roadmap & Long-term Vision (out of 10)
+
+✅ Points to check:
+
+- Clear, ambitious but realistic roadmap?
+- Fundable stages with this round?
+- Inspiring and credible vision?
+
+⚠️ Challenge:
+
+- Is there a plan B in case of failure?
+- Does the vision allow becoming a global leader or just a niche player?
+
+🎯 Score: __/10
+
+📝 Detailed analysis:
+
+---
+
+🔍 Conclusion
+
+✅ Strengths of the deck:
+
+(List here the solid and convincing elements)
+
+⚠️ Weaknesses and areas for improvement:
+
+(List the gaps, inaccuracies, or unclear areas)
+
+📢 Final recommendations to maximize impact:
+
+(List concrete actions to strengthen the pitch)', 'Contexte :
+
+Tu es un investisseur VC expérimenté, spécialisé dans l’évaluation de startups early-stage.
+
+Ta mission est d’analyser un deck de startup et d’en évaluer la qualité, la clarté et le potentiel d’investissement.
+
+---
+
+📌 Quelques informations sur la société  :
+
+- Nom de la société : [Nom de la société]
+
+---
+
+🧾 Ta réponse doit être structurée comme suit :
+
+1. Note globale sur 100
+2. Évaluation détaillée de chaque critère (note sur 10 + analyse critique)
+3. Points forts du deck
+4. Axes d’amélioration et points faibles
+5. Recommandations finales pour maximiser l’impact et convaincre les investisseurs
+
+---
+
+⚠️ ATTENTION :
+
+Ne te contente pas d’une analyse basique.
+
+Challenge chaque aspect du deck en posant des questions critiques et en mettant en avant les zones d’ombre.
+
+---
+
+📊 Critères d’évaluation (note sur 10 chacun) :
+
+---
+
+### 1️⃣ Problème & Opportunité de marché (sur 10)
 
 ✅ Points à vérifier :
 
-Le problème est-il clair, urgent et important ?
-
-Le problème est-il universel ou niche ? Est-ce un vrai pain point ?
-
-Des données factuelles (marché, études, tendances) justifient-elles la taille de l’opportunité ?
-
-Le deck met-il en avant un angle différenciant ou une vision unique sur ce problème ?
+- Le problème est-il clair, urgent et important ?
+- Est-il universel ou niche ?
+- Est-ce un vrai pain point ?
+- Le deck montre-t-il une opportunité de marché chiffrée et crédible ?
+- Y a-t-il un angle différenciant ou une vision unique ?
 
 ⚠️ Challenge :
 
-Pourquoi ce problème n’a-t-il pas encore été résolu par d’autres acteurs ?
-
-Si le problème disparaît demain (ex. avancée techno, réglementation), que devient la startup ?
-
-Ce problème est-il assez gros pour justifier une levée ?
+- Pourquoi ce problème n’a-t-il pas encore été résolu ?
+- Que devient la startup si le problème disparaît ?
+- Est-ce un problème suffisamment gros pour justifier une levée ?
 
 🎯 Note : __/10
 
 📝 Analyse détaillée :
 
-2️⃣ Solution & Proposition de valeur (sur 10)
+---
+
+### 2️⃣ Solution & Proposition de valeur (sur 10)
 
 ✅ Points à vérifier :
 
-La solution répond-elle directement et efficacement au problème posé ?
-
-Est-elle 10x meilleure que ce qui existe (prix, rapidité, expérience…) ?
-
-L’innovation est-elle bien mise en avant (technologie, business model, UX) ?
-
-Y a-t-il des preuves d’intérêt marché (PoC, early adopters, traction) ?
+- La solution répond-elle directement au problème ?
+- Est-elle 10x meilleure que ce qui existe ?
+- L’innovation est-elle mise en avant (tech, UX, modèle…) ?
+- Y a-t-il des preuves d’intérêt marché ?
 
 ⚠️ Challenge :
 
-Pourquoi cette solution est-elle vraiment unique ?
-
-Est-elle copiable facilement par une grande entreprise ?
-
-Si un concurrent bien financé se lance demain, comment résister ?
+- Qu’est-ce qui rend la solution vraiment unique ?
+- Est-elle copiable facilement ?
+- Comment résiste-t-elle à un concurrent bien financé ?
 
 🎯 Note : __/10
 
 📝 Analyse détaillée :
 
-3️⃣ Business Model & Monétisation (sur 10)
+---
+
+### 3️⃣ Business Model & Monétisation (sur 10)
 
 ✅ Points à vérifier :
 
-Comment l’entreprise gagne-t-elle de l’argent ?
-
-Le modèle est-il scalable et permet-il une croissance rapide ?
-
-Y a-t-il des effets de récurrence (abonnement, SaaS, marketplace) ?
-
-Quels sont les KPIs financiers clés : CAC, LTV, marge brute, etc.
+- Comment l’entreprise gagne-t-elle de l’argent ?
+- Le modèle est-il scalable ?
+- Y a-t-il de la récurrence (SaaS, abonnements, etc.) ?
+- Présence de KPIs financiers clés : CAC, LTV, marge brute…
 
 ⚠️ Challenge :
 
-Pourquoi ce modèle est-il viable sur le long terme ?
-
-Quels sont les gros coûts cachés de cette croissance ?
-
-Y a-t-il une dépendance excessive à un canal d’acquisition ?
+- Ce modèle est-il viable à long terme ?
+- Y a-t-il des coûts cachés ?
+- Dépendance à un canal d’acquisition ?
 
 🎯 Note : __/10
 
 📝 Analyse détaillée :
 
-4️⃣ Traction & Adoption Marché (sur 10)
+---
+
+### 4️⃣ Traction & Adoption Marché (sur 10)
 
 ✅ Points à vérifier :
 
-Y a-t-il des utilisateurs ou des clients déjà engagés ?
-
-Les chiffres de traction sont-ils convaincants (revenus, croissance, churn) ?
-
-Y a-t-il une preuve sociale (presse, investisseurs actuels, testimonials) ?
+- Y a-t-il des utilisateurs ou clients engagés ?
+- Chiffres de traction (revenus, croissance, churn) ?
+- Preuves sociales : presse, clients, investisseurs…
 
 ⚠️ Challenge :
 
-Taux de rétention : les clients reviennent-ils après un 1er achat ?
-
-Le coût d’acquisition client (CAC) est-il viable ?
-
-Si la startup disparaît demain, combien de clients seraient vraiment impactés ?
+- Les clients reviennent-ils ?
+- CAC vs LTV : est-ce soutenable ?
+- Si la startup disparaît demain, qui serait vraiment impacté ?
 
 🎯 Note : __/10
 
 📝 Analyse détaillée :
 
-5️⃣ Concurrence & Barrières à l’entrée (sur 10)
+---
+
+### 5️⃣ Concurrence & Barrières à l’entrée (sur 10)
 
 ✅ Points à vérifier :
 
-Le paysage concurrentiel est-il bien analysé ?
-
-Les avantages compétitifs sont-ils clairs (technologie, coûts, réseau, IP) ?
-
-Quels sont les risques d’entrée de nouveaux acteurs plus gros ?
+- Le paysage concurrentiel est-il bien analysé ?
+- Avantages compétitifs clairs ?
+- Risques d’entrée de gros acteurs ?
 
 ⚠️ Challenge :
 
-Quelle est la vraie barrière à l’entrée ? Un brevet, une marque, une communauté engagée ?
-
-Pourquoi un Google/Amazon/Facebook ne peut-il pas écraser cette startup ?
-
-L’avantage concurrentiel sera-t-il valable dans 3 ans ?
+- Quelle est la vraie barrière à l’entrée ?
+- Pourquoi un Google / Amazon ne peut-il pas l’écraser ?
+- L’avantage sera-t-il encore là dans 3 ans ?
 
 🎯 Note : __/10
 
 📝 Analyse détaillée :
 
-6️⃣ Marché & Scalabilité (sur 10)
+---
+
+### 6️⃣ Marché & Scalabilité (sur 10)
 
 ✅ Points à vérifier :
 
-Le marché adressable (TAM, SAM, SOM) est-il bien défini et crédible ?
-
-Existe-t-il des barrières géographiques, réglementaires ou techniques ?
-
-L’entreprise a-t-elle une vision claire de son expansion ?
+- TAM, SAM, SOM bien définis et crédibles ?
+- Y a-t-il des freins géographiques, réglementaires ou techniques ?
+- Vision claire de l’expansion ?
 
 ⚠️ Challenge :
 
-La startup attaque-t-elle le bon segment du marché pour commencer ?
-
-Quelle est la vraie opportunité mondiale ?
-
-Comment la startup pourrait-elle faire x10 en 3 ans ?
+- La startup attaque-t-elle le bon segment ?
+- Quelle est la vraie opportunité mondiale ?
+- Comment scaler x10 en 3 ans ?
 
 🎯 Note : __/10
 
 📝 Analyse détaillée :
 
-7️⃣ Équipe & Exécution (sur 10)
+---
+
+### 7️⃣ Équipe & Exécution (sur 10)
 
 ✅ Points à vérifier :
 
-L’équipe fondatrice a-t-elle un track record pertinent ?
-
-Les compétences-clés sont-elles bien réparties ?
-
-La startup exécute-t-elle vite et efficacement ?
+- L’équipe fondatrice a-t-elle un bon track record ?
+- Les compétences sont-elles bien réparties ?
+- Exécution rapide et efficace ?
 
 ⚠️ Challenge :
 
-Si le CEO part demain, que devient la boîte ?
-
-L’équipe est-elle capable de pivoter si nécessaire ?
-
-Y a-t-il un déséquilibre dangereux (tech vs business) ?
+- Que se passe-t-il si le CEO part ?
+- L’équipe peut-elle pivoter ?
+- Y a-t-il un déséquilibre tech / biz ?
 
 🎯 Note : __/10
 
 📝 Analyse détaillée :
 
-8️⃣ Roadmap & Vision long-terme (sur 10)
+---
+
+### 8️⃣ Roadmap & Vision long-terme (sur 10)
 
 ✅ Points à vérifier :
 
-La roadmap est-elle réaliste et ambitieuse ?
-
-Les prochaines étapes sont-elles finançables avec cette levée ?
-
-La vision est-elle inspirante mais crédible ?
+- Roadmap claire, ambitieuse mais réaliste ?
+- Étapes finançables avec cette levée ?
+- Vision inspirante et crédible ?
 
 ⚠️ Challenge :
 
-La startup a-t-elle un plan B si ses hypothèses sont fausses ?
-
-Peut-elle devenir un leader mondial ou seulement une niche ?
+- Y a-t-il un plan B en cas d’échec ?
+- La vision permet-elle de devenir un leader mondial ou juste une niche ?
 
 🎯 Note : __/10
 
 📝 Analyse détaillée :
 
-🔍 Conclusion :
+---
+
+🔍 Conclusion
 
 ✅ Points forts du deck :
 
-(Liste détaillée)
+(Lister ici les éléments solides et convaincants)
 
 ⚠️ Points faibles et axes d’amélioration :
 
-(Liste détaillée)
+(Lister les manques, imprécisions ou zones floues)
 
 📢 Recommandations finales pour maximiser l’impact :
 
-(Liste détaillée)
-', 'fr', '2025-03-31 10:56:42.14321+00', 'GTM/Analyse', 'official', 12);
+(Lister les actions concrètes pour renforcer le pitch)', NULL, 'Deck challenge', 'Challenger son deck '),
+	(4, '2025-04-02 19:44:27.165679+00', 1, NULL, '2025-04-03 12:39:20.164742+00', NULL, 'official', 2, NULL, NULL, 'I want to create a comprehensive profile on the company [Company Name]. Use your web search function to provide me with accurate and recent information, organized according to the sections below. For each piece of information, cite your source with a hyperlink.
+GUIDELINES ON SOURCES
+
+Prioritize official sources: company website, annual reports, official press releases
+Use recognized financial information sources depending on the company''s country (Bloomberg, Financial Times, etc.)
+Consult specialized press articles in the relevant sector
+For news, prefer articles less than 12 months old
+Avoid personal blogs, forums, or unverifiable sources
+Do not use Wikipedia as a main source, but only as a starting point
+Verify the consistency of information across multiple sources when possible
+
+IDENTITY CARD
+
+Full company name
+Logo (if available, describe it)
+Date of creation
+Headquarters and main locations
+Main and secondary business sectors
+Size (number of employees, revenue)
+Official website
+
+ACTIVITY & MARKET
+
+Description of main products/services
+Unique value proposition
+Target customer segments
+Market share and positioning
+Main competitors (3-5 maximum)
+
+LEADERSHIP & STRUCTURE
+
+CEO and brief background
+Key executives (with their roles)
+Organizational structure (if information available)
+Communicated corporate culture
+
+FINANCIAL SITUATION
+
+Key figures from the last 2-3 years
+General trend (growth, stability, difficulty)
+Recent investments or fundraising
+Stock market listing (if applicable)
+
+NEWS & OUTLOOK
+
+3-5 important news items from the last 12 months
+Announced expansion projects or new products
+Identified current challenges
+Strategic opportunities
+
+SUMMARY
+
+In 3-5 points, summarize the differentiating elements of this company
+In 2-3 sentences, identify the main potential issues/needs
+
+Present this profile in a visually structured manner with relevant emojis for each section, bullet points, and clear separations between sections. For each section, clearly indicate the source of the information with a direct link. End with a complete list of all sources consulted, ranked by reliability.
+You MUST always maintain the same structure for each point. If you cannot complete the analysis, ask the user if they want you to continue the analysis. You must always ask them this.', 'Je souhaite créer une fiche complète sur l''entreprise [Nom de l’Entreprise]. Utilise ta fonction de recherche web pour me fournir des informations précises et récentes, organisées selon les sections ci-dessous. Pour chaque information, cite ta source avec un lien hypertexte.
+
+DIRECTIVES SUR LES SOURCES
+
+- Privilégie les sources officielles : site web de l''entreprise, rapports annuels, communiqués de presse officiels
+- Utilise des sources d''information financière reconnues en fonction du pays de l’entreprise (Bloomberg, Financial Times,  etc.)
+- Consulte des articles de presse spécialisée dans le secteur concerné
+- Pour l''actualité, préfère les articles datant de moins de 12 mois
+- Évite les blogs personnels, forums ou sources non vérifiables
+- N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ
+- Vérifie la cohérence des informations entre plusieurs sources quand c''est possible
+
+CARTE D''IDENTITÉ
+
+- Nom complet de l''entreprise
+- Logo (si disponible, décris-le)
+- Date de création
+- Siège social et implantations principales
+- Secteur d''activité principal et secondaires
+- Taille (nombre d''employés, chiffre d''affaires)
+- Site web officiel
+
+ ACTIVITÉ & MARCHÉ
+
+- Description des produits/services principaux
+- Proposition de valeur unique
+- Segments de clientèle visés
+- Part de marché et positionnement
+- Principaux concurrents (3-5 maximum)
+
+DIRIGEANTS & STRUCTURE
+
+- PDG/CEO et parcours résumé
+- Principaux dirigeants (avec leurs rôles)
+- Structure organisationnelle (si information disponible)
+- Culture d''entreprise communiquée
+
+SITUATION FINANCIÈRE
+
+- Chiffres clés des 2-3 dernières années
+- Tendance générale (croissance, stabilité, difficulté)
+- Investissements récents ou levées de fonds
+- Cotation en bourse (si applicable)
+
+ACTUALITÉS & PERSPECTIVES
+
+- 3-5 actualités importantes des 12 derniers mois
+- Projets d''expansion ou nouveaux produits annoncés
+- Défis actuels identifiés
+- Opportunités stratégiques
+
+SYNTHÈSE
+
+- En 3-5 points, résume les éléments différenciants de cette entreprise
+- En 2-3 phrases, identifie les principaux enjeux/besoins potentiels
+
+Présente cette fiche de manière visuellement structurée avec des emojis pertinents pour chaque section, des puces, et des séparations claires entre les sections. Pour chaque section, indique clairement la source de l''information avec un lien direct. Termine par une liste complète de toutes les sources consultées, classées par fiabilité.
+
+Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.', NULL, 'Prospect / client profile', 'Fiche prospect / client'),
+	(7, '2025-04-02 19:44:27.165679+00', 2, NULL, NULL, NULL, 'official', NULL, NULL, NULL, 'You are an expert in synthesis, strategy, and content analysis. I will provide you with a document. Your mission is to perform a thorough analysis, structured, clear, and useful for a demanding reader (executive, investor, consultant, etc.). Here are the instructions to follow:
+
+🔍 1. Global summary of the document
+
+Summarize the document in 10 to 15 lines maximum.
+Highlight the context, main objectives, and big ideas.
+Use a professional, concise, but flowing tone.
+
+
+🏗️ 2. Structure and detailed content
+
+Detail the document structure (main parts, progression logic).
+For each major part, provide a content analysis:
+
+What are the key messages?
+What data or arguments are used?
+How clear or rigorous is the argumentation?
+
+
+Use quotes from the document to support your points
+
+
+🎯 3. Critical analysis and areas for improvement
+
+Analyze the overall coherence of the document (form, substance, logic).
+Point out any potential weaknesses, inaccuracies, or contradictions.
+Propose improvement areas: structure, clarity, relevance, impact.
+
+
+📌 4. Key takeaways (TL;DR)
+
+End with a section of 5 to 7 bullet points entitled: "Priority takeaways"
+Summarize the key points of the document or your analysis in an actionable way.
+
+
+🎨 Response format:
+
+Use clear titles and subtitles
+Space out paragraphs
+Use emojis sparingly for readability if relevant (e.g., ✅, ⚠️, 📌)
+
+
+🧾 Context to consider (if provided):
+
+Document type: [Document type — e.g., pitch deck, strategic plan, blog article...]
+Purpose of the analysis: [E.g., identify weaknesses before publication / prepare for a meeting / obtain an expert summary / etc.]
+
+
+Do not start your analysis until I have sent you the document content. First confirm that you are ready to analyze it. You must complete your analysis to the end or if you cannot, you must ask the user "Click on continue so I can finish my analysis"', 'Tu es un expert en synthèse, stratégie et analyse de contenu.
+
+Je vais te fournir un document.
+
+Ta mission est d’en faire une **analyse approfondie**, structurée, claire et utile pour un lecteur exigeant (dirigeant, investisseur, consultant, etc.).
+
+Voici les instructions à suivre :
+
+---
+
+🔍 1. **Résumé global du document**
+
+- Résume le document en 10 à 15 lignes maximum.
+- Fais ressortir le **contexte**, les **objectifs principaux**, et les **grandes idées**.
+- Utilise un ton professionnel, synthétique, mais fluide.
+
+---
+
+🏗️ 2. **Structure et contenu détaillé**
+
+- Détaille la **structure du document** (parties principales, logique de progression).
+- Pour chaque grande partie, fais une **analyse du contenu** :
+    - Quels sont les messages clés ?
+    - Quelles données ou arguments sont utilisés ?
+    - Quelle est la clarté ou la rigueur de l’argumentation ?
+    - Utilise des citations du document pour appuyer tes propos
+    
+
+---
+
+🎯 3. **Analyse critique et axes d’amélioration**
+
+- Analyse la **cohérence globale** du document (forme, fond, logique).
+- Signale les éventuelles **faiblesses**, imprécisions ou contradictions.
+- Propose des **axes d’amélioration** : structure, clarté, pertinence, impact.
+
+---
+
+📌 4. **Ce qu’il faut retenir (TL;DR)**
+
+- Termine avec une section de 5 à 7 bullet points intitulée :**"À retenir en priorité"**
+- Résume les points clés du document ou de ton analyse de façon actionnable.
+
+---
+
+🎨 Format de réponse :
+
+- Utilise des **titres et sous-titres clairs**
+- Aère les paragraphes
+- Utilise des emojis avec parcimonie pour la lisibilité si pertinent (ex : ✅, ⚠️, 📌)
+
+---
+
+🧾 Contexte à considérer (si fourni) :
+
+- Type de document : [Type de document — ex : pitch deck, plan stratégique, article de blog...]
+- Objectif de l’analyse : [Ex : identifier les points faibles avant publication / préparer une réunion / obtenir une synthèse experte / etc.]
+
+---
+
+Ne commence pas ton analyse tant que je ne t’ai pas envoyé le contenu du document.
+Tu me confirmes d’abord que tu es prêt à l’analyser.
+
+Tu dois finir ton analyse jusqu’à la fin ou si tu ne peux pas , tu dois demander à l’utilisateur “Clique sur continuer pour que je finisse mon analyse”', NULL, 'Document Analysis', 'Analyse d''un document'),
+	(9, '2025-04-02 19:44:27.165679+00', 2, NULL, '2025-04-02 19:51:30.899591+00', NULL, 'official', 3, NULL, NULL, NULL, 'Tu es un expert en veille stratégique et en recherche documentaire. Ta mission est de réaliser une recherche documentaire exhaustive et structurée sur le sujet suivant :
+
+- Thématique principale : [thématique à étudier]
+- Sous-thème spécifique : [sous-thème ou angle particulier à approfondir]
+- Zone géographique ciblée : [pays ou zone géographique]
+- Langue des sources préférées : [langue souhaitée, ex : français, anglais]
+- Niveau de profondeur attendu : [basique / avancé / expert]
+- Types de contenus souhaités : [rapports, articles, bases de données, vidéos, podcasts, etc.]
+- Objectif final : Obtenir une liste exhaustive d’articles et de documents classés par thématique, avec au moins 10 articles par thématique, accompagnés de résumés clairs pour faciliter l''analyse.
+
+DIRECTIVES SUR LES SOURCES
+
+- Privilégie les sources officielles : site web de l''entreprise, rapports annuels, communiqués de presse officiels, site spécialisé , site des gouvernements
+- Utilise des sources d''information  reconnues en fonction du pays ou de la zone cherchée
+- Consulte des articles de presse spécialisée dans le secteur concerné
+- Pour l''actualité, préfère les articles datant de moins de 12 mois
+- Évite les blogs personnels, forums ou sources non vérifiables
+- Assure toi que le lien existe bien
+- N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ
+- Vérifie la cohérence des informations entre plusieurs sources quand c''est possible
+
+Instructions spécifiques :
+
+1. Classification par grandes thématiques : Identifie et classe les résultats en 3 à 6 grandes thématiques pertinentes.
+2. Sélection d''articles par thématique : Pour chaque thématique identifiée, sélectionne au moins 10 articles ou documents pertinents.
+3. Vérification des sources : Avant de fournir un lien, assure-toi de la fiabilité de la source, de la validité du lien, et de la cohérence de l''information avec la thématique annoncée.
+4. Présentation des résultats : Pour chaque article ou document, fournis les informations suivantes :
+    - Titre de l’article ou du document
+    - Lien cliquable (assure-toi que le lien est valide et mène à la source annoncée)
+    - Résumé concis (3 à 5 lignes) mettant en évidence les points clés et l''apport de l''article
+5. Priorisation des sources : Donne la priorité aux sources fiables, institutionnelles, académiques ou de presse spécialisée.
+6. Format de rendu : Présente les informations sous forme de tableaux clairs pour chaque thématique, facilitant ainsi la lecture et l''analyse.
+7. Tu dois absolument finir jusqu’à la fin ton analyse, ou si tu ne le finis pas, tu dois dire à l’utilisateur “Ecris continuer pour que je finisse l’analyse” 
+
+Note : Le résultat doit être clair, professionnel et agréable à lire, semblable à un document de cadrage pour une équipe projet. Utilise des titres, des puces, des émojies, une structure lisible et oriente-moi vers des actions concrètes.', NULL, NULL, 'Recherche documentaire '),
+	(6, '2025-04-02 19:44:27.165679+00', 1, NULL, '2025-04-03 11:49:59.72528+00', NULL, 'official', 2, NULL, NULL, 'You are an expert in marketing, sales, and copywriting. Your role is to generate a highly relevant FAQ for potential customers of a solution.
+
+Here is the offer:
+Product name: [Product or service name]
+Product type: [Product type: SaaS / Consumer good / Mobile app / other]
+Main function: [Solution description: What the solution actually does in one clear sentence]
+Primary target: [Primary target: e.g., individuals, SMEs, HR, recruiters, students, etc.]
+Market: [Market: B2B / B2C / both]
+Key benefit: [Key benefit: E.g., Time savings, simplicity, productivity improvement, etc.]
+Price: [Price: Free / freemium model / subscription / price per user, etc.]
+
+Generate a clear, reassuring, and engaging marketing FAQ that covers:
+
+- Main features
+- Added value for the user
+- Frequently asked questions (price, security, compatibility, support, GDPR, etc.)
+- Possible objections and appropriate responses
+- Credibility and social proof (if relevant)
+
+Use a tone that is professional, simple, direct, and educational. Organize the FAQ with questions in bold and clear answers, sometimes with concrete examples.
+
+If some answers require me to fill in missing elements (e.g., free trial duration, compatibility, etc.), leave a [variable] so I can adapt them.', 'Tu es un expert en marketing, en ventes et en copywriting. Ton rôle est de générer une FAQ ultra pertinente à destination des potentiels clients d''une solution.
+
+Voici l’offre :
+Nom du produit : [Nom du produit ou service]
+
+Type de produit : [Type de produit : SaaS / Bien de consommation / Application mobile / autre]
+
+Fonction principale : [Description de la solution : Ce que fait concrètement la solution en une phrase claire]
+
+Cible principale : [Cible principale : ex. particuliers, PME, RH, recruteurs, étudiants, etc.]
+
+Marché : [Marché : B2B / B2C / les deux]
+
+Avantage clé : [Avantage clé : Ex. Gain de temps, simplicité, amélioration de la productivité, etc.]
+
+Prix : [Prix : Gratuit / modèle freemium / abonnement / prix à l’utilisateur, etc.]
+
+Génère une FAQ marketing claire, rassurante et engageante qui couvre :
+
+- Les fonctionnalités principales
+- La valeur ajoutée pour l’utilisateur
+- Les questions fréquentes (prix, sécurité, compatibilité, support, RGPD, etc.)
+- Les objections possibles et les réponses adaptées
+- La crédibilité et la preuve sociale (si pertinentes)
+
+Utilise un ton à la fois professionnel, simple, direct et pédagogique. Organise la FAQ avec des questions en gras et des réponses claires, avec parfois des exemples concrets.
+
+Si certaines réponses nécessitent que je remplisse des éléments manquants (ex. durée de l’essai gratuit, compatibilité, etc.), laisse une *variable* pour que je puisse les adapter.', NULL, 'Customer FAQ', 'FAQ Client '),
+	(5, '2025-04-02 19:44:27.165679+00', 1, NULL, '2025-04-02 20:03:46.563373+00', NULL, 'official', 1, NULL, NULL, 'You are a legal expert specializing in law. Draft a structured, clear, and educational analysis on the current regulations concerning: [Specify the subject or issue to be analyzed, try to be as detailed as possible].
+⚠️ You must conduct online research to verify the current status of laws, ongoing reforms, and industry practices.
+
+Prioritize official sources: legal texts, official press releases, specialized and recognized websites
+Use recognized information sources depending on the country
+Consult specialized press articles in the relevant sector
+For news, prefer articles less than 12 months old
+Avoid personal blogs, forums, or unverifiable sources
+Do not use Wikipedia as a main source, but only as a starting point
+Verify the consistency of information across multiple sources when possible
+
+The objective is to produce a concise yet comprehensive document, accessible to a non-legal audience, that can serve as support for a presentation or strategic decision.
+Structure of the expected analysis:
+
+General context and issues
+
+Why is this subject important today?
+What are the practical implications for the stakeholders concerned?
+
+
+Applicable legal sources
+
+Which laws, regulations, or case law govern this subject?
+Mention the exact texts with their date and include links if possible.
+
+
+Detailed analysis of the regulations
+
+Obligations, rights, limits, or legal uncertainties. In this section, you must really develop your answers as much as possible
+Concrete cases or examples if relevant.
+
+
+Risks and sanctions
+
+What are the risks in case of non-compliance?
+Who are the controlling authorities and what are their powers?
+
+
+Perspectives and upcoming reforms
+
+Research to be done on bills, official announcements, or industry trends.
+Integrate dated sources to support your statements.
+
+
+Strategic recommendations
+
+Practical advice
+Measures to take to ensure compliance and anticipate developments.
+
+
+
+✅ The deliverable must be professional, readable, and credible, with clear titles, fluid style, and sourced references in footnotes or at the end of the document. Use lists if it improves readability.', 'Tu es un expert juridique spécialisé en droit. Rédige une analyse structurée, claire et pédagogique sur la réglementation en vigueur concernant  :[Préciser le sujet ou la problématique à analyser, essaye d’être le plus détaillé possible].
+
+⚠️ Tu dois effectuer des recherches en ligne pour vérifier l’actualité des textes de loi, des réformes en cours et des pratiques du secteur.
+
+- Privilégie les sources officielles : texte de loi, communiqués de presse officiels , site spécialisé et reconnu
+- Utilise des sources d''information reconnues en fonction du pays
+- Consulte des articles de presse spécialisée dans le secteur concerné
+- Pour l''actualité, préfère les articles datant de moins de 12 mois
+- Évite les blogs personnels, forums ou sources non vérifiables
+- N''utilise pas Wikipédia comme source principale, mais seulement comme point de départ
+- Vérifie la cohérence des informations entre plusieurs sources quand c''est possible
+
+L’objectif est de produire un **document synthétique mais complet**, accessible à un public non juriste, pouvant servir de support à une présentation ou à une décision stratégique.
+
+Structure de l’analyse attendue :
+
+1. Contexte général et enjeux
+    - Pourquoi ce sujet est-il important aujourd’hui ?
+    - Quelles sont les implications pratiques pour les acteurs concernés ?
+2. Sources juridiques applicables
+    - Quelles lois, règlements ou jurisprudences encadrent ce sujet ?
+    - Mentionner les textes exacts avec leur **date** et inclure des **liens** si possible.
+3. Analyse détaillée de la réglementation
+    - Obligations, droits, limites ou incertitudes juridiques. Dans cette partie tu dois vraiment développer un maximum tes réponses
+    - Cas concrets ou exemples si pertinents.
+4. Risques et sanctions
+    - Que risque-t-on en cas de non-respect ?
+    - Quels sont les acteurs du contrôle et leurs pouvoirs ?
+5. Perspectives et réformes à venir
+    - Recherches à faire sur les projets de loi, annonces officielles ou tendances sectorielles.
+    - Intégrer des sources datées pour appuyer tes propos.
+6. Recommandations stratégiques
+    - Conseils pratiques
+    - Mesures à prendre pour être en conformité et anticiper les évolutions.
+
+✅ Le rendu doit être **professionnel, lisible et crédible**, avec des titres clairs, un style fluide, et des **références sourcées** en pied de page ou à la fin du document. Utilise des listes si cela améliore la lisibilité.', NULL, 'Legal Analysis', 'Analyse juridique '),
+	(8, '2025-04-02 19:44:27.165679+00', 2, NULL, '2025-04-03 08:53:48.837765+00', NULL, 'official', 5, NULL, NULL, 'Email Response Generation Prompt
+You are an expert in professional communication and email writing. Your goal is to create a precise, contextual, and appropriate email response.
+Variables to fill in:
+Objective: [Email objective: inform, propose, clarify, refuse, etc.]
+Tone: [Tone to adopt (formal, semi-formal, friendly, neutral, empathetic)]
+Received email: [Content of the email you''re responding to]
+Name & title: [Name and/or title of the recipient]
+Recipient''s position: [Professional position of the recipient]
+Company name: [Name of the recipient''s company]
+[Specific constraints: length, points to address, mandatory information]
+Personal style: [An example of your communication style (optional)]
+Generation instructions:
+Guidelines for generating the response:
+
+Precisely analyze the original email
+Adapt the tone and style to the situation
+Be clear, concise, and professional
+Answer all questions asked
+Anticipate the potential needs of the recipient
+Propose actions or concrete solutions if necessary
+Check grammar and spelling
+Include an appropriate closing phrase
+
+Recommended response structure:
+
+Personalized greeting
+Acknowledgment of receipt (if relevant)
+Direct response to main points
+Complementary information
+Proposal of actions or next steps
+Closing phrase
+Don''t sign the email but leave it for the person to do
+
+Systematically personalize your response:
+
+Avoid generic responses
+Show empathy and understanding
+Always be constructive and positive', 'Prompt de génération de réponse email
+
+Tu es un expert en communication professionnelle et rédaction email. Ton objectif est de créer une réponse email précise, contextuelle et adaptée.
+Variables à remplir
+
+Objectif : [Objectif du mail : informer, proposer, clarifier, refuser, etc.]
+Ton : [Ton à adopter (formel, semi-formel, amical, neutre, empathique)]
+Email reçu :[Contenu de l''email auquel vous répondez]
+Nom & prénom : [Nom et/ou titre du destinataire]
+Fonction destinataire : [ Fonction professionnelle du destinataire]
+Nom entreprise : [ Nom de l''entreprise du destinataire]
+[Contraintes spécifiques : longueur, points à aborder, informations obligatoires ]
+
+Style personnel : [Un exemple de votre style de communication (optionnel)]
+
+Instructions de génération
+
+**Consignes pour la génération de la réponse** :
+
+- Analyse précisément l''email original
+- Adapte le ton et le style à la situation
+- Sois clair, concis et professionnel
+- Réponds à toutes les questions posées
+- Anticipe les besoins potentiels du destinataire
+- Propose des actions ou des solutions concrètes si nécessaire
+- Vérifie la grammaire et l''orthographe
+- Inclus une formule de politesse adaptée
+
+**Structure recommandée de la réponse**
+
+- Salutation personnalisée
+- Accusé de réception (si pertinent)
+- Réponse directe aux points principaux
+- Informations complémentaires
+- Proposition d''actions ou de prochaines étapes
+- Formule de politesse
+- Ne signe pas le mail mais laisse la personne le faire
+
+**Personnalise systématiquement ta réponse**
+
+- Évite les réponses génériques
+- Montre de l''empathie et de la compréhension
+- Sois toujours constructif et positif', NULL, 'Sent a mail', 'Envoyer un mail '),
+	(3, '2025-04-02 19:44:27.165679+00', 1, NULL, '2025-04-03 11:50:06.19161+00', NULL, 'official', 2, NULL, NULL, 'You are an expert in financial analysis and business strategy.
+Your mission is to produce a structured analysis to help a founder prepare for a conversation with a demanding investor (VC, analyst, or strategy expert).
+You must challenge the business model of the company [Company name] in the [Industry] sector, by asking all the critical questions an investor would ask to understand the viability of the model.
+Your response must be structured by major themes, and for each theme: 0. Explain that the document presents the main questions that someone challenging the company''s business model might ask.
+
+Start with a short introduction (2 to 4 lines) explaining why this theme is essential to analyze in a business model.
+Propose at least 6 key questions that an experienced investor would ask.
+For each question, add a line of thinking or an element to anticipate that will help the entrepreneur formulate their response.
+Format your response with clear titles, subtitles if needed, and a pleasant layout. You can use emojis if it improves readability.
+Here is the context information to use:
+
+
+Value proposition: [Main value proposition]
+Target customers: [Target customers: Type of customers or market segments]
+Main revenue source: [Revenue sources: Subscription / Commission / Direct sales / Other]
+Company development stage: [Development stage: Idea / MVP / Growth / Maturity]
+Mandatory themes (and recommended order):
+
+
+Revenue
+Costs and margins
+Scalability
+Growth & traction
+Customers & target market
+Barriers to entry and differentiation
+Operational and financial risks
+Respond directly in the conversation
+You MUST always maintain the same structure for each point. If you cannot complete the analysis, ask the user if they want you to continue the analysis. You must always ask them this.', 'Tu es un expert en analyse financière et stratégie d’entreprise.
+
+Ta mission est de produire une analyse structurée destinée à aider un·e fondateur·rice à se préparer à un échange avec un investisseur exigeant (VC, analyste ou expert en stratégie).
+
+Tu dois **challenger le business model** de l’entreprise [Nom de l''entreprise] dans le secteur [Secteur d''activité], en posant toutes les **questions critiques** qu’un investisseur poserait pour comprendre la viabilité du modèle.
+
+Ta réponse doit être structurée **par grandes thématiques**, et pour **chaque thématique** :
+0. Explique que le document présente les principales questions que peux poser une personne qui challenge le modèle économique de l''entreprise.
+
+1. Commence par une **courte introduction** (2 à 4 lignes) qui explique **pourquoi cette thématique est essentielle** à analyser dans un business model.
+2. Propose **au moins 6 questions clés** que poserait un investisseur expérimenté.
+3. Pour chaque question, ajoute une **piste de réflexion** ou un **élément à anticiper** qui aidera l’entrepreneur à formuler sa réponse.
+
+Formate ta réponse avec des titres clairs, de
+
+s sous-titres si besoin, et une mise en page agréable. Tu peux utiliser des emojis si cela améliore la lisibilité.
+
+Voici les informations de contexte à utiliser :
+
+- Proposition de valeur : [Proposition de valeur principale]
+- Clients cibles : [Clients cibles : Type de clients ou segments de marché]
+- Source principale de revenus : [Sources de revenus : Abonnement / Commission / Vente directe / Autre]
+- Stade de développement de l’entreprise : [Stade de développement : Idée / MVP / Croissance / Maturité]
+
+Thématiques obligatoires (et ordre recommandé) :
+
+1. Revenus
+2. Coûts et marges
+3. Scalabilité
+4. Croissance & traction
+5. Clientèle & marché cible
+6. Barrières à l’entrée et différenciation
+7. Risques opérationnels et financiers
+
+Répond directement dans la conversation
+
+Tu DOIS toujours conserver la même structure pour chaque point. Si tu ne peux pas aller au bout, demande à l’utilisateur s’il veut que tu continues l’analyse. Tu dois toujours lui demander cela.', NULL, 'Investor questions', 'Interrogations Investisseurs');
 
 
 --
 -- Data for Name: user_folders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."user_folders" ("id", "created_at", "type", "tags", "path", "user_id", "description", "locale", "name") VALUES
+	(1, '2025-04-01 10:23:45.782265+00', NULL, NULL, 'dede', '6b28412c-fece-4a00-9d91-24381700e79d', '', NULL, 'dede'),
+	(2, '2025-04-01 11:11:53.872049+00', NULL, NULL, 'dedede', '6b28412c-fece-4a00-9d91-24381700e79d', 'dedeed', NULL, 'dedede'),
+	(3, '2025-04-01 11:23:34.867674+00', NULL, NULL, 'marketing', '6b28412c-fece-4a00-9d91-24381700e79d', 'de', NULL, 'Marketing'),
+	(4, '2025-04-01 11:24:06.386893+00', NULL, NULL, 'finance', '6b28412c-fece-4a00-9d91-24381700e79d', 'dede', NULL, 'Finance'),
+	(5, '2025-04-01 11:24:58.967484+00', NULL, NULL, 'test', '20259212-ba5c-4311-8781-6d249c7e885b', 'blabal', NULL, 'test'),
+	(6, '2025-04-01 11:31:55.495922+00', NULL, NULL, 'fe', '6b28412c-fece-4a00-9d91-24381700e79d', 'e', NULL, 'fe'),
+	(7, '2025-04-01 12:17:11.51183+00', NULL, NULL, 'marketing', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', '', NULL, 'Marketing'),
+	(8, '2025-04-02 10:17:32.801356+00', NULL, NULL, 'marketing-jaydai', 'c2d2ed42-60e8-4514-ad26-419274b64f51', 'eze', NULL, 'Marketing Jaydai'),
+	(9, '2025-04-02 10:18:57.539992+00', NULL, NULL, 'ds', 'c2d2ed42-60e8-4514-ad26-419274b64f51', '', NULL, 'ds'),
+	(10, '2025-04-02 10:19:15.541151+00', NULL, NULL, 'finance', 'c2d2ed42-60e8-4514-ad26-419274b64f51', 'fs', NULL, 'Finance'),
+	(11, '2025-04-02 10:19:41.913229+00', NULL, NULL, 'as', 'c2d2ed42-60e8-4514-ad26-419274b64f51', 'Hallo', NULL, 'as'),
+	(12, '2025-04-02 10:21:08.334803+00', NULL, NULL, 'lplplp', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', 'lplp', NULL, 'lplplp');
 
 
 --
 -- Data for Name: users_metadata; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."users_metadata" ("id", "created_at", "user_id", "name", "phone_number", "pinned_official_folder_ids", "pinned_organization_folder_ids", "preferences_metadata", "additional_email", "additional_organization", "organization_id") VALUES
-	(1, '2025-03-25 17:54:31.94983+00', 'd0c4c8d9-9051-4f37-a70d-81aa83a3d577', 'frfr', NULL, '{1}', '{}', NULL, NULL, NULL, NULL),
-	(2, '2025-03-25 18:01:44.696484+00', 'e4bfcd23-fd85-41ba-a00e-950802edcb20', 'qq', NULL, '{1}', '{}', NULL, NULL, NULL, NULL),
-	(3, '2025-03-25 18:11:58.704178+00', 'af7a995b-feac-4950-b5d6-7a844c223854', 'gtr', NULL, '{1}', '{}', NULL, NULL, NULL, NULL),
-	(4, '2025-03-25 18:23:22.280363+00', 'd0c384b2-2966-47aa-8b07-22be4a7c0326', 'yi', NULL, '{1}', '{}', NULL, NULL, NULL, NULL),
-	(5, '2025-03-25 18:34:12.632689+00', '6730a941-19d4-412d-814a-ecdb6d34397b', 'Huiban', NULL, '{1}', '{}', NULL, NULL, NULL, NULL),
-	(6, '2025-03-25 18:47:46.708737+00', 'b8d5f98e-23a5-4a21-8fa1-ce0a41f0ef42', 'fg', NULL, '{1}', '{}', NULL, NULL, NULL, NULL),
-	(8, '2025-03-28 14:54:07.267318+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', 'huiban', NULL, '{1}', '{}', NULL, NULL, NULL, NULL),
-	(7, '2025-03-27 08:13:14.700709+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', 'Quentin Bragard', '+33630299726', '{1}', '{}', NULL, 'quentin@sopatech.co', 'Sopatech', NULL);
+INSERT INTO "public"."users_metadata" ("id", "created_at", "user_id", "name", "phone_number", "pinned_official_folder_ids", "pinned_organization_folder_ids", "preferences_metadata", "additional_email", "additional_organization", "organization_id", "linkedin_headline", "linkedin_id", "linkedin_profile_url", "email", "google_id") VALUES
+	(1, '2025-03-25 17:54:31.94983+00', 'd0c4c8d9-9051-4f37-a70d-81aa83a3d577', 'frfr', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(2, '2025-03-25 18:01:44.696484+00', 'e4bfcd23-fd85-41ba-a00e-950802edcb20', 'qq', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(3, '2025-03-25 18:11:58.704178+00', 'af7a995b-feac-4950-b5d6-7a844c223854', 'gtr', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(4, '2025-03-25 18:23:22.280363+00', 'd0c384b2-2966-47aa-8b07-22be4a7c0326', 'yi', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(5, '2025-03-25 18:34:12.632689+00', '6730a941-19d4-412d-814a-ecdb6d34397b', 'Huiban', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(6, '2025-03-25 18:47:46.708737+00', 'b8d5f98e-23a5-4a21-8fa1-ce0a41f0ef42', 'fg', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(14, '2025-04-02 17:54:20.704088+00', 'ee0c9faa-7cf4-4328-9918-50489f9c6743', 'Quentin Bragard', '+33630299726', '{3,4,2,1}', '{}', NULL, 'quentin@sopatech.co', 'Sopatech', NULL, NULL, NULL, NULL, NULL, NULL),
+	(12, '2025-04-01 12:10:04.062869+00', 'f0a0ed15-b090-489e-854f-8e4dd348e4ad', 'Jb H', '+33684552941', '{}', '{}', NULL, 'b00604891@essec.edu', 'Personal', NULL, NULL, NULL, NULL, 'jbhuiban@gmail.com', '103456325911028559455'),
+	(9, '2025-04-01 09:35:49.260887+00', '43f1515b-b9c7-408d-8705-7cc8f5a13c63', '', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'quentin@sopatech.co', '111651606195166769529'),
+	(10, '2025-04-01 10:06:15.430412+00', '20259212-ba5c-4311-8781-6d249c7e885b', '', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'quentinbragard@gmail.com', '104350031743014440835'),
+	(11, '2025-04-01 10:21:25.986477+00', '6b28412c-fece-4a00-9d91-24381700e79d', '', NULL, '{1}', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'b00604891@essec.edu', '116357914315519093526'),
+	(8, '2025-03-28 14:54:07.267318+00', 'c2d2ed42-60e8-4514-ad26-419274b64f51', 'Jb H', '+33684552941', '{1,3,4,2}', '{}', NULL, 'b00604891@essec.edu', 'Personal', NULL, NULL, NULL, NULL, NULL, NULL),
+	(7, '2025-03-27 08:13:14.700709+00', '5ac2ef2a-9c42-4dbf-86fd-51be8c67461b', 'Quentin Bragard', '+33630299726', '{1}', '{}', NULL, 'quentin@sopatech.co', 'Sopatech', NULL, NULL, NULL, NULL, NULL, NULL),
+	(13, '2025-04-02 17:50:14.584514+00', 'f38eee2e-9293-4c3d-ad41-3e4264c826d7', 'Quentin Bragard', '+33630299726', '{3,4,2,1}', '{}', NULL, 'quentin@sopatech.co', 'Sopatech', NULL, NULL, NULL, NULL, NULL, NULL);
 
 
 --
@@ -4158,7 +6823,8 @@ INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_a
 
 INSERT INTO "storage"."objects" ("id", "bucket_id", "name", "owner", "created_at", "updated_at", "last_accessed_at", "metadata", "version", "owner_id", "user_metadata") VALUES
 	('0ad18e89-ea0d-4d4d-aac0-abad9f59f51c', 'images', 'jaydai-extension-logo.png', NULL, '2025-03-25 17:11:05.130945+00', '2025-03-25 17:11:05.130945+00', '2025-03-25 17:11:05.130945+00', '{"eTag": "\"5d8d56f59907d6504de0d00a899a2721-1\"", "size": 10859, "mimetype": "image/png", "cacheControl": "max-age=3600", "lastModified": "2025-03-25T17:11:05.000Z", "contentLength": 10859, "httpStatusCode": 200}', 'd5c9f7d9-9a90-4eaa-b521-b2bb16031472', NULL, NULL),
-	('e8e2de3c-56cf-4e37-a029-474452dec2b9', 'images', 'screenshot-extension.png', NULL, '2025-03-27 07:54:08.83548+00', '2025-03-27 07:54:08.83548+00', '2025-03-27 07:54:08.83548+00', '{"eTag": "\"849f463f24498d237305b68765de8520-1\"", "size": 20728, "mimetype": "image/png", "cacheControl": "max-age=3600", "lastModified": "2025-03-27T07:54:09.000Z", "contentLength": 20728, "httpStatusCode": 200}', '4273e87b-a0d1-460e-a88a-03eb43644b3f', NULL, NULL);
+	('e8e2de3c-56cf-4e37-a029-474452dec2b9', 'images', 'screenshot-extension.png', NULL, '2025-03-27 07:54:08.83548+00', '2025-03-27 07:54:08.83548+00', '2025-03-27 07:54:08.83548+00', '{"eTag": "\"849f463f24498d237305b68765de8520-1\"", "size": 20728, "mimetype": "image/png", "cacheControl": "max-age=3600", "lastModified": "2025-03-27T07:54:09.000Z", "contentLength": 20728, "httpStatusCode": 200}', '4273e87b-a0d1-460e-a88a-03eb43644b3f', NULL, NULL),
+	('d01318aa-ebc2-4c2c-b08b-de7c1407fdba', 'images', 'jaydai-extension-logo-dark.png', NULL, '2025-04-01 09:33:17.903608+00', '2025-04-01 09:33:36.64942+00', '2025-04-01 09:33:17.903608+00', '{"eTag": "\"1bbc88cd77af3a770a919076b763315d\"", "size": 16580, "mimetype": "image/png", "cacheControl": "max-age=3600", "lastModified": "2025-04-01T09:33:37.000Z", "contentLength": 16580, "httpStatusCode": 200}', '01bdfa56-fa9c-46c4-a9cc-b6042dabf739', NULL, NULL);
 
 
 --
@@ -4183,7 +6849,7 @@ INSERT INTO "storage"."objects" ("id", "bucket_id", "name", "owner", "created_at
 -- Name: refresh_tokens_id_seq; Type: SEQUENCE SET; Schema: auth; Owner: supabase_auth_admin
 --
 
-SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 34, true);
+SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 113, true);
 
 
 --
@@ -4204,7 +6870,7 @@ SELECT pg_catalog.setval('"public"."chats_id_seq"', 1, false);
 -- Name: messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."messages_id_seq"', 149, true);
+SELECT pg_catalog.setval('"public"."messages_id_seq"', 250, true);
 
 
 --
@@ -4218,14 +6884,14 @@ SELECT pg_catalog.setval('"public"."notifications_id_seq"', 1, false);
 -- Name: official_folders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."official_folders_id_seq"', 2, true);
+SELECT pg_catalog.setval('"public"."official_folders_id_seq"', 4, true);
 
 
 --
 -- Name: official_prompt_templates_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."official_prompt_templates_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."official_prompt_templates_id_seq"', 22, true);
 
 
 --
@@ -4239,14 +6905,14 @@ SELECT pg_catalog.setval('"public"."organization_folders_id_seq"', 1, false);
 -- Name: user_folders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."user_folders_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."user_folders_id_seq"', 12, true);
 
 
 --
 -- Name: users_metadata_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."users_metadata_id_seq"', 8, true);
+SELECT pg_catalog.setval('"public"."users_metadata_id_seq"', 14, true);
 
 
 --
