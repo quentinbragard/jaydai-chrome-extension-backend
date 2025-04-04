@@ -47,7 +47,6 @@ class CombinedBatchRequest(BaseModel):
 @router.post("/message")
 async def save_message(message: MessageData, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     """Save a chat message with parent message ID support."""
-    print("message", message)
     #try:
     created_at = None
     if message.created_at:
@@ -118,7 +117,6 @@ async def save_chat(chat: ChatData, user_id: str = Depends(supabase_helpers.get_
 
 @router.post("/user_metadata")
 async def save_user_metadata(metadata: UserMetadataData, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    print(f"Saving user metadata for user {user_id} with metadata {metadata}")
     """Save user metadata."""
     #try:
         # Check if metadata already exists
@@ -155,7 +153,6 @@ async def save_user_metadata(metadata: UserMetadataData, user_id: str = Depends(
 @router.post("/batch/message")
 async def save_batch_messages(batch_data: BatchMessagesRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     """Save multiple messages in a single batch operation with parent message ID support."""
-    print("batch_data", batch_data)
     #try:
     if not batch_data.messages:
         return {"success": True, "message": "No messages to save", "count": 0}

@@ -36,7 +36,7 @@ class NotificationService:
                     "user_id": user_id,
                     "type": "welcome_new_user",
                     "title": "welcome_notification_title", # Use localization key
-                    "body": f"{greeting}welcome_notification_body", # Use localization key with personalization
+                    "body": "welcome_notification_body", # Use localization key with personalization
                     "metadata": {
                         "action_type": "openLinkedIn",
                         "action_title_key": "followOnLinkedIn",
@@ -72,53 +72,3 @@ class NotificationService:
             print(f"Error creating notification: {str(e)}")
             return None
     
-    @staticmethod
-    async def create_analytics_insight_notification(user_id: str, insight_type: str, insight_text: str):
-        """Create an analytics insight notification."""
-        insights = {
-            "prompt_length": {
-                "title": "prompt_length_insight_title",
-                "body": insight_text,
-                "metadata": "View Details"
-            },
-            "response_time": {
-                "title": "response_time_insight_title",
-                "body": insight_text,
-                "metadata": "View Details"
-            },
-            "conversation_quality": {
-                "title": "conversation_quality_insight_title",
-                "body": insight_text,
-                "metadata": "View Details"
-            }
-        }
-        
-        insight = insights.get(insight_type, {
-            "title": "new_insight_title",
-            "body": insight_text,
-            "metadata": "View Details"
-        })
-        
-        return await NotificationService.create_notification(
-            user_id=user_id,
-            notification_type=f"insight_{insight_type}",
-            title=insight["title"],
-            body=insight["body"],
-            metadata=insight["metadata"]
-        )
-
-# Helper functions to use in API routes
-
-async def create_first_notification(user_id: str, username: str = ""):
-    """
-    Check various notification conditions for a user.
-    Call this whenever user logs in or starts using the extension.
-    """
-    # Check for welcome notification for new users
-    await NotificationService.create_welcome_notification(user_id, username)
-    
-    # Additional notification checks can be added here in the future
-    # For example:
-    # - Prompt optimization suggestions
-    # - Weekly usage reports
-    # - New feature announcements
