@@ -1,15 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
-import requests
 from supabase import create_client, Client
 import dotenv
 import os
-from utils.notification_service import create_first_notification
+from utils.notification_service import NotificationService
 from typing import Optional
-from datetime import datetime, timedelta
-import uuid
-import jwt
+
 
 
 dotenv.load_dotenv()
@@ -124,10 +121,10 @@ async def sign_up(sign_up_data: SignUpData):
                 "additional_organization": None
             }).execute()
             
-            print("metadata_response", metadata_response)
             
             metadata = metadata_response.data[0] if metadata_response.data else None
             user_with_metadata = {**response.user.__dict__, "metadata": metadata}
+            await NotificationService.create_welcome_notification(response.user.id, sign_up_data.name)
         
         return {
             "success": True,
@@ -150,9 +147,6 @@ async def sign_in(sign_in_data: SignInData):
             "email": sign_in_data.email,
             "password": sign_in_data.password
         })
-
-        # Check for notifications after successful login
-        await create_first_notification(response.user.id)
 
         # Get user metadata
         metadata_response = supabase.table("users_metadata") \
@@ -196,7 +190,6 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
             "token": google_sign_in_data.id_token,
         })
         
-        print("===========================Supabase sign_in_with_id_token response:", response)
         
         if not response.user:
             raise HTTPException(status_code=400, detail="Invalid Google ID token")
@@ -204,8 +197,6 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
         user_id = response.user.id
         is_new_user = False
         
-        # Check for notifications after successful login
-        await create_first_notification(user_id)
 
         # Get user metadata
         metadata_response = supabase.table("users_metadata") \
@@ -213,7 +204,6 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
             .eq("user_id", user_id) \
             .execute()
             
-        print("\n\n===========metadata_response", metadata_response)
 
         # If no metadata exists for this user, create a new metadata record
         if not metadata_response.data:
@@ -244,6 +234,8 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
                 "pinned_official_folder_ids": official_folder_ids,
                 "pinned_organization_folder_ids": organization_folder_ids
             }
+            await NotificationService.create_welcome_notification(response.user.id, user_name)
+
         else:
             metadata = metadata_response.data
 
@@ -294,8 +286,6 @@ async def refresh_token(refresh_data: RefreshTokenData):
 async def get_current_user(user_id: str = Depends(supabase.auth.get_user)):
     """Get the current authenticated user."""
     try:
-        # Check for notifications on user session validation
-        await create_first_notification(user_id)
         
         return {
             "success": True,
