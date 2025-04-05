@@ -39,6 +39,7 @@ def energy_to_equivalent(wh: float) -> str:
     else:
         return "équivaut à quelques minutes d’ordinateur portable"
 
+
 @router.get("/user")
 async def get_user_stats(user_id: str = Depends(get_user_from_session_token)):
     try:
@@ -132,7 +133,7 @@ async def get_user_stats(user_id: str = Depends(get_user_from_session_token)):
 
         # Model usage
         model_usage = {}
-        for msg in messages:
+        for msg in messages: 
             model = msg.get("model", "unknown")
             if model not in model_usage:
                 model_usage[model] = {"count": 0, "input_tokens": 0, "output_tokens": 0}
@@ -142,6 +143,21 @@ async def get_user_stats(user_id: str = Depends(get_user_from_session_token)):
                 model_usage[model]["input_tokens"] += tok
             else:
                 model_usage[model]["output_tokens"] += tok
+        chats_per_day = { (current_date - timedelta(days=i)).strftime('%Y-%m-%d'): 0 for i in range(7) }
+        for chat in chats_response.data:
+            if chat.get("created_at"):
+                date = chat["created_at"].split('T')[0]
+                if date in chats_per_day:
+                    chats_per_day[date] += 1
+
+        # Convert date strings to datetime objects for sorting
+        chats_per_day = {datetime.strptime(date, '%Y-%m-%d'): count for date, count in chats_per_day.items()}
+        
+        # Sort chats_per_day by date (earliest first, latest last)
+        chats_per_day = dict(sorted(chats_per_day.items()))
+
+        # Convert datetime objects back to date strings
+        chats_per_day = {date.strftime('%Y-%m-%d'): count for date, count in chats_per_day.items()}
 
         return {
             "total_chats": total_chats,
@@ -149,6 +165,7 @@ async def get_user_stats(user_id: str = Depends(get_user_from_session_token)):
             "total_messages": total_messages,
             "avg_messages_per_chat": avg_messages_per_chat,
             "messages_per_day": messages_per_day,
+            "chats_per_day": chats_per_day,
             "token_usage": {
                 "recent": recent_tokens,
                 "recent_input": recent_input,
