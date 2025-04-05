@@ -28,9 +28,6 @@ class NotificationService:
             
             # If no existing welcome notification
             if len(existing_notification.data) == 0:
-                # Create personalized greeting if username is provided
-                greeting = f"Hi {username}! " if username else ""
-                
                 # Create the notification
                 notification = {
                     "user_id": user_id,
@@ -44,6 +41,7 @@ class NotificationService:
                     }
                 }
                 
+                print("notification", notification)
                 # Insert notification
                 supabase.table("notifications").insert(notification).execute()
                 return True
