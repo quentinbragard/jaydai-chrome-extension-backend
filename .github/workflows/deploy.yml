@@ -156,27 +156,56 @@ jobs:
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}
 
-  deploy-vercel-version:
-    name: Deploy Version to Vercel
+  deploy-version:
+    name: Deploy Version to Cloud Run
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/heads/v.')
+    needs: [test, migrate-database]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Deploy to Vercel
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Set environment for version branch
+        id: set-env
         run: |
-          # Extract version from branch name (e.g., v1.2.3)
           VERSION="${GITHUB_REF#refs/heads/}"
-          # Deploy to Vercel with a custom environment or alias
-          vercel --prod --token $VERCEL_TOKEN --env VERSION=$VERSION --confirm --name my-project-$VERSION
+          echo "ENVIRONMENT=version" >> $GITHUB_ENV
+          echo "SERVICE_NAME=api-$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{ github.sha }}"
+          echo "Building image: $IMAGE_TAG"
+          docker build -t $IMAGE_TAG -f Dockerfile.prod .
+          docker push $IMAGE_TAG
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          image: ${{ env.IMAGE_TAG }}
+          flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --min-instances=0 --max-instances=10'
+          env_vars: |
+            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            VERSION=${{ env.VERSION }}
+
+      - name: Show Output
+        run: echo ${{ steps.deploy.outputs.url }}
