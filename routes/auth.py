@@ -5,9 +5,8 @@ from supabase import create_client, Client
 import dotenv
 import os
 from utils.notification_service import NotificationService
+from utils.prompts import get_all_folder_ids_by_type
 from typing import Optional
-
-
 
 dotenv.load_dotenv()
 
@@ -31,7 +30,6 @@ class SignUpData(BaseModel):
     email: str
     password: str
     name: Optional[str] = None
-    
 
 # Data model for OTP verification
 class VerifyOTPData(BaseModel):
@@ -39,28 +37,6 @@ class VerifyOTPData(BaseModel):
     token: str
     linkedin_id: Optional[str] = None
     name: Optional[str] = None
-
-async def get_all_folder_ids(folder_type):
-    """Get all folder IDs of a specific type (official or organization)."""
-    try:
-        table_name = f"{folder_type}_folders"
-        response = supabase.table(table_name).select("id").execute()
-        return [folder['id'] for folder in (response.data or [])]
-    except Exception as e:
-        print(f"Error fetching {folder_type} folder IDs: {str(e)}")
-        return []
-
-async def get_organization_folder_ids(organization_id):
-    """Get all folder IDs for a specific organization."""
-    if not organization_id:
-        return []
-        
-    try:
-        response = supabase.table("organization_folders").select("id").eq("organization_id", organization_id).execute()
-        return [folder['id'] for folder in (response.data or [])]
-    except Exception as e:
-        print(f"Error fetching organization folder IDs: {str(e)}")
-        return []
 
 @router.get("/confirm")
 async def confirm_email(token: str, type: str = "signup"):
@@ -83,8 +59,6 @@ async def confirm_email(token: str, type: str = "signup"):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to confirm email: {str(e)}")
 
-    
-    
 @router.post("/sign_up")
 async def sign_up(sign_up_data: SignUpData):
     """Sign up a new user and pin all available folders."""
@@ -104,8 +78,8 @@ async def sign_up(sign_up_data: SignUpData):
         
         # Initialize user metadata with all available folders pinned
         if response.user:
-            # Get all official folder IDs
-            official_folder_ids = await get_all_folder_ids("official")
+            # Get all official folder IDs using utility
+            official_folder_ids = await get_all_folder_ids_by_type(supabase, "official")
             
             # Get organization folder IDs if applicable (default empty list)
             organization_folder_ids = []
@@ -120,7 +94,6 @@ async def sign_up(sign_up_data: SignUpData):
                 "phone_number": None,
                 "additional_organization": None
             }).execute()
-            
             
             metadata = metadata_response.data[0] if metadata_response.data else None
             user_with_metadata = {**response.user.__dict__, "metadata": metadata}
@@ -178,7 +151,6 @@ async def sign_in(sign_in_data: SignInData):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
-
 @router.post("/sign_in_with_google")
 async def sign_in(google_sign_in_data: GoogleAuthRequest):
     """Authenticate user via Google OAuth and pin all available folders for new users."""
@@ -190,20 +162,17 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
             "token": google_sign_in_data.id_token,
         })
         
-        
         if not response.user:
             raise HTTPException(status_code=400, detail="Invalid Google ID token")
         
         user_id = response.user.id
         is_new_user = False
-        
 
         # Get user metadata
         metadata_response = supabase.table("users_metadata") \
             .select("*") \
             .eq("user_id", user_id) \
             .execute()
-            
 
         # If no metadata exists for this user, create a new metadata record
         if not metadata_response.data:
@@ -212,8 +181,8 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
             user_email = response.user.email
             user_name = response.user.user_metadata.get("full_name", "")
             
-            # Get all official folder IDs
-            official_folder_ids = await get_all_folder_ids("official")
+            # Get all official folder IDs using utility
+            official_folder_ids = await get_all_folder_ids_by_type(supabase, "official")
             
             # Get organization folder IDs if applicable (default empty list)
             organization_folder_ids = []
@@ -237,7 +206,7 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
             await NotificationService.create_welcome_notification(response.user.id, user_name)
 
         else:
-            metadata = metadata_response.data
+            metadata = metadata_response.data[0] if metadata_response.data else {}
 
         # Ensure we have user data to return
         user_dict = response.user.__dict__ if hasattr(response.user, "__dict__") else {
@@ -264,7 +233,6 @@ async def sign_in(google_sign_in_data: GoogleAuthRequest):
         print(f"Google Sign-In error: {error_message}")
         raise HTTPException(status_code=500, detail=f"Google Sign-In error: {error_message}")
 
-
 @router.post("/refresh_token")
 async def refresh_token(refresh_data: RefreshTokenData):
     """Refresh an expired access token using the refresh token."""
@@ -286,7 +254,6 @@ async def refresh_token(refresh_data: RefreshTokenData):
 async def get_current_user(user_id: str = Depends(supabase.auth.get_user)):
     """Get the current authenticated user."""
     try:
-        
         return {
             "success": True,
             "user_id": user_id

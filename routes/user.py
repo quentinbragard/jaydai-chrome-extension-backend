@@ -2,8 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from supabase import create_client, Client
 from utils import supabase_helpers
+from utils.prompts import (
+    get_all_folder_ids_by_type,
+    process_folder_for_response,
+    process_template_for_response
+)
 import dotenv
 import os
+from typing import List
 
 dotenv.load_dotenv()
 
@@ -17,21 +23,9 @@ class UserMetadata(BaseModel):
     additional_email: str | None = None
     phone_number: str | None = None
     additional_organization: str | None = None
-    organization_id: int | None = None  # Added field for organization_id
+    organization_id: int | None = None
     pinned_official_folder_ids: list[int] | None = None
     pinned_organization_folder_ids: list[int] | None = None
-
-async def get_organization_folder_ids(organization_id):
-    """Get all folder IDs for a specific organization."""
-    if not organization_id:
-        return []
-        
-    try:
-        response = supabase.table("organization_folders").select("id").eq("organization_id", organization_id).execute()
-        return [folder['id'] for folder in (response.data or [])]
-    except Exception as e:
-        print(f"Error fetching organization folder IDs: {str(e)}")
-        return []
 
 @router.get("/metadata")
 async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
@@ -97,8 +91,12 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
             if metadata.organization_id != current_org_id:
                 update_data["organization_id"] = metadata.organization_id
                 
-                # Auto-pin all folders for this organization
-                organization_folder_ids = await get_organization_folder_ids(metadata.organization_id)
+                # Auto-pin all folders for this organization using utility
+                organization_folder_ids = await get_all_folder_ids_by_type(
+                    supabase, 
+                    "organization", 
+                    str(metadata.organization_id)
+                )
                 update_data["pinned_organization_folder_ids"] = organization_folder_ids
         
         # Handle explicit updates to pinned folder IDs (only if provided)
@@ -138,36 +136,45 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
 
 @router.get("/folders-with-prompts")
 async def get_folders_with_prompts(
-    locale: str = "en",  # Added locale parameter for content selection
+    locale: str = "en",
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """Get all folders with their prompts, including pinned status."""
     try:
         # Get user metadata for pinned folders
         metadata = supabase.table("users_metadata") \
-            .select("pinned_official_folder_ids, pinned_organization_folder_ids") \
+            .select("pinned_official_folder_ids, pinned_organization_folder_ids, organization_id") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
             
         pinned_official_folders = metadata.data.get('pinned_official_folder_ids', []) if metadata.data else []
         pinned_org_folders = metadata.data.get('pinned_organization_folder_ids', []) if metadata.data else []
+        user_org_id = metadata.data.get('organization_id') if metadata.data else None
 
         # Get all prompts
         prompts = supabase.table("prompt_templates") \
             .select("*") \
             .execute()
 
-        # Get all folders
-        official_folders = supabase.table("official_folders") \
+        # Get folders from unified table
+        # Official folders
+        official_folders_response = supabase.table("prompt_folders") \
             .select("*") \
+            .is_("user_id", "null") \
+            .is_("organization_id", "null") \
             .execute()
-            
-        org_folders = supabase.table("organization_folders") \
-            .select("*") \
-            .execute()
-            
-        user_folders = supabase.table("user_folders") \
+        
+        # Organization folders (for user's organization)
+        org_folders_response = None
+        if user_org_id:
+            org_folders_response = supabase.table("prompt_folders") \
+                .select("*") \
+                .eq("organization_id", user_org_id) \
+                .execute()
+        
+        # User folders
+        user_folders_response = supabase.table("prompt_folders") \
             .select("*") \
             .eq("user_id", user_id) \
             .execute()
@@ -180,127 +187,49 @@ async def get_folders_with_prompts(
         }
 
         # Process official folders
-        for folder in official_folders.data or []:
-            processed_folder = folder.copy()
-            
-            # Handle locale-specific folder name
-            name_field = f"name_{locale}" if locale in ["en", "fr"] else "name_en"
-            fallback_field = "name_en"
-            
-            if name_field in folder and folder[name_field]:
-                processed_folder["name"] = folder[name_field]
-            elif fallback_field in folder and folder[fallback_field]:
-                processed_folder["name"] = folder[fallback_field]
-            else:
-                processed_folder["name"] = "Unnamed Folder"
-                
-            # Remove locale-specific fields
-            processed_folder.pop("name_en", None)
-            processed_folder.pop("name_fr", None)
+        for folder in official_folders_response.data or []:
+            processed_folder = process_folder_for_response(folder, locale)
             
             # Process prompts for this folder
             folder_prompts = []
-            for p in prompts.data:
+            for p in prompts.data or []:
                 if p.get("folder_id") == folder["id"] and p.get("type") == "official":
-                    processed_prompt = p.copy()
-                    
-                    # Select content based on locale
-                    content_field = f"content_{locale}" if locale in ["en", "fr"] else "content_en"
-                    fallback_content = "content_en"
-                    
-                    if content_field in p and p[content_field]:
-                        processed_prompt["content"] = p[content_field]
-                    elif fallback_content in p and p[fallback_content]:
-                        processed_prompt["content"] = p[fallback_content]
-                    else:
-                        processed_prompt["content"] = ""
-                        
-                    # Handle title if it has locale versions
-                    title_field = f"title_{locale}" if locale in ["en", "fr"] else "title_en"
-                    fallback_title = "title_en"
-                    
-                    if title_field in p and p[title_field]:
-                        processed_prompt["title"] = p[title_field]
-                    elif fallback_title in p and p[fallback_title]:
-                        processed_prompt["title"] = p[fallback_title]
-                        
-                    # Remove locale fields
-                    processed_prompt.pop("content_en", None)
-                    processed_prompt.pop("content_fr", None)
-                    processed_prompt.pop("title_en", None)
-                    processed_prompt.pop("title_fr", None)
-                    
+                    processed_prompt = process_template_for_response(p, locale)
                     folder_prompts.append(processed_prompt)
                     
             processed_folder["prompts"] = folder_prompts
             processed_folder["is_pinned"] = folder["id"] in pinned_official_folders
             organized_folders["official"].append(processed_folder)
 
-        # Process organization folders (similarly to official folders)
-        for folder in org_folders.data or []:
-            processed_folder = folder.copy()
-            
-            # Handle locale-specific folder name
-            name_field = f"name_{locale}" if locale in ["en", "fr"] else "name_en"
-            fallback_field = "name_en"
-            
-            if name_field in folder and folder[name_field]:
-                processed_folder["name"] = folder[name_field]
-            elif fallback_field in folder and folder[fallback_field]:
-                processed_folder["name"] = folder[fallback_field]
-            else:
-                processed_folder["name"] = "Unnamed Folder"
+        # Process organization folders
+        if org_folders_response:
+            for folder in org_folders_response.data or []:
+                processed_folder = process_folder_for_response(folder, locale)
                 
-            # Remove locale-specific fields
-            processed_folder.pop("name_en", None)
-            processed_folder.pop("name_fr", None)
-            
-            # Process prompts for this folder
-            folder_prompts = []
-            for p in prompts.data:
-                if p.get("folder_id") == folder["id"] and p.get("type") == "organization":
-                    processed_prompt = p.copy()
-                    
-                    # Select content based on locale
-                    content_field = f"content_{locale}" if locale in ["en", "fr"] else "content_en"
-                    fallback_content = "content_en"
-                    
-                    if content_field in p and p[content_field]:
-                        processed_prompt["content"] = p[content_field]
-                    elif fallback_content in p and p[fallback_content]:
-                        processed_prompt["content"] = p[fallback_content]
-                    else:
-                        processed_prompt["content"] = ""
+                # Process prompts for this folder
+                folder_prompts = []
+                for p in prompts.data or []:
+                    if p.get("folder_id") == folder["id"] and p.get("type") == "organization":
+                        processed_prompt = process_template_for_response(p, locale)
+                        folder_prompts.append(processed_prompt)
                         
-                    # Handle title if it has locale versions
-                    title_field = f"title_{locale}" if locale in ["en", "fr"] else "title_en"
-                    fallback_title = "title_en"
-                    
-                    if title_field in p and p[title_field]:
-                        processed_prompt["title"] = p[title_field]
-                    elif fallback_title in p and p[fallback_title]:
-                        processed_prompt["title"] = p[fallback_title]
-                        
-                    # Remove locale fields
-                    processed_prompt.pop("content_en", None)
-                    processed_prompt.pop("content_fr", None)
-                    processed_prompt.pop("title_en", None)
-                    processed_prompt.pop("title_fr", None)
-                    
-                    folder_prompts.append(processed_prompt)
-                    
-            processed_folder["prompts"] = folder_prompts
-            processed_folder["is_pinned"] = folder["id"] in pinned_org_folders
-            organized_folders["organization"].append(processed_folder)
+                processed_folder["prompts"] = folder_prompts
+                processed_folder["is_pinned"] = folder["id"] in pinned_org_folders
+                organized_folders["organization"].append(processed_folder)
 
-        # Process user folders (no name locale handling needed)
-        for folder in user_folders.data or []:
-            folder_prompts = [
-                p for p in prompts.data 
-                if p.get("folder_id") == folder["id"] and p.get("type") == "user"
-            ]
-            folder["prompts"] = folder_prompts
-            organized_folders["user"].append(folder)
+        # Process user folders
+        for folder in user_folders_response.data or []:
+            processed_folder = process_folder_for_response(folder, locale)
+            
+            # Get prompts for this folder
+            folder_prompts = []
+            for p in prompts.data or []:
+                if p.get("folder_id") == folder["id"] and p.get("type") == "user":
+                    processed_prompt = process_template_for_response(p, locale)
+                    folder_prompts.append(processed_prompt)
+            
+            processed_folder["prompts"] = folder_prompts
+            organized_folders["user"].append(processed_folder)
 
         return {
             "success": True,

@@ -14,7 +14,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware, 
-    allow_origins=["chrome-extension://enfcjmbdbldomiobfndablekgdkmcipd", "https://chatgpt.com"], 
+    allow_origins=["chrome-extension://enfcjmbdbldomiobfndablekgdkmcipd", "https://chatgpt.com", "https://claude.ai"], 
     allow_credentials=True, 
     allow_methods=["*"], 
     allow_headers=["*"]

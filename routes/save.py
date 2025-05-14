@@ -29,11 +29,28 @@ class ChatData(BaseModel):
     provider_name: str = "ChatGPT"  # Default provider to ChatGPT
 
 class UserMetadataData(BaseModel):
-    email: str
+    id: Optional[str] = None
+    created_at: Optional[str] = None
+    user_id: Optional[str] = None
     name: Optional[str] = None
-    picture: Optional[str] = None
     phone_number: Optional[str] = None
-    org_name: Optional[str] = None
+    pinned_official_folder_ids: Optional[List[str]] = None
+    pinned_organization_folder_ids: Optional[List[str]] = None
+    preferences_metadata: Optional[Dict[str, Any]] = None
+    additional_email: Optional[str] = None
+    additional_organization: Optional[str] = None
+    organization_id: Optional[str] = None
+    linkedin_headline: Optional[str] = None
+    linkedin_id: Optional[str] = None
+    linkedin_profile_url: Optional[str] = None
+    email: Optional[str] = None
+    google_id: Optional[str] = None
+    job_type: Optional[str] = None
+    job_industry: Optional[str] = None
+    job_seniority: Optional[str] = None
+    interests: Optional[List[str]] = None
+    signup_source: Optional[str] = None
+
 class BatchMessagesRequest(BaseModel):
     messages: List[MessageData]
 
@@ -130,12 +147,9 @@ async def save_user_metadata(metadata: UserMetadataData, user_id: str = Depends(
     }
     
     # Only include fields that are not None
-    if metadata.name is not None:
-        update_data["name"] = metadata.name
-    if metadata.phone_number is not None:
-        update_data["phone_number"] = metadata.phone_number
-    if metadata.org_name is not None:
-        update_data["additional_organization"] = metadata.org_name
+    for field in metadata.__dict__:
+        if metadata.__dict__[field] is not None:
+            update_data[field] = metadata.__dict__[field] 
 
         
     if existing.data:
