@@ -12,6 +12,7 @@ from utils.prompts import (
 )
 import dotenv
 from models.prompts.templates import TemplateCreate, TemplateUpdate, TemplateResponse, TemplateBlock
+from models.common import APIResponse
 dotenv.load_dotenv()
 
 # Initialize Supabase client
@@ -69,7 +70,7 @@ async def get_templates(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
 
-@router.get("/unorganized", response_model=List[TemplateResponse])
+@router.get("/unorganized", response_model=APIResponse[List[TemplateResponse]])
 async def get_unorganized_templates_endpoint(
     locale: Optional[str] = "en",
     expand_blocks: bool = True,
@@ -93,7 +94,7 @@ async def get_unorganized_templates_endpoint(
             
             templates.append(processed_template)
         
-        return templates
+        return APIResponse(success=True, data=templates)
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving unorganized templates: {str(e)}")
