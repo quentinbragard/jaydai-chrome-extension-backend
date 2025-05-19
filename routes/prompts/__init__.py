@@ -6,7 +6,7 @@ import dotenv
 import os
 from typing import List, Optional
 from enum import Enum
-from . import folders, templates
+from . import folders, templates, blocks
 
 dotenv.load_dotenv()
 
@@ -19,3 +19,4 @@ router = APIRouter(prefix="/prompts", tags=["Prompts"])
 # Include sub-routers
 router.include_router(folders.router, prefix="/folders", tags=["Folders"])
 router.include_router(templates.router, prefix="/templates", tags=["Templates"])
+router.include_router(blocks.router, prefix="/blocks", tags=["Blocks"])

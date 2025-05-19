@@ -17,7 +17,7 @@ def determine_folder_type(folder: Dict) -> str:
     """
     if folder.get("user_id"):
         return "user"
-    elif folder.get("organization_id"):
+    elif folder.get("company_id"):
         return "organization"
     else:
         return "official"
@@ -58,7 +58,7 @@ async def fetch_folders_by_type(
     supabase: Client,
     folder_type: Optional[str] = None,
     user_id: Optional[str] = None,
-    organization_id: Optional[str] = None,
+    company_id: Optional[str] = None,
     folder_ids: Optional[List[int]] = None,
     locale: str = "en"
 ) -> List[Dict]:
@@ -69,7 +69,7 @@ async def fetch_folders_by_type(
         supabase: Supabase client
         folder_type: Type of folders to fetch ("user", "organization", "official")
         user_id: User ID for user folders
-        organization_id: Organization ID for org folders
+        company_id: Organization ID for org folders
         folder_ids: Specific folder IDs to filter by
         locale: Locale for response processing
         
@@ -80,20 +80,20 @@ async def fetch_folders_by_type(
     
     # Apply filters based on folder type
     if folder_type == "user" and user_id:
-        query = query.eq("user_id", user_id).is_("organization_id", "null")
+        query = query.eq("user_id", user_id).is_("company_id", "null")
     elif folder_type == "organization":
-        if organization_id:
-            query = query.eq("organization_id", organization_id).is_("user_id", "null")
+        if company_id:
+            query = query.eq("company_id", organization_id).is_("user_id", "null")
         elif user_id:
             # Get user's organization from metadata
-            user_metadata = supabase.table("users_metadata").select("organization_id").eq("user_id", user_id).single().execute()
-            if user_metadata.data and user_metadata.data.get("organization_id"):
-                query = query.eq("organization_id", user_metadata.data["organization_id"]).is_("user_id", "null")
+            user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
+            if user_metadata.data and user_metadata.data.get("company_id"):
+                query = query.eq("company_id", user_metadata.data["company_id"]).is_("user_id", "null")
             else:
                 # User has no organization, return empty
                 return []
     elif folder_type == "official":
-        query = query.is_("user_id", "null").is_("organization_id", "null")
+        query = query.is_("user_id", "null").is_("company_id", "null")
     
     # Filter by specific folder IDs if provided
     if folder_ids:
@@ -158,23 +158,23 @@ async def update_user_pinned_folders(supabase: Client, user_id: str, folder_type
     
     return {"success": True, "updated_folder_ids": folder_ids}
 
-async def get_all_folder_ids_by_type(supabase: Client, folder_type: str, organization_id: Optional[str] = None) -> List[int]:
+async def get_all_folder_ids_by_type(supabase: Client, folder_type: str, company_id: Optional[str] = None) -> List[int]:
     """
     Get all folder IDs of a specific type.
     
     Args:
         supabase: Supabase client
         folder_type: Type of folders ("official", "organization")
-        organization_id: Organization ID for org folders
+        company_id: Organization ID for org folders
         
     Returns:
         List of folder IDs
     """
     try:
         if folder_type == "official":
-            response = supabase.table("prompt_folders").select("id").is_("user_id", "null").is_("organization_id", "null").execute()
-        elif folder_type == "organization" and organization_id:
-            response = supabase.table("prompt_folders").select("id").eq("organization_id", organization_id).execute()
+            response = supabase.table("prompt_folders").select("id").is_("user_id", "null").is_("company_id", "null").execute()
+        elif folder_type == "organization" and company_id:
+            response = supabase.table("prompt_folders").select("id").eq("company_id", organization_id).execute()
         else:
             return []
         

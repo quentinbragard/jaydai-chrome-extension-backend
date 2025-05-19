@@ -39,7 +39,117 @@ class FolderUpdate(FolderBase):
 class PromptType(str, Enum):
     official = "official"
     user = "user"
-    organization = "organization"
+    company = "company"
+
+# ---------------------- HELPER FUNCTIONS ----------------------
+
+async def get_user_organizations(user_id: str) -> List[str]:
+    """Get all organization IDs a user belongs to"""
+    try:
+        user_metadata = supabase.table("users_metadata").select("organization_ids").eq("user_id", user_id).single().execute()
+        if user_metadata.data and user_metadata.data.get("organization_ids"):
+            return user_metadata.data.get("organization_ids", [])
+        return []
+    except Exception as e:
+        print(f"Error fetching user organizations: {str(e)}")
+        return []
+
+async def get_user_company(user_id: str) -> Optional[str]:
+    """Get company ID a user belongs to"""
+    try:
+        user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
+        if user_metadata.data:
+            return user_metadata.data.get("company_id")
+        return None
+    except Exception as e:
+        print(f"Error fetching user company: {str(e)}")
+        return None
+
+async def fetch_folders_by_type(
+    supabase: Client,
+    folder_type: str,
+    user_id: Optional[str] = None,
+    folder_ids: Optional[List[int]] = None,
+    locale: str = "en"
+) -> List[dict]:
+    """Fetch folders by type with updated access logic"""
+    try:
+        # Start with base query
+        query = supabase.table("prompt_folders").select("*").eq("type", folder_type)
+        
+        if folder_type == "user" and user_id:
+            # User folders: owned by the user
+            query = query.eq("user_id", user_id)
+        elif folder_type == "company" and user_id:
+            # Company folders: from user's company
+            company_id = await get_user_company(user_id)
+            if company_id:
+                query = query.eq("company_id", company_id)
+            else:
+                return []  # No company, no folders
+        elif folder_type == "official" and user_id:
+            # We'll need multiple queries for official folders
+            folders = []
+            
+            # 1. Global official folders (no IDs)
+            global_query = supabase.table("prompt_folders").select("*") \
+                .eq("type", folder_type) \
+                .is_("user_id", "null") \
+                .is_("company_id", "null") \
+                .is_("organization_id", "null")
+                
+            if folder_ids:
+                global_query = global_query.in_("id", folder_ids)
+                
+            global_response = global_query.execute()
+            if global_response.data:
+                folders.extend(global_response.data)
+            
+            # 2. User's organization folders
+            org_ids = await get_user_organizations(user_id)
+            for org_id in org_ids:
+                org_query = supabase.table("prompt_folders").select("*") \
+                    .eq("type", folder_type) \
+                    .eq("organization_id", org_id)
+                    
+                if folder_ids:
+                    org_query = org_query.in_("id", folder_ids)
+                    
+                org_response = org_query.execute()
+                if org_response.data:
+                    folders.extend(org_response.data)
+            
+            # Process folders for response
+            processed_folders = []
+            for folder_data in folders:
+                from utils.prompts.folders import process_folder_for_response
+                processed_folder = process_folder_for_response(folder_data, locale)
+                processed_folders.append(processed_folder)
+            
+            return processed_folders
+        
+        # For user and company folders, continue with the original query
+        
+        # Filter by specific folder IDs if provided
+        if folder_ids:
+            query = query.in_("id", folder_ids)
+        
+        # Execute query
+        response = query.execute()
+        
+        # Process folders for response
+        folders = []
+        for folder_data in (response.data or []):
+            from utils.prompts.folders import process_folder_for_response
+            processed_folder = process_folder_for_response(folder_data, locale)
+            folders.append(processed_folder)
+        
+        return folders
+    
+    except Exception as e:
+        print(f"Error fetching folders: {str(e)}")
+        return []
+    
 
 # ---------------------- ROUTE HANDLERS ----------------------
 
@@ -52,13 +162,14 @@ async def get_folders(
 ):
     """Get folders with optional filtering by type."""
     try:
-        if type not in ["user", "official", "organization", None]:
+        if type not in ["user", "official", "company", None]:
             raise HTTPException(status_code=400, detail="Invalid folder type")
         
         # Default to English if locale not specified
         if not locale:
             locale = "en"
         
+        # Parse folder IDs if provided
         folder_id_list = []
         if folder_ids:
             try:
@@ -71,19 +182,19 @@ async def get_folders(
             folders = await fetch_folders_by_type(
                 supabase,
                 folder_type=type,
-                user_id=user_id if type == "user" else None,
+                user_id=user_id,
                 folder_ids=folder_id_list if folder_id_list else None,
                 locale=locale
             )
             
-            # Add templates if not in empty mode
+            # Fetch templates for folders (requires updating fetch_templates_for_folders)
             folder_ids_for_templates = [f["id"] for f in folders]
             templates = await fetch_templates_for_folders(supabase, folder_ids_for_templates, type, locale)
             templates_by_folder = organize_templates_by_folder(templates)
             folders_with_templates = add_templates_to_folders(folders, templates_by_folder)
             
-            # Add pinned status for official and organization folders
-            if type in ["official", "organization"]:
+            # Add pinned status for official and company folders
+            if type in ["official", "company"]:
                 pinned_folders = await get_user_pinned_folders(supabase, user_id)
                 add_pinned_status_to_folders(folders_with_templates, pinned_folders[type])
             
@@ -91,11 +202,11 @@ async def get_folders(
         else:
             # Get all folder types
             user_folders = await fetch_folders_by_type(supabase, "user", user_id=user_id, locale=locale)
-            official_folders = await fetch_folders_by_type(supabase, "official", locale=locale)
-            org_folders = await fetch_folders_by_type(supabase, "organization", user_id=user_id, locale=locale)
+            official_folders = await fetch_folders_by_type(supabase, "official", user_id=user_id, locale=locale)
+            company_folders = await fetch_folders_by_type(supabase, "company", user_id=user_id, locale=locale)
             
             # Add templates to each folder type
-            for folder_type, folders in [("user", user_folders), ("official", official_folders), ("organization", org_folders)]:
+            for folder_type, folders in [("user", user_folders), ("official", official_folders), ("company", company_folders)]:
                 folder_ids_for_templates = [f["id"] for f in folders]
                 templates = await fetch_templates_for_folders(supabase, folder_ids_for_templates, folder_type, locale)
                 templates_by_folder = organize_templates_by_folder(templates)
@@ -104,13 +215,13 @@ async def get_folders(
             # Add pinned status
             pinned_folders = await get_user_pinned_folders(supabase, user_id)
             add_pinned_status_to_folders(official_folders, pinned_folders["official"])
-            add_pinned_status_to_folders(org_folders, pinned_folders["organization"])
+            add_pinned_status_to_folders(company_folders, pinned_folders["company"])
             
             return {
                 "success": True,
                 "userFolders": user_folders,
                 "officialFolders": official_folders,
-                "organizationFolders": org_folders
+                "companyFolders": company_folders
             }
     except Exception as e:
         if isinstance(e, HTTPException):
@@ -132,6 +243,8 @@ async def create_folder(
         response = supabase.table("prompt_folders").insert({
             "user_id": user_id,
             "organization_id": None,
+            "company_id": None,
+            "type": "user",  # Always create as user folder
             "parent_folder_id": folder.parent_id,
             "title": title_json,
             "content": title_json,  # Use same as title for backward compatibility
@@ -141,7 +254,6 @@ async def create_folder(
         if response.data:
             from utils.prompts.folders import process_folder_for_response
             processed_folder = process_folder_for_response(response.data[0])
-
         
         return {
             "success": True,
@@ -287,7 +399,7 @@ async def unpin_folder(
 @router.post("/update-pinned")
 async def update_pinned_folders(
     official_folder_ids: List[int],
-    organization_folder_ids: List[int],
+    company_folder_ids: List[int],
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """Update all pinned folders in one call."""
@@ -295,16 +407,17 @@ async def update_pinned_folders(
         # Update official pinned folders
         await update_user_pinned_folders(supabase, user_id, "official", official_folder_ids)
         
-        # Update organization pinned folders
-        await update_user_pinned_folders(supabase, user_id, "organization", organization_folder_ids)
+        # Update company pinned folders
+        await update_user_pinned_folders(supabase, user_id, "company", company_folder_ids)
         
         return {
             "success": True,
             "pinnedOfficialFolderIds": official_folder_ids,
-            "pinnedOrganizationFolderIds": organization_folder_ids
+            "pinnedCompanyFolderIds": company_folder_ids
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error updating pinned folders: {str(e)}")
+
 
 @router.get("/template-folders")
 async def get_template_folders(

@@ -39,7 +39,7 @@ class UserMetadataData(BaseModel):
     preferences_metadata: Optional[Dict[str, Any]] = None
     additional_email: Optional[str] = None
     additional_organization: Optional[str] = None
-    organization_id: Optional[str] = None
+    organization_id: Optional[List[str]] = None
     linkedin_headline: Optional[str] = None
     linkedin_id: Optional[str] = None
     linkedin_profile_url: Optional[str] = None

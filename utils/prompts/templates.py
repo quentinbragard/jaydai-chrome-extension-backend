@@ -1,38 +1,44 @@
 """
 Utility functions for template operations in the prompts system.
 """
-from typing import Dict, List, Optional, Any
+from typing import Dict, List , Union
 from supabase import Client
 from .locales import extract_localized_field, create_localized_field
+import os
+from supabase import create_client, Client
 
-def process_template_for_response(template: Dict, locale: str = "en") -> Dict:
-    """
-    Process a template record for API response with proper locale handling.
+# Initialize Supabase client
+supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
+
+
+def process_template_for_response(template_data: dict, locale: str = "en") -> dict:
+    """Process template data for API response"""
+    # Extract localized title and content
+    title = extract_localized_content(template_data.get("title", {}), locale)
     
-    Args:
-        template: Raw template record from database
-        locale: Requested locale
-        
-    Returns:
-        Processed template dict ready for API response
-    """
-    processed_template = template.copy()
-    template_type = template.get("type", "")
+    # Make sure blocks field exists (even if empty)
+    if "blocks" not in template_data:
+        template_data["blocks"] = []
     
-    # Determine if this is user content
-    is_user_content = template_type == "user"
+    # Create a processed template with all fields
+    processed = {
+        "id": template_data.get("id"),
+        "title": title,
+        "content": normalize_content_to_dict(template_data.get("content", {}), locale),
+        "blocks": template_data.get("blocks", []),
+        "description": extract_localized_content(template_data.get("description", {}), locale),
+        "folder_id": template_data.get("folder_id"),
+        "type": template_data.get("type"),
+        "usage_count": template_data.get("usage_count", 0),
+        "last_used_at": template_data.get("last_used_at"),
+        "created_at": template_data.get("created_at"),
+        "user_id": template_data.get("user_id"),
+        "organization_id": template_data.get("organization_id"),
+        "company_id": template_data.get("company_id"),
+        "folder": template_data.get("folder")
+    }
     
-    # For all templates now, we use JSONB fields for title, content, and description
-    if "title" in template:
-        processed_template["title"] = extract_localized_field(template["title"], locale, is_user_content)
-    
-    if "content" in template:
-        processed_template["content"] = extract_localized_field(template["content"], locale, is_user_content)
-    
-    if "description" in template:
-        processed_template["description"] = extract_localized_field(template["description"], locale, is_user_content)
-    
-    return processed_template
+    return processed
 
 async def fetch_templates_for_folders(
     supabase: Client,
@@ -66,215 +72,6 @@ async def fetch_templates_for_folders(
     # Process templates for locale
     return [process_template_for_response(template, locale) for template in templates]
 
-async def fetch_templates_by_type(
-    supabase: Client,
-    template_type: str,
-    user_id: Optional[str] = None,
-    organization_id: Optional[str] = None,
-    locale: str = "en"
-) -> List[Dict]:
-    """
-    Fetch templates by type with locale handling.
-    
-    Args:
-        supabase: Supabase client
-        template_type: Type of templates ("user", "official", "organization")
-        user_id: User ID for user templates
-        organization_id: Organization ID for org templates
-        locale: Requested locale
-        
-    Returns:
-        List of processed template dicts
-    """
-    query = supabase.table("prompt_templates").select("*").eq("type", template_type)
-    
-    # Add additional filters based on type
-    if template_type == "user" and user_id:
-        query = query.eq("user_id", user_id)
-    elif template_type == "organization" and organization_id:
-        # Get templates for specific organization through folder relationships
-        org_folders = supabase.table("prompt_folders").select("id").eq("organization_id", organization_id).execute()
-        if org_folders.data:
-            folder_ids = [f["id"] for f in org_folders.data]
-            query = query.in_("folder_id", folder_ids)
-        else:
-            return []
-    
-    response = query.execute()
-    templates = response.data or []
-    
-    return [process_template_for_response(template, locale) for template in templates]
-
-async def get_unorganized_templates(
-    supabase: Client,
-    user_id: str,
-    locale: str = "en"
-) -> List[Dict]:
-    """
-    Get templates that are not organized in any folder.
-    
-    Args:
-        supabase: Supabase client
-        user_id: User ID
-        locale: Requested locale
-        
-    Returns:
-        List of unorganized template dicts
-    """
-    response = supabase.table("prompt_templates") \
-        .select("*") \
-        .eq("type", "user") \
-        .eq("user_id", user_id) \
-        .is_("folder_id", "null") \
-        .execute()
-    
-    templates = response.data or []
-    return [process_template_for_response(template, locale) for template in templates]
-
-async def create_template(
-    supabase: Client,
-    template_data: Dict,
-    user_id: str,
-    locale: str = "en"
-) -> Dict:
-    """
-    Create a new template with proper locale handling.
-    For user templates, always use the first locale (no specific locale required).
-    
-    Args:
-        supabase: Supabase client
-        template_data: Template data dict
-        user_id: User ID
-        locale: Locale for the template content (only used for non-user templates)
-        
-    Returns:
-        Created template dict
-    """
-    # Prepare template data with JSONB fields
-    insert_data = {
-        "type": template_data.get("type", "user"),
-        "user_id": user_id,
-        "folder_id": template_data.get("folder_id"),
-        "tags": template_data.get("tags", [])
-    }
-    
-    # For user templates, we don't care about locale - just use 'en' as default
-    template_type = template_data.get("type", "user")
-    if template_type == "user":
-        effective_locale = "en"  # Always use 'en' for user content, but it doesn't matter since we'll take first available
-    else:
-        effective_locale = locale
-    
-    # Create localized JSONB fields
-    if "title" in template_data:
-        insert_data["title"] = create_localized_field(template_data["title"], effective_locale)
-    
-    if "content" in template_data:
-        insert_data["content"] = create_localized_field(template_data["content"], effective_locale)
-    
-    if "description" in template_data:
-        insert_data["description"] = create_localized_field(template_data["description"], effective_locale)
-    
-    response = supabase.table("prompt_templates").insert(insert_data).execute()
-    
-    if response.data:
-        return process_template_for_response(response.data[0], locale)
-    
-    return {}
-
-async def update_template(
-    supabase: Client,
-    template_id: str,
-    template_data: Dict,
-    user_id: str,
-    locale: str = "en"
-) -> Dict:
-    """
-    Update an existing template with proper locale handling.
-    For user templates, just update with first available value.
-    
-    Args:
-        supabase: Supabase client
-        template_id: Template ID
-        template_data: Updated template data
-        user_id: User ID
-        locale: Locale for the updates (only relevant for non-user templates)
-        
-    Returns:
-        Updated template dict
-    """
-    # Verify template belongs to user
-    verify = supabase.table("prompt_templates").select("*").eq("id", template_id).eq("user_id", user_id).execute()
-    
-    if not verify.data:
-        raise ValueError("Template not found or doesn't belong to user")
-    
-    existing_template = verify.data[0]
-    update_data = {}
-    
-    # Update tags and folder_id if provided
-    if "tags" in template_data:
-        update_data["tags"] = template_data["tags"]
-    
-    if "folder_id" in template_data:
-        update_data["folder_id"] = template_data["folder_id"]
-    
-    # Get template type to determine locale handling
-    template_type = existing_template.get("type", "user")
-    
-    # Update localized fields
-    for field in ["title", "content", "description"]:
-        if field in template_data:
-            # Get existing localized field or create new one
-            existing_field = existing_template.get(field, {})
-            if not isinstance(existing_field, dict):
-                existing_field = {}
-            
-            if template_type == "user":
-                # For user templates, just update with any locale (use 'en' as default)
-                # But when processing for response, we'll take the first available
-                existing_field["en"] = template_data[field]
-            else:
-                # For official/organization templates, use the specified locale
-                existing_field[locale] = template_data[field]
-            
-            update_data[field] = existing_field
-    
-    response = supabase.table("prompt_templates").update(update_data).eq("id", template_id).execute()
-    
-    if response.data:
-        return process_template_for_response(response.data[0], locale)
-    
-    return {}
-
-async def track_template_usage(supabase: Client, template_id: str) -> Dict:
-    """
-    Track template usage by incrementing usage count.
-    
-    Args:
-        supabase: Supabase client
-        template_id: Template ID
-        
-    Returns:
-        Success response with updated usage count
-    """
-    # Get current template
-    template = supabase.table("prompt_templates").select("*").eq("id", template_id).single().execute()
-    
-    if not template.data:
-        raise ValueError("Template not found")
-    
-    # Increment usage count
-    current_count = template.data.get('usage_count', 0) or 0
-    new_count = current_count + 1
-    
-    # Update template
-    response = supabase.table("prompt_templates").update({
-        "usage_count": new_count,
-        "last_used_at": "now()"
-    }).eq("id", template_id).execute()
-    
-    return {"success": True, "usage_count": new_count}
 
 def organize_templates_by_folder(templates: List[Dict]) -> Dict[int, List[Dict]]:
     """
@@ -312,3 +109,122 @@ def add_templates_to_folders(folders: List[Dict], templates_by_folder: Dict[int,
         folder_with_templates["templates"] = templates_by_folder.get(folder["id"], [])
         folders_with_templates.append(folder_with_templates)
     return folders_with_templates
+
+
+async def expand_template_blocks(template_data: dict, locale: str = "en") -> dict:
+    """Expand block references in a template"""
+    if not template_data.get("blocks"):
+        # If no blocks array, create default content block
+        template_data["expanded_blocks"] = [{
+            "id": 0,
+            "type": "content",
+            "content": normalize_content_to_dict(template_data.get("content", {}), locale),
+            "name": "Template Content"
+        }]
+        return template_data
+    
+    # Get all referenced blocks (excluding 0)
+    block_ids = [bid for bid in template_data["blocks"] if bid != 0]
+    expanded_blocks = []
+    
+    # Process blocks in order
+    for block_id in template_data["blocks"]:
+        if block_id == 0:
+            # Add template's own content
+            expanded_blocks.append({
+                "id": 0,
+                "type": "content",
+                "content": normalize_content_to_dict(template_data.get("content", {}), locale),
+                "name": "Template Content"
+            })
+        else:
+            # Fetch actual block from database
+            block_response = supabase.table("prompt_blocks").select("*").eq("id", block_id).single().execute()
+            if block_response.data:
+                block = block_response.data
+                expanded_blocks.append({
+                    "id": block["id"],
+                    "type": block["type"],
+                    "content": normalize_content_to_dict(block.get("content", {}), locale),
+                    "name": block.get("name"),
+                    "description": block.get("description")
+                })
+    
+    template_data["expanded_blocks"] = expanded_blocks
+    return template_data
+
+# Helper function to ensure content is always a dictionary
+def normalize_content_to_dict(content, locale: str = "en"):
+    """Ensure content is a dictionary format with locale keys"""
+    if content is None:
+        return {locale: ""}
+        
+    if isinstance(content, str):
+        return {locale: content}
+        
+    if isinstance(content, dict):
+        return content
+        
+    # For any other type, convert to string and wrap in dict
+    return {locale: str(content)}
+
+async def validate_block_access(block_ids: List[int], user_id: str) -> bool:
+    """Validate that user has access to all referenced blocks"""
+    if not block_ids:
+        return True
+    
+    # Get user's metadata
+    user_metadata_response = supabase.table("users_metadata").select("organization_ids, company_id").eq("user_id", user_id).single().execute()
+    user_metadata = user_metadata_response.data or {}
+    
+    # Get user's organization IDs and company ID
+    org_ids = user_metadata.get("organization_ids", [])
+    company_id = user_metadata.get("company_id")
+    
+    # Need to use separate queries for each access type and combine results
+    accessible_block_ids = set()
+    
+    # 1. User's own blocks
+    user_blocks = supabase.table("prompt_blocks").select("id").eq("user_id", user_id).in_("id", block_ids).execute()
+    if user_blocks.data:
+        accessible_block_ids.update(block["id"] for block in user_blocks.data)
+    
+    # 2. Global blocks (no IDs)
+    global_blocks = supabase.table("prompt_blocks").select("id").is_("user_id", "null").is_("company_id", "null").is_("organization_id", "null").in_("id", block_ids).execute()
+    if global_blocks.data:
+        accessible_block_ids.update(block["id"] for block in global_blocks.data)
+    
+    # 3. Company blocks if user has company
+    if company_id:
+        company_blocks = supabase.table("prompt_blocks").select("id").eq("company_id", company_id).in_("id", block_ids).execute()
+        if company_blocks.data:
+            accessible_block_ids.update(block["id"] for block in company_blocks.data)
+    
+    # 4. Organization blocks
+    if org_ids and len(org_ids) > 0:
+        for org_id in org_ids:
+            org_blocks = supabase.table("prompt_blocks").select("id").eq("organization_id", org_id).in_("id", block_ids).execute()
+            if org_blocks.data:
+                accessible_block_ids.update(block["id"] for block in org_blocks.data)
+        
+    # Check if all requested blocks are accessible
+    return all(block_id in accessible_block_ids for block_id in block_ids)
+
+
+def normalize_localized_field(field: Union[str, Dict[str, str]], locale: str = "en") -> Dict[str, str]:
+    """Normalize a field to be a localized dictionary"""
+    if isinstance(field, str):
+        return {locale: field}
+    elif isinstance(field, dict):
+        return field
+    else:
+        return {locale: str(field) if field else ""}
+
+def extract_localized_content(field: Union[str, Dict[str, str]], locale: str = "en") -> str:
+    """Extract content for a specific locale from a localized field"""
+    if isinstance(field, str):
+        return field
+    elif isinstance(field, dict):
+        return field.get(locale) or field.get("en") or list(field.values())[0] if field else ""
+    else:
+        return str(field) if field else ""

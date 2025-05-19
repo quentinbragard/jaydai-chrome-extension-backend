@@ -23,13 +23,11 @@ from .folders import (
 from .templates import (
     process_template_for_response,
     fetch_templates_for_folders,
-    fetch_templates_by_type,
-    get_unorganized_templates,
-    create_template,
-    update_template,
-    track_template_usage,
     organize_templates_by_folder,
-    add_templates_to_folders
+    add_templates_to_folders,
+    expand_template_blocks,
+    validate_block_access,
+    normalize_localized_field
 )
 
 __all__ = [
@@ -52,11 +50,9 @@ __all__ = [
     # Template utilities
     'process_template_for_response',
     'fetch_templates_for_folders',
-    'fetch_templates_by_type',
-    'get_unorganized_templates',
-    'create_template',
-    'update_template',
-    'track_template_usage',
     'organize_templates_by_folder',
-    'add_templates_to_folders'
+    'add_templates_to_folders',
+    'expand_template_blocks',
+    'validate_block_access',
+    'normalize_localized_field'
 ]

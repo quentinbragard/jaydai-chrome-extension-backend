@@ -23,7 +23,7 @@ class UserMetadata(BaseModel):
     additional_email: str | None = None
     phone_number: str | None = None
     additional_organization: str | None = None
-    organization_id: int | None = None
+    company_id: str | None = None
     pinned_official_folder_ids: list[int] | None = None
     pinned_organization_folder_ids: list[int] | None = None
 
@@ -32,7 +32,7 @@ async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_fro
     """Get metadata for a specific user."""
     try:
         response = supabase.table("users_metadata") \
-            .select("name, additional_email, phone_number, additional_organization, organization_id, pinned_official_folder_ids, pinned_organization_folder_ids") \
+            .select("name, additional_email, phone_number, additional_organization, company_id, pinned_official_folder_ids, pinned_organization_folder_ids") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
@@ -45,7 +45,7 @@ async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_fro
                     "additional_email": None,
                     "phone_number": None,
                     "additional_organization": None,
-                    "organization_id": None,
+                    "company_id": None,
                     "pinned_official_folder_ids": [],
                     "pinned_organization_folder_ids": []
                 }
@@ -64,7 +64,7 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
     try:
         # Check if user metadata exists
         existing_metadata = supabase.table("users_metadata") \
-            .select("organization_id, pinned_organization_folder_ids") \
+            .select("user_id") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
@@ -84,12 +84,12 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
         if metadata.additional_organization is not None:
             update_data["additional_organization"] = metadata.additional_organization
         
-        # Handle organization_id update and auto-pin organization folders
-        if metadata.organization_id is not None:
+        # Handle company_id update and auto-pin organization folders
+        if metadata.company_id is not None:
             # If organization has changed or is being set for the first time
-            current_org_id = existing_metadata.data.get("organization_id") if existing_metadata.data else None
-            if metadata.organization_id != current_org_id:
-                update_data["organization_id"] = metadata.organization_id
+            current_org_id = existing_metadata.data.get("company_id") if existing_metadata.data else None
+            if metadata.company_id != current_org_id:
+                update_data["company_id"] = metadata.organization_id
                 
                 # Auto-pin all folders for this organization using utility
                 organization_folder_ids = await get_all_folder_ids_by_type(
@@ -143,7 +143,7 @@ async def get_folders_with_prompts(
     try:
         # Get user metadata for pinned folders
         metadata = supabase.table("users_metadata") \
-            .select("pinned_official_folder_ids, pinned_organization_folder_ids, organization_id") \
+            .select("pinned_official_folder_ids, pinned_organization_folder_ids, company_id") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
@@ -162,7 +162,7 @@ async def get_folders_with_prompts(
         official_folders_response = supabase.table("prompt_folders") \
             .select("*") \
             .is_("user_id", "null") \
-            .is_("organization_id", "null") \
+            .is_("company_id", "null") \
             .execute()
         
         # Organization folders (for user's organization)
@@ -170,7 +170,7 @@ async def get_folders_with_prompts(
         if user_org_id:
             org_folders_response = supabase.table("prompt_folders") \
                 .select("*") \
-                .eq("organization_id", user_org_id) \
+                .eq("company_id", user_org_id) \
                 .execute()
         
         # User folders

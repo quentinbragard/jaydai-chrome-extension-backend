@@ -1,322 +1,278 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+# routes/prompts/templates.py
+from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import Optional, List, Union, Dict
 from supabase import create_client, Client
+import os
 from utils import supabase_helpers
 from utils.prompts import (
-    fetch_templates_by_type,
-    get_unorganized_templates,
-    create_template as create_template_util,
-    update_template as update_template_util,
-    track_template_usage as track_template_usage_util,
-    fetch_folders_by_type,
-    get_user_pinned_folders,
-    add_pinned_status_to_folders,
-    process_template_for_response
+    process_template_for_response,
+    expand_template_blocks,
+    validate_block_access,
+    normalize_localized_field
 )
 import dotenv
-import os
-from typing import List, Optional
-
+from models.prompts.templates import TemplateCreate, TemplateUpdate, TemplateResponse, TemplateBlock
 dotenv.load_dotenv()
 
 # Initialize Supabase client
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
+
 router = APIRouter(tags=["Templates"])
 
-class TemplateBase(BaseModel):
-    content: str
-    title: str
-    type: str
-    description: Optional[str] = None
-    tags: Optional[List[str]] = None
-    locale: Optional[str] = None
-    folder_id: Optional[int] = None
+# ---------------------- HELPER FUNCTIONS ----------------------
 
-class TemplateCreate(TemplateBase):
-    pass
+async def get_user_organizations(user_id: str) -> List[str]:
+    """Get all organization IDs a user belongs to"""
+    try:
+        user_metadata = supabase.table("users_metadata").select("organization_ids").eq("user_id", user_id).single().execute()
+        if user_metadata.data and user_metadata.data.get("organization_ids"):
+            return user_metadata.data.get("organization_ids", [])
+        return []
+    except Exception as e:
+        print(f"Error fetching user organizations: {str(e)}")
+        return []
 
-class TemplateUpdate(TemplateBase):
-    pass
+async def get_user_company(user_id: str) -> Optional[str]:
+    """Get company ID a user belongs to"""
+    try:
+        user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
+        if user_metadata.data:
+            return user_metadata.data.get("company_id")
+        return None
+    except Exception as e:
+        print(f"Error fetching user company: {str(e)}")
+        return None
+    
 
-@router.get("")
+# ---------------------- ROUTE HANDLERS ----------------------
+
+@router.get("", response_model=List[TemplateResponse])
 async def get_templates(
     type: Optional[str] = None,
     locale: Optional[str] = "en",
+    expand_blocks: bool = True,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """Get templates with optional filtering by type."""
     try:
         if type == "user":
-            return await get_user_templates(user_id, locale)
+            return await get_user_templates(user_id, locale, expand_blocks)
         elif type == "official":
-            return await get_official_templates(user_id, locale)
-        elif type == "organization":
-            return await get_organization_templates(user_id, locale)
+            return await get_official_templates(user_id, locale, expand_blocks)
+        elif type == "company":
+            return await get_company_templates(user_id, locale, expand_blocks)
         else:
             # Get all templates
-            return await get_all_templates(user_id, locale)
+            return await get_all_templates(user_id, locale, expand_blocks)
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
-    
-@router.get("/unorganized")
+
+@router.get("/unorganized", response_model=List[TemplateResponse])
 async def get_unorganized_templates_endpoint(
     locale: Optional[str] = "en",
+    expand_blocks: bool = True,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """Get all templates that are not organized in any folder."""
     try:
-        templates = await get_unorganized_templates(supabase, user_id, locale)
+        # Get user templates without folder
+        query = supabase.table("prompt_templates").select("*")
+        query = query.eq("user_id", user_id).eq("type", "user").is_("folder_id", "null")
+        response = query.execute()
         
-        return {
-            "success": True,
-            "templates": templates
-        }
+        templates = []
+        for template_data in (response.data or []):
+            # Process template for response
+            processed_template = process_template_for_response(template_data, locale)
+            
+            # Expand blocks if requested
+            if expand_blocks:
+                processed_template = await expand_template_blocks(processed_template, locale)
+            
+            templates.append(processed_template)
+        
+        return templates
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving unorganized templates: {str(e)}")
 
-async def get_user_templates(user_id: str, locale: str = "en"):
+async def get_user_templates(user_id: str, locale: str = "en", expand_blocks: bool = True):
     """Get user's personal templates."""
-    # Get user folders
-    user_folders = await fetch_folders_by_type(supabase, "user", user_id=user_id, locale=locale)
-    
-    # Get user templates
-    templates = await fetch_templates_by_type(supabase, "user", user_id=user_id, locale=locale)
-    
-    # Organize templates by folders
-    folders = {folder['path']: [] for folder in user_folders if 'path' in folder}
-    folders['root'] = []  # For templates without a folder
-
-    for template in templates:
-        folder_id = template.get('folder_id')
-        folder_path = 'root'
-        
-        # Find folder path for this template
-        for folder in user_folders:
-            if folder['id'] == folder_id:
-                folder_path = folder.get('path', 'root')
-                break
-        
-        folders[folder_path].append(template)
-
-    # Extract unique folder paths
-    unique_folders = []
-    for folder in user_folders:
-        if 'path' in folder:
-            path = folder['path']
-            parts = path.split('/')
-            current_path = ""
-            
-            for i, part in enumerate(parts):
-                if i > 0:
-                    current_path += "/"
-                current_path += part
-                
-                # Add folder if not already in list
-                if not any(f['path'] == current_path for f in unique_folders):
-                    unique_folders.append({
-                        'path': current_path,
-                        'name': part,
-                        'level': i
-                    })
-
-    return {
-        "success": True,
-        "templates": templates,
-        "folders": unique_folders,
-        "templates_by_folder": folders
-    }
-
-async def get_official_templates(user_id: Optional[str] = None, locale: str = "en"):
-    """Get official prompt templates."""
-    pinned_folder_ids = []
-
-    if user_id:
-        # Get user metadata to retrieve pinned official folder IDs
-        user_metadata = supabase.table("users_metadata").select("pinned_official_folder_ids").eq("user_id", user_id).single().execute()
-        pinned_folder_ids = user_metadata.data.get('pinned_official_folder_ids', []) if user_metadata.data else []
-
-    # Get official folders
-    if pinned_folder_ids:
-        official_folders = await fetch_folders_by_type(
-            supabase, 
-            "official", 
-            folder_ids=pinned_folder_ids, 
-            locale=locale
-        )
-    else:
-        official_folders = await fetch_folders_by_type(supabase, "official", locale=locale)
-
-    # Get official templates
-    templates = await fetch_templates_by_type(supabase, "official", locale=locale)
-    
-    # Filter templates by pinned folders if user has them
-    if pinned_folder_ids:
-        templates = [t for t in templates if t.get('folder_id') in pinned_folder_ids]
-
-    # Extract all unique folders from the official folders
-    folders = set()
-    for folder in official_folders:
-        folder_path = folder.get('path')
-        if folder_path:
-            parts = folder_path.split('/')
-            current_path = ""
-            for i, part in enumerate(parts):
-                if i > 0:
-                    current_path += "/"
-                current_path += part
-                folders.add(current_path)
-
-    # Convert to a sorted list
-    folders_list = sorted(list(folders))
-
-    return {
-        "success": True,
-        "templates": templates,
-        "folders": folders_list
-    }
-
-async def get_organization_templates(user_id: Optional[str] = None, locale: str = "en"):
-    """Get organization templates for the user's organization."""
-    organization_id = None
-    folder_ids = []
-
-    if user_id:
-        # Get user metadata to check for organization_id and pinned organization folder IDs
-        user_metadata = supabase.table("users_metadata").select("*").eq("user_id", user_id).single().execute()
-        
-        if user_metadata.data:
-            organization_id = user_metadata.data.get('organization_id')
-            pinned_folder_ids = user_metadata.data.get('pinned_organization_folder_ids', [])
-            folder_ids = pinned_folder_ids if pinned_folder_ids else []
-
-    # Get organization templates
-    templates = await fetch_templates_by_type(
-        supabase, 
-        "organization", 
-        organization_id=organization_id, 
-        locale=locale
-    )
-    
-    # Filter by pinned folders if specified
-    if folder_ids:
-        templates = [t for t in templates if t.get('folder_id') in folder_ids]
-
-    # Extract all unique folders from the templates
-    folders = set()
-    for template in templates:
-        folder_path = template.get('folder')
-        if folder_path:
-            parts = folder_path.split('/')
-            current_path = ""
-            for i, part in enumerate(parts):
-                if i > 0:
-                    current_path += "/"
-                current_path += part
-                folders.add(current_path)
-
-    # Convert to a sorted list
-    folders_list = sorted(list(folders))
-
-    return {
-        "success": True,
-        "templates": templates,
-        "folders": folders_list
-    }
-
-async def get_all_templates(user_id: str, locale: str = "en"):
-    """Get templates organized by type (official, organization, and user)."""
     try:
-        # Get user metadata to check for organization_id and pinned folders
-        user_metadata = supabase.table("users_metadata").select("*").eq("user_id", user_id).single().execute()
+        # Get user templates
+        response = supabase.table("prompt_templates").select("*").eq("user_id", user_id).eq("type", "user").execute()
         
-        organization_id = None
-        if user_metadata.data and 'organization_id' in user_metadata.data:
-            organization_id = user_metadata.data['organization_id']
+        templates = []
+        for template_data in (response.data or []):
+            # Process template for response
+            processed_template = process_template_for_response(template_data, locale)
+            
+            # Expand blocks if requested
+            if expand_blocks:
+                processed_template = await expand_template_blocks(processed_template, locale)
+            
+            templates.append(processed_template)
         
-        # Get pinned folders
-        pinned_folders = []
-        if user_metadata.data and 'pinned_official_folder_ids' in user_metadata.data:
-            pinned_folders = user_metadata.data['pinned_official_folder_ids'] or []
+        return templates
         
-        # 1. Get folders
-        official_folders = await fetch_folders_by_type(supabase, "official", locale=locale)
-        user_folders = await fetch_folders_by_type(supabase, "user", user_id=user_id, locale=locale)
-        org_folders = await fetch_folders_by_type(supabase, "organization", user_id=user_id, locale=locale)
-        
-        # Add pinned status to official folders
-        add_pinned_status_to_folders(official_folders, pinned_folders)
-        
-        # 2. Fetch templates for each folder using the utility
-        # For official folders
-        official_templates = []
-        for folder in official_folders:
-            templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).eq("type", "official").execute()
-            raw_templates = templates_response.data or []
-            folder['templates'] = [process_template_for_response(t, locale) for t in raw_templates]
-            official_templates.extend(folder['templates'])
-        
-        # For user folders
-        user_templates = []
-        for folder in user_folders:
-            templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).eq("type", "user").execute()
-            raw_templates = templates_response.data or []
-            folder['templates'] = [process_template_for_response(t, locale) for t in raw_templates]
-            user_templates.extend(folder['templates'])
-        
-        # For organization folders
-        org_templates = []
-        for folder in org_folders:
-            templates_response = supabase.table("prompt_templates").select("*").eq("folder_id", folder['id']).eq("type", "organization").execute()
-            raw_templates = templates_response.data or []
-            folder['templates'] = [process_template_for_response(t, locale) for t in raw_templates]
-            org_templates.extend(folder['templates'])
-        
-        return {
-            "success": True,
-            "pinnedFolders": {
-                "userTemplates": {
-                    "templates": user_templates,
-                    "folders": user_folders
-                },
-                "officialTemplates": {
-                    "templates": official_templates,
-                    "folders": official_folders
-                },
-                "organizationTemplates": {
-                    "templates": org_templates,
-                    "folders": org_folders
-                }
-            }
-        }
     except Exception as e:
-        print(f"Error retrieving templates: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving user templates: {str(e)}")
+
+async def get_official_templates(user_id: Optional[str] = None, locale: str = "en", expand_blocks: bool = True):
+    """
+    Get official prompt templates.
+    Official templates now include:
+    1. Templates with no user_id, company_id, or organization_id
+    2. Templates belonging to organizations the user is a member of
+    """
+    try:
+        # Get user's organizations
+        org_ids = await get_user_organizations(user_id) if user_id else []
+        
+        # Start with a base query
+        query = supabase.table("prompt_templates").select("*").eq("type", "official")
+        
+        # Use proper PostgREST filter syntax
+        # First, get templates that have no IDs (truly official)
+        no_ids_query = query.is_("user_id", "null").is_("company_id", "null").is_("organization_id", "null")
+        response = no_ids_query.execute()
+        templates = response.data or []
+        
+        # Then, if user has organizations, get templates from those orgs
+        if org_ids:
+            for org_id in org_ids:
+                org_query = supabase.table("prompt_templates").select("*") \
+                    .eq("type", "official") \
+                    .eq("organization_id", org_id)
+                org_response = org_query.execute()
+                if org_response.data:
+                    templates.extend(org_response.data)
+        
+        # Process templates
+        processed_templates = []
+        for template_data in templates:
+            # Process template for response
+            processed_template = process_template_for_response(template_data, locale)
+            
+            # Expand blocks if requested
+            if expand_blocks:
+                processed_template = await expand_template_blocks(processed_template, locale)
+            
+            processed_templates.append(processed_template)
+        
+        return processed_templates
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving official templates: {str(e)}")
     
-@router.post("")
+    
+async def get_company_templates(user_id: Optional[str] = None, locale: str = "en", expand_blocks: bool = True):
+    """Get company templates for the user's company."""
+    try:
+        company_id = None
+        
+        if user_id:
+            # Get user's company_id
+            company_id = await get_user_company(user_id)
+        
+        if not company_id:
+            return []
+        
+        # Get company templates
+        response = supabase.table("prompt_templates").select("*").eq("type", "company").eq("company_id", company_id).execute()
+        
+        templates = []
+        for template_data in (response.data or []):
+            # Process template for response
+            processed_template = process_template_for_response(template_data, locale)
+            
+            # Expand blocks if requested
+            if expand_blocks:
+                processed_template = await expand_template_blocks(processed_template, locale)
+            
+            templates.append(processed_template)
+        
+        return templates
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving company templates: {str(e)}")
+
+async def get_all_templates(user_id: str, locale: str = "en", expand_blocks: bool = True):
+    """Get templates organized by type (official, company, and user)."""
+    try:
+        # Get all template types
+        user_templates = await get_user_templates(user_id, locale, expand_blocks)
+        official_templates = await get_official_templates(user_id, locale, expand_blocks)
+        company_templates = await get_company_templates(user_id, locale, expand_blocks)
+        
+        # Combine all templates
+        all_templates = user_templates + official_templates + company_templates
+        
+        return all_templates
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving all templates: {str(e)}")
+
+@router.post("", response_model=TemplateResponse)
 async def create_template(
     template: TemplateCreate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
-    """Create a new template."""
-    try:
-        # Use the utility function for creating templates
-        created_template = await create_template_util(
-            supabase,
-            template.dict(),
-            user_id,
-            template.locale or "en"
-        )
+    """Create a new template with blocks support."""
+    #try:
+        # Validate referenced blocks
+    block_ids = [bid for bid in (template.blocks or []) if bid != 0]
+    if block_ids:
+        has_access = await validate_block_access(block_ids, user_id)
+        if not has_access:
+            raise HTTPException(status_code=403, detail="Access denied to one or more referenced blocks")
+    
+    # Get user metadata
+    user_metadata_response = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
+    user_metadata = user_metadata_response.data or {}
+    
+    # Normalize localized fields
+    title_data = normalize_localized_field(template.title, template.locale)
+    content_data = normalize_localized_field(template.content, template.locale)
+    description_data = normalize_localized_field(template.description, template.locale) if template.description else {}
+    
+    # Prepare template data
+    template_data = {
+        "user_id": user_id if template.type == "user" else None,
+        "company_id": user_metadata.get("company_id") if template.type == "company" else None,
+        "organization_id": None,  # No longer used for template creation, handled at folder level
+        "type": template.type,
+        "title": title_data,
+        "content": content_data,
+        "blocks": template.blocks or [],
+        "description": description_data,
+        "folder_id": template.folder_id,
+        "tags": template.tags or [],
+        "usage_count": 0
+    }
+    
+    # Insert template
+    response = supabase.table("prompt_templates").insert(template_data).execute()
+    
+    if response.data:
+        # Process template for response
+        processed_template = process_template_for_response(response.data[0], template.locale)
         
-        return {
-            "success": True,
-            "template": created_template
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error creating template: {str(e)}")
+        # Expand blocks in response
+        expanded_template = await expand_template_blocks(processed_template, template.locale)
+        
+        return expanded_template
+    else:
+        raise HTTPException(status_code=400, detail="Failed to create template")
+        
+    #except Exception as e:
+    #    if isinstance(e, HTTPException):
+    #        raise e
+    #    raise HTTPException(status_code=500, detail=f"Error creating template: {str(e)}")
 
-@router.put("/{template_id}")
+@router.put("/{template_id}", response_model=TemplateResponse)
 async def update_template(
     template_id: str,
     template: TemplateUpdate,
@@ -324,22 +280,76 @@ async def update_template(
 ):
     """Update an existing template."""
     try:
-        # Use the utility function for updating templates
-        updated_template = await update_template_util(
-            supabase,
-            template_id,
-            template.dict(),
-            user_id,
-            template.locale or "en"
-        )
+        # Check if template exists and user has permission
+        existing_template = supabase.table("prompt_templates").select("*").eq("id", template_id).single().execute()
         
-        return {
-            "success": True,
-            "template": updated_template
-        }
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        if not existing_template.data:
+            raise HTTPException(status_code=404, detail="Template not found")
+        
+        template_data = existing_template.data
+        
+        # Check permissions
+        if template_data.get("type") == "user" and template_data.get("user_id") != user_id:
+            raise HTTPException(status_code=403, detail="Access denied")
+        elif template_data.get("type") == "company":
+            # Check if user belongs to the same company
+            user_company = await get_user_company(user_id)
+            if template_data.get("company_id") != user_company:
+                raise HTTPException(status_code=403, detail="Access denied")
+        elif template_data.get("type") == "official" and template_data.get("organization_id"):
+            # Check if user belongs to the same organization
+            user_orgs = await get_user_organizations(user_id)
+            if template_data.get("organization_id") not in user_orgs:
+                raise HTTPException(status_code=403, detail="Access denied")
+        
+        # Prepare update data
+        update_data = {}
+        current_locale = "en"  # Default locale
+        
+        if template.title is not None:
+            update_data["title"] = normalize_localized_field(template.title, current_locale)
+        
+        if template.content is not None:
+            update_data["content"] = normalize_localized_field(template.content, current_locale)
+        
+        if template.blocks is not None:
+            # Validate referenced blocks
+            block_ids = [bid for bid in template.blocks if bid != 0]
+            if block_ids:
+                has_access = await validate_block_access(block_ids, user_id)
+                if not has_access:
+                    raise HTTPException(status_code=403, detail="Access denied to one or more referenced blocks")
+            update_data["blocks"] = template.blocks
+        
+        if template.description is not None:
+            update_data["description"] = normalize_localized_field(template.description, current_locale)
+        
+        if template.folder_id is not None:
+            update_data["folder_id"] = template.folder_id
+        
+        if template.tags is not None:
+            update_data["tags"] = template.tags
+        
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No valid fields to update")
+        
+        # Update template
+        response = supabase.table("prompt_templates").update(update_data).eq("id", template_id).execute()
+        
+        if response.data:
+            # Process template for response
+            processed_template = process_template_for_response(response.data[0], current_locale)
+            
+            # Expand blocks in response
+            expanded_template = await expand_template_blocks(processed_template, current_locale)
+            
+            return expanded_template
+        else:
+            raise HTTPException(status_code=400, detail="Failed to update template")
+            
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
         raise HTTPException(status_code=500, detail=f"Error updating template: {str(e)}")
 
 @router.delete("/{template_id}")
@@ -349,19 +359,36 @@ async def delete_template(
 ):
     """Delete a template."""
     try:
-        # Verify template belongs to user
-        verify = supabase.table("prompt_templates").select("id").eq("id", template_id).eq("user_id", user_id).execute()
+        # Verify template exists and user has permission
+        template_response = supabase.table("prompt_templates").select("*").eq("id", template_id).single().execute()
         
-        if not verify.data:
-            raise HTTPException(status_code=404, detail="Template not found or doesn't belong to user")
+        if not template_response.data:
+            raise HTTPException(status_code=404, detail="Template not found")
+        
+        template_data = template_response.data
+        
+        # Check permissions
+        if template_data.get("type") == "user" and template_data.get("user_id") != user_id:
+            raise HTTPException(status_code=403, detail="Access denied")
+        elif template_data.get("type") == "company":
+            # Check if user belongs to the same company
+            user_company = await get_user_company(user_id)
+            if template_data.get("company_id") != user_company:
+                raise HTTPException(status_code=403, detail="Access denied")
+        elif template_data.get("type") == "official" and template_data.get("organization_id"):
+            # Check if user belongs to the organization
+            user_orgs = await get_user_organizations(user_id)
+            if template_data.get("organization_id") not in user_orgs:
+                raise HTTPException(status_code=403, detail="Access denied")
+        elif template_data.get("type") == "official" and not template_data.get("organization_id"):
+            # Cannot delete global official templates
+            raise HTTPException(status_code=403, detail="Cannot delete global official templates")
         
         # Delete template
         supabase.table("prompt_templates").delete().eq("id", template_id).execute()
         
-        return {
-            "success": True,
-            "message": "Template deleted"
-        }
+        return {"success": True, "message": "Template deleted"}
+        
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
@@ -374,10 +401,136 @@ async def track_template_usage(
 ):
     """Track template usage."""
     try:
-        # Use the utility function for tracking usage
-        result = await track_template_usage_util(supabase, template_id)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        # Get current template
+        template_response = supabase.table("prompt_templates").select("usage_count").eq("id", template_id).single().execute()
+        
+        if not template_response.data:
+            raise HTTPException(status_code=404, detail="Template not found")
+        
+        # Increment usage count
+        current_count = template_response.data.get("usage_count", 0)
+        
+        # Update usage count and last used timestamp
+        update_data = {
+            "usage_count": current_count + 1,
+            "last_used_at": "now()"
+        }
+        
+        supabase.table("prompt_templates").update(update_data).eq("id", template_id).execute()
+        
+        return {
+            "success": True,
+            "usage_count": current_count + 1
+        }
+        
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
         raise HTTPException(status_code=500, detail=f"Error tracking template usage: {str(e)}")
+
+@router.get("/{template_id}", response_model=TemplateResponse)
+async def get_template_by_id(
+    template_id: str,
+    locale: Optional[str] = "en",
+    expand_blocks: bool = True,
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Get a specific template by ID."""
+    try:
+        # Get template
+        response = supabase.table("prompt_templates").select("*").eq("id", template_id).single().execute()
+        
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Template not found")
+        
+        template_data = response.data
+        
+        # Check access permissions
+        if template_data.get("type") == "user" and template_data.get("user_id") != user_id:
+            raise HTTPException(status_code=403, detail="Access denied")
+        elif template_data.get("type") == "organization":
+            # Check if user belongs to the same organization
+            user_metadata = supabase.table("users_metadata").select("organization_id").eq("user_id", user_id).single().execute()
+            user_org_id = user_metadata.data.get("organization_id") if user_metadata.data else None
+            if template_data.get("organization_id") != user_org_id:
+                raise HTTPException(status_code=403, detail="Access denied")
+        
+        # Process template for response
+        processed_template = process_template_for_response(template_data, locale)
+        
+        # Expand blocks if requested
+        if expand_blocks:
+            processed_template = await expand_template_blocks(processed_template, locale)
+        
+        return processed_template
+        
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail=f"Error retrieving template: {str(e)}")
+
+@router.post("/{template_id}/duplicate", response_model=TemplateResponse)
+async def duplicate_template(
+    template_id: str,
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Duplicate an existing template."""
+    try:
+        # Get the original template
+        original_response = supabase.table("prompt_templates").select("*").eq("id", template_id).single().execute()
+        
+        if not original_response.data:
+            raise HTTPException(status_code=404, detail="Template not found")
+        
+        original_template = original_response.data
+        
+        # Check if user has access to the template
+        if original_template.get("type") == "user" and original_template.get("user_id") != user_id:
+            raise HTTPException(status_code=403, detail="Access denied")
+        elif original_template.get("type") == "organization":
+            # Check if user belongs to the same organization
+            user_metadata = supabase.table("users_metadata").select("organization_id").eq("user_id", user_id).single().execute()
+            user_org_id = user_metadata.data.get("organization_id") if user_metadata.data else None
+            if original_template.get("organization_id") != user_org_id:
+                raise HTTPException(status_code=403, detail="Access denied")
+        
+        # Validate referenced blocks
+        blocks = original_template.get("blocks", [])
+        block_ids = [bid for bid in blocks if bid != 0]
+        if block_ids:
+            has_access = await validate_block_access(block_ids, user_id)
+            if not has_access:
+                raise HTTPException(status_code=403, detail="Access denied to one or more referenced blocks")
+        
+        # Create duplicate template data
+        duplicate_data = {
+            "user_id": user_id,
+            "organization_id": None,  # Always create as user template
+            "type": "user",  # Always create as user template
+            "title": original_template["title"],
+            "content": original_template["content"],
+            "blocks": blocks,
+            "description": original_template.get("description"),
+            "folder_id": None,  # Don't duplicate folder assignment
+            "tags": original_template.get("tags", []),
+            "usage_count": 0
+        }
+        
+        # Insert duplicate template
+        response = supabase.table("prompt_templates").insert(duplicate_data).execute()
+        
+        if response.data:
+            # Process template for response
+            processed_template = process_template_for_response(response.data[0], "en")
+            
+            # Expand blocks in response
+            expanded_template = await expand_template_blocks(processed_template, "en")
+            
+            return expanded_template
+        else:
+            raise HTTPException(status_code=400, detail="Failed to duplicate template")
+            
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail=f"Error duplicating template: {str(e)}")
