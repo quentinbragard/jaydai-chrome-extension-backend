@@ -84,7 +84,10 @@ async def fetch_folders_by_type(
             query = query.eq("user_id", user_id)
         elif folder_type == "company" and user_id:
             # Company folders: from user's company
-            company_id = await get_user_company(user_id)
+            company_resp = await get_user_company(user_id)
+            if not company_resp.success:
+                return company_resp
+            company_id = company_resp.data
             if company_id:
                 query = query.eq("company_id", company_id)
             else:
@@ -108,8 +111,10 @@ async def fetch_folders_by_type(
                 folders.extend(global_response.data)
             
             # 2. User's organization folders
-            org_ids = await get_user_organizations(user_id)
-            for org_id in org_ids:
+            org_resp = await get_user_organizations(user_id)
+            if not org_resp.success:
+                return org_resp
+            for org_id in org_resp.data:
                 org_query = supabase.table("prompt_folders").select("*") \
                     .eq("type", folder_type) \
                     .eq("organization_id", org_id)
@@ -181,15 +186,18 @@ async def get_folders(
         
         if type:
             # Get specific folder type
-            folders = await fetch_folders_by_type(
+            folder_resp = await fetch_folders_by_type(
                 supabase,
                 folder_type=type,
                 user_id=user_id,
                 folder_ids=folder_id_list if folder_id_list else None,
                 locale=locale
             )
+            if not folder_resp.success:
+                raise HTTPException(status_code=400, detail=folder_resp.message or "Error fetching folders")
+            folders = folder_resp.data or []
             
-            # Fetch templates for folders (requires updating fetch_templates_for_folders)
+            # Fetch templates for folders
             folder_ids_for_templates = [f["id"] for f in folders]
             templates = await fetch_templates_for_folders(supabase, folder_ids_for_templates, type, locale)
             templates_by_folder = organize_templates_by_folder(templates)
@@ -203,9 +211,17 @@ async def get_folders(
             return APIResponse(success=True, data=folders_with_templates)
         else:
             # Get all folder types
-            user_folders = await fetch_folders_by_type(supabase, "user", user_id=user_id, locale=locale)
-            official_folders = await fetch_folders_by_type(supabase, "official", user_id=user_id, locale=locale)
-            company_folders = await fetch_folders_by_type(supabase, "company", user_id=user_id, locale=locale)
+            user_resp = await fetch_folders_by_type(supabase, "user", user_id=user_id, locale=locale)
+            official_resp = await fetch_folders_by_type(supabase, "official", user_id=user_id, locale=locale)
+            company_resp = await fetch_folders_by_type(supabase, "company", user_id=user_id, locale=locale)
+
+            for resp in [user_resp, official_resp, company_resp]:
+                if not resp.success:
+                    raise HTTPException(status_code=400, detail=resp.message or "Error fetching folders")
+
+            user_folders = user_resp.data or []
+            official_folders = official_resp.data or []
+            company_folders = company_resp.data or []
             
             # Add templates to each folder type
             for folder_type, folders in [("user", user_folders), ("official", official_folders), ("company", company_folders)]:
@@ -427,13 +443,16 @@ async def get_template_folders(
                 raise HTTPException(status_code=400, detail=f"Invalid folder ID format: {str(e)}")
         
         # Get folders based on type
-        folders = await fetch_folders_by_type(
+        folder_resp = await fetch_folders_by_type(
             supabase,
             folder_type=type.value,
             user_id=user_id if type == PromptType.user else None,
             folder_ids=folder_id_list if folder_id_list else None,
             locale=locale
         )
+        if not folder_resp.success:
+            raise HTTPException(status_code=400, detail=folder_resp.message or "Error fetching folders")
+        folders = folder_resp.data or []
         
         # If empty flag is set, return folders without templates
         if empty:
