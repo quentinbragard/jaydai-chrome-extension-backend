@@ -48,7 +48,7 @@ async def get_user_company(user_id: str) -> Optional[str]:
 
 # ---------------------- ROUTE HANDLERS ----------------------
 
-@router.get("", response_model=List[TemplateResponse])
+@router.get("", response_model=APIResponse[List[TemplateResponse]])
 async def get_templates(
     type: Optional[str] = None,
     locale: Optional[str] = "en",
@@ -202,21 +202,22 @@ async def get_company_templates(user_id: Optional[str] = None, locale: str = "en
 
 async def get_all_templates(user_id: str, locale: str = "en", expand_blocks: bool = True):
     """Get templates organized by type (official, company, and user)."""
-    try:
-        # Get all template types
-        user_templates = await get_user_templates(user_id, locale, expand_blocks)
-        official_templates = await get_official_templates(user_id, locale, expand_blocks)
-        company_templates = await get_company_templates(user_id, locale, expand_blocks)
-        
-        # Combine all templates
-        all_templates = user_templates + official_templates + company_templates
-        
-        return all_templates
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving all templates: {str(e)}")
+    #try:
+    # Get all template types
+    user_templates = await get_user_templates(user_id, locale, expand_blocks)
+    official_templates = await get_official_templates(user_id, locale, expand_blocks)
+    company_templates = await get_company_templates(user_id, locale, expand_blocks)
+    
+    # Combine all templates
+    all_templates = user_templates + official_templates + company_templates
 
-@router.post("", response_model=TemplateResponse)
+    
+    return APIResponse(success=True, data=all_templates)
+        
+    #except Exception as e:
+    #    raise HTTPException(status_code=500, detail=f"Error retrieving all templates: {str(e)}")
+
+@router.post("", response_model=APIResponse[TemplateResponse])
 async def create_template(
     template: TemplateCreate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
@@ -264,7 +265,7 @@ async def create_template(
         # Expand blocks in response
         expanded_template = await expand_template_blocks(processed_template, template.locale)
         
-        return expanded_template
+        return APIResponse(success=True, data=expanded_template)
     else:
         raise HTTPException(status_code=400, detail="Failed to create template")
         
@@ -273,7 +274,7 @@ async def create_template(
     #        raise e
     #    raise HTTPException(status_code=500, detail=f"Error creating template: {str(e)}")
 
-@router.put("/{template_id}", response_model=TemplateResponse)
+@router.put("/{template_id}", response_model=APIResponse[TemplateResponse])
 async def update_template(
     template_id: str,
     template: TemplateUpdate,
@@ -344,7 +345,7 @@ async def update_template(
             # Expand blocks in response
             expanded_template = await expand_template_blocks(processed_template, current_locale)
             
-            return expanded_template
+            return APIResponse(success=True, data=expanded_template)
         else:
             raise HTTPException(status_code=400, detail="Failed to update template")
             
@@ -388,7 +389,7 @@ async def delete_template(
         # Delete template
         supabase.table("prompt_templates").delete().eq("id", template_id).execute()
         
-        return {"success": True, "message": "Template deleted"}
+        return APIResponse(success=True, message="Template deleted")
         
     except Exception as e:
         if isinstance(e, HTTPException):
@@ -419,17 +420,16 @@ async def track_template_usage(
         
         supabase.table("prompt_templates").update(update_data).eq("id", template_id).execute()
         
-        return {
-            "success": True,
+        return APIResponse(success=True, data={
             "usage_count": current_count + 1
-        }
+        })
         
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail=f"Error tracking template usage: {str(e)}")
 
-@router.get("/{template_id}", response_model=TemplateResponse)
+@router.get("/{template_id}", response_model=APIResponse[TemplateResponse])
 async def get_template_by_id(
     template_id: str,
     locale: Optional[str] = "en",
@@ -463,14 +463,14 @@ async def get_template_by_id(
         if expand_blocks:
             processed_template = await expand_template_blocks(processed_template, locale)
         
-        return processed_template
+        return APIResponse(success=True, data=processed_template)
         
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail=f"Error retrieving template: {str(e)}")
 
-@router.post("/{template_id}/duplicate", response_model=TemplateResponse)
+@router.post("/{template_id}/duplicate", response_model=APIResponse[TemplateResponse])
 async def duplicate_template(
     template_id: str,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
@@ -527,7 +527,7 @@ async def duplicate_template(
             # Expand blocks in response
             expanded_template = await expand_template_blocks(processed_template, "en")
             
-            return expanded_template
+            return APIResponse(success=True, data=expanded_template)
         else:
             raise HTTPException(status_code=400, detail="Failed to duplicate template")
             

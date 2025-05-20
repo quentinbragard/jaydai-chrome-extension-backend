@@ -17,6 +17,8 @@ import dotenv
 import os
 from typing import List, Optional
 from enum import Enum
+from models.common import APIResponse
+
 
 dotenv.load_dotenv()
 
@@ -43,27 +45,27 @@ class PromptType(str, Enum):
 
 # ---------------------- HELPER FUNCTIONS ----------------------
 
-async def get_user_organizations(user_id: str) -> List[str]:
+async def get_user_organizations(user_id: str) -> APIResponse[List[str]]:
     """Get all organization IDs a user belongs to"""
     try:
         user_metadata = supabase.table("users_metadata").select("organization_ids").eq("user_id", user_id).single().execute()
         if user_metadata.data and user_metadata.data.get("organization_ids"):
-            return user_metadata.data.get("organization_ids", [])
-        return []
+            return APIResponse(success=True, data=user_metadata.data.get("organization_ids", []))
+        return APIResponse(success=True, data=[])
     except Exception as e:
         print(f"Error fetching user organizations: {str(e)}")
-        return []
+        return APIResponse(success=False, message="Error fetching user organizations")
 
-async def get_user_company(user_id: str) -> Optional[str]:
+async def get_user_company(user_id: str) -> APIResponse[Optional[str]]:
     """Get company ID a user belongs to"""
     try:
         user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
         if user_metadata.data:
-            return user_metadata.data.get("company_id")
-        return None
+            return APIResponse(success=True, data=user_metadata.data.get("company_id"))
+        return APIResponse(success=True, data=None)
     except Exception as e:
         print(f"Error fetching user company: {str(e)}")
-        return None
+        return APIResponse(success=False, message="Error fetching user company")
 
 async def fetch_folders_by_type(
     supabase: Client,
@@ -71,7 +73,7 @@ async def fetch_folders_by_type(
     user_id: Optional[str] = None,
     folder_ids: Optional[List[int]] = None,
     locale: str = "en"
-) -> List[dict]:
+) -> APIResponse[List[dict]]:
     """Fetch folders by type with updated access logic"""
     try:
         # Start with base query
@@ -86,7 +88,7 @@ async def fetch_folders_by_type(
             if company_id:
                 query = query.eq("company_id", company_id)
             else:
-                return []  # No company, no folders
+                return APIResponse(success=False, message="No company, no folders")
         elif folder_type == "official" and user_id:
             # We'll need multiple queries for official folders
             folders = []
@@ -126,7 +128,7 @@ async def fetch_folders_by_type(
                 processed_folder = process_folder_for_response(folder_data, locale)
                 processed_folders.append(processed_folder)
             
-            return processed_folders
+            return APIResponse(success=True, data=processed_folders)
         
         # For user and company folders, continue with the original query
         
@@ -144,11 +146,11 @@ async def fetch_folders_by_type(
             processed_folder = process_folder_for_response(folder_data, locale)
             folders.append(processed_folder)
         
-        return folders
+        return APIResponse(success=True, data=folders)
     
     except Exception as e:
         print(f"Error fetching folders: {str(e)}")
-        return []
+        return APIResponse(success=False, message="Error fetching folders")
     
 
 # ---------------------- ROUTE HANDLERS ----------------------
@@ -159,7 +161,7 @@ async def get_folders(
     folder_ids: Optional[str] = None,
     locale: Optional[str] = None,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
-):
+) -> APIResponse[List[dict]]:
     """Get folders with optional filtering by type."""
     try:
         if type not in ["user", "official", "company", None]:
@@ -198,7 +200,7 @@ async def get_folders(
                 pinned_folders = await get_user_pinned_folders(supabase, user_id)
                 add_pinned_status_to_folders(folders_with_templates, pinned_folders[type])
             
-            return {"success": True, "folders": folders_with_templates}
+            return APIResponse(success=True, data=folders_with_templates)
         else:
             # Get all folder types
             user_folders = await fetch_folders_by_type(supabase, "user", user_id=user_id, locale=locale)
@@ -217,12 +219,11 @@ async def get_folders(
             add_pinned_status_to_folders(official_folders, pinned_folders["official"])
             add_pinned_status_to_folders(company_folders, pinned_folders["company"])
             
-            return {
-                "success": True,
+            return APIResponse(success=True, data={
                 "userFolders": user_folders,
                 "officialFolders": official_folders,
                 "companyFolders": company_folders
-            }
+            })
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
@@ -232,7 +233,7 @@ async def get_folders(
 async def create_folder(
     folder: FolderCreate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
-):
+) -> APIResponse[dict]:
     """Create a new user folder."""
     try:
         # Prepare localized title and description
@@ -255,10 +256,7 @@ async def create_folder(
             from utils.prompts.folders import process_folder_for_response
             processed_folder = process_folder_for_response(response.data[0])
         
-        return {
-            "success": True,
-            "folder": processed_folder
-        }
+        return APIResponse(success=True, data=processed_folder)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating folder: {str(e)}")
 
@@ -267,7 +265,7 @@ async def update_folder(
     folder_id: int,
     folder: FolderUpdate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
-):
+) -> APIResponse[dict]:
     """Update an existing user folder."""
     try:
         # Verify folder belongs to user
@@ -293,10 +291,7 @@ async def update_folder(
             processed_folder = process_folder_for_response(response.data[0])
             processed_folder["path"] = folder.path
         
-        return {
-            "success": True,
-            "folder": processed_folder
-        }
+        return APIResponse(success=True, data=processed_folder)
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
@@ -306,7 +301,7 @@ async def update_folder(
 async def delete_folder(
     folder_id: int,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
-):
+) -> APIResponse[dict]:
     """Delete a user folder."""
     try:
         # Verify folder belongs to user
@@ -318,10 +313,7 @@ async def delete_folder(
         # Delete folder
         supabase.table("prompt_folders").delete().eq("id", folder_id).execute()
         
-        return {
-            "success": True,
-            "message": "Folder deleted"
-        }
+        return APIResponse(success=True, message="Folder deleted")
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
@@ -332,7 +324,7 @@ async def pin_folder(
     folder_id: int,
     folder_type: str = "official",
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
-):
+) -> APIResponse[dict]:
     """Pin a folder for a user."""
     try:
         if folder_type not in ["official", "organization"]:
@@ -357,10 +349,7 @@ async def pin_folder(
         # Update user's pinned folders
         await update_user_pinned_folders(supabase, user_id, folder_type, pinned_folders[folder_type])
         
-        return {
-            "success": True,
-            "pinned_folders": pinned_folders[folder_type]
-        }
+        return APIResponse(success=True, data=pinned_folders[folder_type])
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
@@ -371,7 +360,7 @@ async def unpin_folder(
     folder_id: int,
     folder_type: str = "official",
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
-):
+) -> APIResponse[List[int]]:
     """Unpin a folder for a user."""
     try:
         if folder_type not in ["official", "organization"]:
@@ -387,10 +376,7 @@ async def unpin_folder(
         # Update user's pinned folders
         await update_user_pinned_folders(supabase, user_id, folder_type, pinned_folders[folder_type])
         
-        return {
-            "success": True,
-            "pinned_folders": pinned_folders[folder_type]
-        }
+        return APIResponse(success=True, data=pinned_folders[folder_type])
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
@@ -401,7 +387,7 @@ async def update_pinned_folders(
     official_folder_ids: List[int],
     company_folder_ids: List[int],
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
-):
+) -> APIResponse[dict]:
     """Update all pinned folders in one call."""
     try:
         # Update official pinned folders
@@ -410,11 +396,10 @@ async def update_pinned_folders(
         # Update company pinned folders
         await update_user_pinned_folders(supabase, user_id, "company", company_folder_ids)
         
-        return {
-            "success": True,
+        return APIResponse(success=True, data={
             "pinnedOfficialFolderIds": official_folder_ids,
             "pinnedCompanyFolderIds": company_folder_ids
-        }
+        })
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error updating pinned folders: {str(e)}")
 
@@ -426,7 +411,7 @@ async def get_template_folders(
     empty: bool = False,
     locale: Optional[str] = None,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
-):
+) -> APIResponse[dict]:
     """Get template folders by type with proper error handling."""
     try:
         # Default to English if locale not specified
@@ -452,7 +437,7 @@ async def get_template_folders(
         
         # If empty flag is set, return folders without templates
         if empty:
-            return {"success": True, "folders": folders}
+            return APIResponse(success=True, data=folders)
         
         # Add templates to folders
         folder_ids_for_templates = [f["id"] for f in folders]
@@ -460,7 +445,7 @@ async def get_template_folders(
         templates_by_folder = organize_templates_by_folder(templates)
         folders_with_templates = add_templates_to_folders(folders, templates_by_folder)
         
-        return {"success": True, "folders": folders_with_templates}
+        return APIResponse(success=True, data=folders_with_templates)
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e

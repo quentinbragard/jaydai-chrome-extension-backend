@@ -5,13 +5,13 @@ from models.prompts.blocks import BlockCreate, BlockUpdate, BlockResponse, Block
 from utils import supabase_helpers
 from supabase import create_client, Client
 import os
-
+from models.common import APIResponse
 router = APIRouter(tags=["Blocks"])
 
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
 
-@router.get("", response_model=List[BlockResponse])
+@router.get("", response_model=APIResponse[List[BlockResponse]])
 async def get_blocks(
     type: Optional[BlockType] = None,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
@@ -45,12 +45,12 @@ async def get_blocks(
         query = query.order("created_at", desc=True)
         
         response = query.execute()
-        return response.data or []
+        return APIResponse(success=True, data=response.data or [])
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching blocks: {str(e)}")
 
-@router.post("", response_model=BlockResponse)
+@router.post("", response_model=APIResponse[BlockResponse])
 async def create_block(
     block: BlockCreate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
@@ -71,14 +71,14 @@ async def create_block(
         response = supabase.table("prompt_blocks").insert(block_data).execute()
         
         if response.data:
-            return response.data[0]
+            return APIResponse(success=True, data=response.data[0])
         else:
             raise HTTPException(status_code=400, detail="Failed to create block")
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating block: {str(e)}")
 
-@router.put("/{block_id}", response_model=BlockResponse)
+@router.put("/{block_id}", response_model=APIResponse[BlockResponse])
 async def update_block(
     block_id: int,
     block: BlockUpdate,
@@ -109,7 +109,7 @@ async def update_block(
         response = supabase.table("prompt_blocks").update(update_data).eq("id", block_id).execute()
         
         if response.data:
-            return response.data[0]
+            return APIResponse(success=True, data=response.data[0])
         else:
             raise HTTPException(status_code=400, detail="Failed to update block")
             
@@ -145,14 +145,14 @@ async def delete_block(
         
         supabase.table("prompt_blocks").delete().eq("id", block_id).execute()
         
-        return {"success": True, "message": "Block deleted"}
+        return APIResponse(success=True, message="Block deleted")
         
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail=f"Error deleting block: {str(e)}")
 
-@router.get("/types", response_model=List[str])
+@router.get("/types", response_model=APIResponse[List[str]])
 async def get_block_types():
     """Get all available block types"""
-    return [block_type.value for block_type in BlockType]
+    return APIResponse(success=True, data=[block_type.value for block_type in BlockType])
