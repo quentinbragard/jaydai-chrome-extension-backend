@@ -2,10 +2,10 @@
 Utility functions for template operations in the prompts system.
 """
 from typing import Dict, List , Union
-from supabase import create_client, Client
+from supabase import Client
 from .locales import extract_localized_field, create_localized_field
 import os
-from utils.user_access import get_user_company_id, get_user_organization_ids
+from supabase import create_client, Client
 
 # Initialize Supabase client
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
@@ -173,8 +173,13 @@ async def validate_block_access(block_ids: List[int], user_id: str) -> bool:
     if not block_ids:
         return True
     
-    org_ids = await get_user_organization_ids(user_id)
-    company_id = await get_user_company_id(user_id)
+    # Get user's metadata
+    user_metadata_response = supabase.table("users_metadata").select("organization_ids, company_id").eq("user_id", user_id).single().execute()
+    user_metadata = user_metadata_response.data or {}
+    
+    # Get user's organization IDs and company ID
+    org_ids = user_metadata.get("organization_ids", [])
+    company_id = user_metadata.get("company_id")
     
     # Need to use separate queries for each access type and combine results
     accessible_block_ids = set()

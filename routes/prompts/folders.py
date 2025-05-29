@@ -13,7 +13,6 @@ from utils.prompts import (
     create_localized_field,
     determine_folder_type
 )
-from utils.user_access import get_user_company_id, get_user_organization_ids
 import dotenv
 import os
 from typing import List, Optional
@@ -46,6 +45,27 @@ class PromptType(str, Enum):
 
 # ---------------------- HELPER FUNCTIONS ----------------------
 
+async def get_user_organizations(user_id: str) -> APIResponse[List[str]]:
+    """Get all organization IDs a user belongs to"""
+    try:
+        user_metadata = supabase.table("users_metadata").select("organization_ids").eq("user_id", user_id).single().execute()
+        if user_metadata.data and user_metadata.data.get("organization_ids"):
+            return APIResponse(success=True, data=user_metadata.data.get("organization_ids", []))
+        return APIResponse(success=True, data=[])
+    except Exception as e:
+        print(f"Error fetching user organizations: {str(e)}")
+        return APIResponse(success=False, message="Error fetching user organizations")
+
+async def get_user_company(user_id: str) -> APIResponse[Optional[str]]:
+    """Get company ID a user belongs to"""
+    try:
+        user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
+        if user_metadata.data:
+            return APIResponse(success=True, data=user_metadata.data.get("company_id"))
+        return APIResponse(success=True, data=None)
+    except Exception as e:
+        print(f"Error fetching user company: {str(e)}")
+        return APIResponse(success=False, message="Error fetching user company")
 
 async def fetch_folders_by_type(
     supabase: Client,
@@ -64,7 +84,10 @@ async def fetch_folders_by_type(
             query = query.eq("user_id", user_id)
         elif folder_type == "company" and user_id:
             # Company folders: from user's company
-            company_id = await get_user_company_id(user_id)
+            company_resp = await get_user_company(user_id)
+            if not company_resp.success:
+                return company_resp
+            company_id = company_resp.data
             if company_id:
                 query = query.eq("company_id", company_id)
             else:
@@ -88,8 +111,10 @@ async def fetch_folders_by_type(
                 folders.extend(global_response.data)
             
             # 2. User's organization folders
-            org_ids = await get_user_organization_ids(user_id)
-            for org_id in org_ids:
+            org_resp = await get_user_organizations(user_id)
+            if not org_resp.success:
+                return org_resp
+            for org_id in org_resp.data:
                 org_query = supabase.table("prompt_folders").select("*") \
                     .eq("type", folder_type) \
                     .eq("organization_id", org_id)
