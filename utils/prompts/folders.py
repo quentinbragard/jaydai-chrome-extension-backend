@@ -83,7 +83,7 @@ async def fetch_folders_by_type(
         query = query.eq("user_id", user_id).is_("company_id", "null")
     elif folder_type == "organization":
         if company_id:
-            query = query.eq("company_id", company_id).is_("user_id", "null")
+            query = query.eq("company_id", organization_id).is_("user_id", "null")
         elif user_id:
             # Get user's organization from metadata
             user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
@@ -174,7 +174,7 @@ async def get_all_folder_ids_by_type(supabase: Client, folder_type: str, company
         if folder_type == "official":
             response = supabase.table("prompt_folders").select("id").is_("user_id", "null").is_("company_id", "null").execute()
         elif folder_type == "organization" and company_id:
-            response = supabase.table("prompt_folders").select("id").eq("company_id", company_id).execute()
+            response = supabase.table("prompt_folders").select("id").eq("company_id", organization_id).execute()
         else:
             return []
         
