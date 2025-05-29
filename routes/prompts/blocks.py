@@ -29,22 +29,71 @@ async def get_blocks(
         # 1. Their own blocks (user_id matches)
         # 2. Organization blocks (if they belong to the organization)
         # 3. Company blocks (if they belong to the company)
+        # 4. Global blocks (no user_id, organization_id, or company_id)
         
         # Get user metadata to check organization/company access
         user_metadata = supabase.table("users_metadata").select("organization_ids, company_id").eq("user_id", user_id).single().execute()
         
-        query = query.or_(f"user_id.eq.{user_id}")
+        # Build access conditions
+        access_conditions = [f"user_id.eq.{user_id}"]
+        
+        # Add global blocks condition
+        access_conditions.append("user_id.is.null,organization_id.is.null,company_id.is.null")
         
         if user_metadata.data:
             if user_metadata.data.get("organization_ids"):
-                query = query.or_(f"organization_ids.contains.{user_metadata.data['organization_ids']}")
+                for org_id in user_metadata.data["organization_ids"]:
+                    access_conditions.append(f"organization_id.eq.{org_id}")
             if user_metadata.data.get("company_id"):
-                query = query.or_(f"company_id.eq.{user_metadata.data['company_id']}")
+                access_conditions.append(f"company_id.eq.{user_metadata.data['company_id']}")
+        
+        # Apply OR conditions
+        query = query.or_(",".join(access_conditions))
         
         # Add ordering
         query = query.order("created_at", desc=True)
         
         response = query.execute()
+        return APIResponse(success=True, data=response.data or [])
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching blocks: {str(e)}")
+
+# Add a new endpoint to get blocks by type
+@router.get("/by-type/{block_type}", response_model=APIResponse[List[BlockResponse]])
+async def get_blocks_by_type(
+    block_type: str,
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Get all blocks of a specific type accessible to the user."""
+    try:
+        # Build query for blocks of this type
+        query = supabase.table("prompt_blocks").select("*").eq("type", block_type)
+        
+        # Get user metadata to check organization/company access
+        user_metadata = supabase.table("users_metadata").select("organization_ids, company_id").eq("user_id", user_id).single().execute()
+        
+        # Build access conditions (same logic as get_blocks)
+        access_conditions = [f"user_id.eq.{user_id}"]
+        
+        # Add global blocks condition (blocks with no user_id, organization_id, or company_id)
+        access_conditions.append("user_id.is.null,organization_id.is.null,company_id.is.null")
+        
+        if user_metadata.data:
+            if user_metadata.data.get("organization_ids"):
+                for org_id in user_metadata.data["organization_ids"]:
+                    access_conditions.append(f"organization_id.eq.{org_id}")
+            if user_metadata.data.get("company_id"):
+                access_conditions.append(f"company_id.eq.{user_metadata.data['company_id']}")
+        
+        # Apply OR conditions
+        query = query.or_(",".join(access_conditions))
+        
+        # Add ordering
+        query = query.order("created_at", desc=True)
+        
+        response = query.execute()
+        
         return APIResponse(success=True, data=response.data or [])
         
     except Exception as e:
@@ -156,3 +205,46 @@ async def delete_block(
 async def get_block_types():
     """Get all available block types"""
     return APIResponse(success=True, data=[block_type.value for block_type in BlockType])
+
+@router.post("/seed-sample-blocks")
+async def seed_sample_blocks(
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Seed some sample blocks for testing (development only)"""
+    try:
+        sample_blocks = [
+            {
+                "type": "content",
+                "content": {"en": "Write a comprehensive analysis of [topic]"},
+                "title": {"en": "Analysis Template"},
+                "description": {"en": "Template for comprehensive analysis"},
+                "user_id": None,  # Global block
+                "organization_id": None,
+                "company_id": None
+            },
+            {
+                "type": "context",
+                "content": {"en": "You are working with a professional audience"},
+                "title": {"en": "Professional Context"},
+                "description": {"en": "Context for professional communications"},
+                "user_id": None,
+                "organization_id": None,
+                "company_id": None
+            },
+            {
+                "type": "role",
+                "content": {"en": "You are an expert copywriter"},
+                "title": {"en": "Copywriter Role"},
+                "description": {"en": "Expert copywriter persona"},
+                "user_id": None,
+                "organization_id": None,
+                "company_id": None
+            }
+        ]
+        
+        response = supabase.table("prompt_blocks").insert(sample_blocks).execute()
+        
+        return APIResponse(success=True, data=response.data, message="Sample blocks created")
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error seeding sample blocks: {str(e)}")

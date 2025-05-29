@@ -1,19 +1,33 @@
-# models/templates.py
+# models/prompts/templates.py
 from pydantic import BaseModel
 from typing import Optional, List, Union, Dict
 from models.prompts.blocks import BlockType
+from enum import Enum
 
-class TemplateBlock(BaseModel):
-    id: int
-    type: BlockType
-    content: Dict[str, str]
-    name: Optional[str] = None
-    description: Optional[str] = None
+class MetadataType(str, Enum):
+    ROLE = "role"
+    TONE_STYLE = "tone_style"
+    OUTPUT_FORMAT = "output_format"
+    AUDIENCE = "audience"
+    OUTPUT_LANGUAGE = "output_language"
+    MAIN_CONTEXT = "main_context"
+    MAIN_GOAL = "main_goal"
+
+class TemplateMetadata(BaseModel):
+    """Metadata references block IDs, 0 means empty/no value"""
+    role: int = 0
+    tone_style: Optional[int] = 0
+    output_format: Optional[int] = 0
+    audience: Optional[int] = 0
+    output_language: Optional[int] = 0
+    main_context: int = 0
+    main_goal: int = 0
 
 class TemplateBase(BaseModel):
     title: Union[str, Dict[str, str]]
     content: Union[str, Dict[str, str]]
     blocks: Optional[List[int]] = []
+    metadata: Optional[TemplateMetadata] = None
     description: Optional[Union[str, Dict[str, str]]] = None
     folder_id: Optional[int] = None
     tags: Optional[List[str]] = []
@@ -26,6 +40,7 @@ class TemplateUpdate(BaseModel):
     title: Optional[Union[str, Dict[str, str]]] = None
     content: Optional[Union[str, Dict[str, str]]] = None
     blocks: Optional[List[int]] = None
+    metadata: Optional[TemplateMetadata] = None
     description: Optional[Union[str, Dict[str, str]]] = None
     folder_id: Optional[int] = None
     tags: Optional[List[str]] = None
@@ -35,7 +50,8 @@ class TemplateResponse(BaseModel):
     title: str
     content: Union[str, Dict[str, str]]
     blocks: List[int]
-    expanded_blocks: Optional[List[TemplateBlock]] = None
+    metadata: Optional[TemplateMetadata] = None
+    expanded_blocks: Optional[List] = None
     description: Optional[str] = None
     folder_id: Optional[int] = None
     type: str

@@ -1,15 +1,28 @@
-# models/blocks.py
+# models/prompts/blocks.py
 from pydantic import BaseModel
 from typing import Optional, Dict
 from enum import Enum
 
 class BlockType(str, Enum):
+    # Content blocks
+    CONTENT = "content"
     CONTEXT = "context"
-    ROLE = "role"
     EXAMPLE = "example"
     FORMAT = "format"
     AUDIENCE = "audience"
-    CONTENT = "content"
+    
+    # New block types for structured prompts
+    ROLE = "role"
+    GOAL = "goal"
+    TONE_STYLE = "tone_style"
+    OUTPUT_FORMAT = "output_format"
+    OUTPUT_LANGUAGE = "output_language"
+    MAIN_CONTEXT = "main_context"
+    MAIN_GOAL = "main_goal"
+    CONSTRAINTS = "constraints"
+    THINKING_STEPS = "thinking_steps"
+    ADDITIONAL_CONTEXT = "additional_context"
+    CUSTOM = "custom"
 
 class BlockBase(BaseModel):
     type: BlockType
@@ -22,13 +35,14 @@ class BlockCreate(BlockBase):
     title: Optional[Dict[str, str]] = None
     description: Optional[Dict[str, str]] = None
     content: Optional[Dict[str, str]] = None
-
+    category: Optional[str] = None  # For grouping similar blocks
 
 class BlockUpdate(BaseModel):
     type: Optional[BlockType] = None
     content: Optional[Dict[str, str]] = None
     title: Optional[Dict[str, str]] = None
     description: Optional[Dict[str, str]] = None
+    category: Optional[str] = None
 
 class BlockResponse(BlockBase):
     id: int
@@ -36,4 +50,6 @@ class BlockResponse(BlockBase):
     company_id: Optional[str]
     organization_id: Optional[str]
     user_id: Optional[str]
-
+    title: Optional[Dict[str, str]] = None
+    description: Optional[Dict[str, str]] = None
+    category: Optional[str] = None

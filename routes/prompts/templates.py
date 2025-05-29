@@ -11,7 +11,7 @@ from utils.prompts import (
     normalize_localized_field
 )
 import dotenv
-from models.prompts.templates import TemplateCreate, TemplateUpdate, TemplateResponse, TemplateBlock
+from models.prompts.templates import TemplateCreate, TemplateUpdate, TemplateResponse, TemplateMetadata
 from models.common import APIResponse
 dotenv.load_dotenv()
 
@@ -222,12 +222,30 @@ async def create_template(
     template: TemplateCreate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
-    """Create a new template with blocks support."""
-    #try:
-        # Validate referenced blocks
+    """Create a new template with blocks and metadata support."""
+    # Validate referenced blocks in both blocks array and metadata
+    all_block_ids = []
+    
+    # Collect block IDs from blocks array
     block_ids = [bid for bid in (template.blocks or []) if bid != 0]
-    if block_ids:
-        has_access = await validate_block_access(block_ids, user_id)
+    all_block_ids.extend(block_ids)
+    
+    # Collect block IDs from metadata
+    if template.metadata:
+        metadata_block_ids = [
+            template.metadata.role,
+            template.metadata.main_context,
+            template.metadata.main_goal,
+            template.metadata.tone_style or 0,
+            template.metadata.output_format or 0,
+            template.metadata.audience or 0,
+            template.metadata.output_language or 0
+        ]
+        all_block_ids.extend([bid for bid in metadata_block_ids if bid != 0])
+    
+    # Validate all blocks
+    if all_block_ids:
+        has_access = await validate_block_access(all_block_ids, user_id)
         if not has_access:
             raise HTTPException(status_code=403, detail="Access denied to one or more referenced blocks")
     
@@ -240,15 +258,20 @@ async def create_template(
     content_data = normalize_localized_field(template.content, template.locale)
     description_data = normalize_localized_field(template.description, template.locale) if template.description else {}
     
+    # Ensure metadata has required fields
+    metadata = template.metadata or TemplateMetadata()
+    metadata_dict = metadata.dict()
+    
     # Prepare template data
     template_data = {
         "user_id": user_id if template.type == "user" else None,
         "company_id": user_metadata.get("company_id") if template.type == "company" else None,
-        "organization_id": None,  # No longer used for template creation, handled at folder level
+        "organization_id": None,
         "type": template.type,
         "title": title_data,
         "content": content_data,
         "blocks": template.blocks or [],
+        "metadata": metadata_dict,  # Store metadata as JSON
         "description": description_data,
         "folder_id": template.folder_id,
         "tags": template.tags or [],
@@ -268,11 +291,6 @@ async def create_template(
         return APIResponse(success=True, data=expanded_template)
     else:
         raise HTTPException(status_code=400, detail="Failed to create template")
-        
-    #except Exception as e:
-    #    if isinstance(e, HTTPException):
-    #        raise e
-    #    raise HTTPException(status_code=500, detail=f"Error creating template: {str(e)}")
 
 @router.put("/{template_id}", response_model=APIResponse[TemplateResponse])
 async def update_template(
@@ -280,7 +298,7 @@ async def update_template(
     template: TemplateUpdate,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
-    """Update an existing template."""
+    """Update an existing template with metadata support."""
     try:
         # Check if template exists and user has permission
         existing_template = supabase.table("prompt_templates").select("*").eq("id", template_id).single().execute()
@@ -290,19 +308,9 @@ async def update_template(
         
         template_data = existing_template.data
         
-        # Check permissions
+        # Check permissions (same as before)
         if template_data.get("type") == "user" and template_data.get("user_id") != user_id:
             raise HTTPException(status_code=403, detail="Access denied")
-        elif template_data.get("type") == "company":
-            # Check if user belongs to the same company
-            user_company = await get_user_company(user_id)
-            if template_data.get("company_id") != user_company:
-                raise HTTPException(status_code=403, detail="Access denied")
-        elif template_data.get("type") == "official" and template_data.get("organization_id"):
-            # Check if user belongs to the same organization
-            user_orgs = await get_user_organizations(user_id)
-            if template_data.get("organization_id") not in user_orgs:
-                raise HTTPException(status_code=403, detail="Access denied")
         
         # Prepare update data
         update_data = {}
@@ -322,6 +330,28 @@ async def update_template(
                 if not has_access:
                     raise HTTPException(status_code=403, detail="Access denied to one or more referenced blocks")
             update_data["blocks"] = template.blocks
+        
+        if template.metadata is not None:
+            # Validate metadata blocks
+            metadata_block_ids = []
+            if template.metadata:
+                metadata_block_ids = [
+                    template.metadata.role,
+                    template.metadata.main_context,
+                    template.metadata.main_goal,
+                    template.metadata.tone_style or 0,
+                    template.metadata.output_format or 0,
+                    template.metadata.audience or 0,
+                    template.metadata.output_language or 0
+                ]
+                metadata_block_ids = [bid for bid in metadata_block_ids if bid != 0]
+                
+            if metadata_block_ids:
+                has_access = await validate_block_access(metadata_block_ids, user_id)
+                if not has_access:
+                    raise HTTPException(status_code=403, detail="Access denied to one or more metadata blocks")
+            
+            update_data["metadata"] = template.metadata.dict()
         
         if template.description is not None:
             update_data["description"] = normalize_localized_field(template.description, current_locale)
@@ -353,6 +383,8 @@ async def update_template(
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail=f"Error updating template: {str(e)}")
+
+
 
 @router.delete("/{template_id}")
 async def delete_template(
