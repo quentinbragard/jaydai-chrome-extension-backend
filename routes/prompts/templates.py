@@ -4,6 +4,7 @@ from typing import Optional, List, Union, Dict
 from supabase import create_client, Client
 import os
 from utils import supabase_helpers
+from utils.user_access import get_user_company_id, get_user_organization_ids
 from utils.prompts import (
     process_template_for_response,
     expand_template_blocks,
@@ -20,31 +21,6 @@ supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_
 
 
 router = APIRouter(tags=["Templates"])
-
-# ---------------------- HELPER FUNCTIONS ----------------------
-
-async def get_user_organizations(user_id: str) -> List[str]:
-    """Get all organization IDs a user belongs to"""
-    try:
-        user_metadata = supabase.table("users_metadata").select("organization_ids").eq("user_id", user_id).single().execute()
-        if user_metadata.data and user_metadata.data.get("organization_ids"):
-            return user_metadata.data.get("organization_ids", [])
-        return []
-    except Exception as e:
-        print(f"Error fetching user organizations: {str(e)}")
-        return []
-
-async def get_user_company(user_id: str) -> Optional[str]:
-    """Get company ID a user belongs to"""
-    try:
-        user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
-        if user_metadata.data:
-            return user_metadata.data.get("company_id")
-        return None
-    except Exception as e:
-        print(f"Error fetching user company: {str(e)}")
-        return None
-    
 
 # ---------------------- ROUTE HANDLERS ----------------------
 
@@ -130,7 +106,7 @@ async def get_official_templates(user_id: Optional[str] = None, locale: str = "e
     """
     try:
         # Get user's organizations
-        org_ids = await get_user_organizations(user_id) if user_id else []
+        org_ids = await get_user_organization_ids(user_id) if user_id else []
         
         # Start with a base query
         query = supabase.table("prompt_templates").select("*").eq("type", "official")
@@ -176,7 +152,7 @@ async def get_company_templates(user_id: Optional[str] = None, locale: str = "en
         
         if user_id:
             # Get user's company_id
-            company_id = await get_user_company(user_id)
+            company_id = await get_user_company_id(user_id)
         
         if not company_id:
             return []
@@ -295,12 +271,12 @@ async def update_template(
             raise HTTPException(status_code=403, detail="Access denied")
         elif template_data.get("type") == "company":
             # Check if user belongs to the same company
-            user_company = await get_user_company(user_id)
+            user_company = await get_user_company_id(user_id)
             if template_data.get("company_id") != user_company:
                 raise HTTPException(status_code=403, detail="Access denied")
         elif template_data.get("type") == "official" and template_data.get("organization_id"):
             # Check if user belongs to the same organization
-            user_orgs = await get_user_organizations(user_id)
+            user_orgs = await get_user_organization_ids(user_id)
             if template_data.get("organization_id") not in user_orgs:
                 raise HTTPException(status_code=403, detail="Access denied")
         
@@ -374,12 +350,12 @@ async def delete_template(
             raise HTTPException(status_code=403, detail="Access denied")
         elif template_data.get("type") == "company":
             # Check if user belongs to the same company
-            user_company = await get_user_company(user_id)
+            user_company = await get_user_company_id(user_id)
             if template_data.get("company_id") != user_company:
                 raise HTTPException(status_code=403, detail="Access denied")
         elif template_data.get("type") == "official" and template_data.get("organization_id"):
             # Check if user belongs to the organization
-            user_orgs = await get_user_organizations(user_id)
+            user_orgs = await get_user_organization_ids(user_id)
             if template_data.get("organization_id") not in user_orgs:
                 raise HTTPException(status_code=403, detail="Access denied")
         elif template_data.get("type") == "official" and not template_data.get("organization_id"):

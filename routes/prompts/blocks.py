@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from models.prompts.blocks import BlockCreate, BlockUpdate, BlockResponse, BlockType
 from utils import supabase_helpers
+from utils.user_access import get_user_company_id, get_user_organization_ids
 from supabase import create_client, Client
 import os
 from models.common import APIResponse
@@ -18,34 +19,50 @@ async def get_blocks(
 ):
     """Get blocks accessible to the user"""
     try:
-        # Build query - user can access their own blocks, organization blocks, and company blocks
-        query = supabase.table("prompt_blocks").select("*")
-        
-        # Add type filter if specified
+        blocks: List[dict] = []
+
+        # User owned blocks
+        user_query = supabase.table("prompt_blocks").select("*").eq("user_id", user_id)
         if type:
-            query = query.eq("type", type)
-        
-        # User can access blocks from:
-        # 1. Their own blocks (user_id matches)
-        # 2. Organization blocks (if they belong to the organization)
-        # 3. Company blocks (if they belong to the company)
-        
-        # Get user metadata to check organization/company access
-        user_metadata = supabase.table("users_metadata").select("organization_ids, company_id").eq("user_id", user_id).single().execute()
-        
-        query = query.or_(f"user_id.eq.{user_id}")
-        
-        if user_metadata.data:
-            if user_metadata.data.get("organization_ids"):
-                query = query.or_(f"organization_ids.contains.{user_metadata.data['organization_ids']}")
-            if user_metadata.data.get("company_id"):
-                query = query.or_(f"company_id.eq.{user_metadata.data['company_id']}")
-        
-        # Add ordering
-        query = query.order("created_at", desc=True)
-        
-        response = query.execute()
-        return APIResponse(success=True, data=response.data or [])
+            user_query = user_query.eq("type", type)
+        resp = user_query.execute()
+        blocks.extend(resp.data or [])
+
+        # Global blocks accessible to everyone
+        global_query = (
+            supabase.table("prompt_blocks")
+            .select("*")
+            .is_("user_id", "null")
+            .is_("company_id", "null")
+            .is_("organization_id", "null")
+        )
+        if type:
+            global_query = global_query.eq("type", type)
+        resp = global_query.execute()
+        blocks.extend(resp.data or [])
+
+        # Company blocks
+        company_id = await get_user_company_id(user_id)
+        if company_id:
+            company_query = supabase.table("prompt_blocks").select("*").eq("company_id", company_id)
+            if type:
+                company_query = company_query.eq("type", type)
+            resp = company_query.execute()
+            blocks.extend(resp.data or [])
+
+        # Organization blocks
+        org_ids = await get_user_organization_ids(user_id)
+        for org_id in org_ids:
+            org_query = supabase.table("prompt_blocks").select("*").eq("organization_id", org_id)
+            if type:
+                org_query = org_query.eq("type", type)
+            resp = org_query.execute()
+            blocks.extend(resp.data or [])
+
+        # Deduplicate by ID
+        unique_blocks = {blk["id"]: blk for blk in blocks}
+        sorted_blocks = sorted(unique_blocks.values(), key=lambda b: b.get("created_at", ""), reverse=True)
+        return APIResponse(success=True, data=sorted_blocks)
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching blocks: {str(e)}")
