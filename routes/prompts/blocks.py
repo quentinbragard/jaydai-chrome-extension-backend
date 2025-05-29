@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from models.prompts.blocks import BlockCreate, BlockUpdate, BlockResponse, BlockType
 from utils import supabase_helpers
+from utils.access_control import get_access_conditions
 from supabase import create_client, Client
 import os
 from models.common import APIResponse
@@ -18,36 +19,15 @@ async def get_blocks(
 ):
     """Get blocks accessible to the user"""
     try:
-        # Build query - user can access their own blocks, organization blocks, and company blocks
+        # Base query
         query = supabase.table("prompt_blocks").select("*")
-        
+
         # Add type filter if specified
         if type:
             query = query.eq("type", type)
-        
-        # User can access blocks from:
-        # 1. Their own blocks (user_id matches)
-        # 2. Organization blocks (if they belong to the organization)
-        # 3. Company blocks (if they belong to the company)
-        # 4. Global blocks (no user_id, organization_id, or company_id)
-        
-        # Get user metadata to check organization/company access
-        user_metadata = supabase.table("users_metadata").select("organization_ids, company_id").eq("user_id", user_id).single().execute()
-        
-        # Build access conditions
-        access_conditions = [f"user_id.eq.{user_id}"]
-        
-        # Add global blocks condition
-        access_conditions.append("user_id.is.null,organization_id.is.null,company_id.is.null")
-        
-        if user_metadata.data:
-            if user_metadata.data.get("organization_ids"):
-                for org_id in user_metadata.data["organization_ids"]:
-                    access_conditions.append(f"organization_id.eq.{org_id}")
-            if user_metadata.data.get("company_id"):
-                access_conditions.append(f"company_id.eq.{user_metadata.data['company_id']}")
-        
-        # Apply OR conditions
+
+        # Apply access restrictions
+        access_conditions = get_access_conditions(supabase, user_id)
         query = query.or_(",".join(access_conditions))
         
         # Add ordering
@@ -70,23 +50,8 @@ async def get_blocks_by_type(
         # Build query for blocks of this type
         query = supabase.table("prompt_blocks").select("*").eq("type", block_type)
         
-        # Get user metadata to check organization/company access
-        user_metadata = supabase.table("users_metadata").select("organization_ids, company_id").eq("user_id", user_id).single().execute()
-        
-        # Build access conditions (same logic as get_blocks)
-        access_conditions = [f"user_id.eq.{user_id}"]
-        
-        # Add global blocks condition (blocks with no user_id, organization_id, or company_id)
-        access_conditions.append("user_id.is.null,organization_id.is.null,company_id.is.null")
-        
-        if user_metadata.data:
-            if user_metadata.data.get("organization_ids"):
-                for org_id in user_metadata.data["organization_ids"]:
-                    access_conditions.append(f"organization_id.eq.{org_id}")
-            if user_metadata.data.get("company_id"):
-                access_conditions.append(f"company_id.eq.{user_metadata.data['company_id']}")
-        
-        # Apply OR conditions
+        # Apply access restrictions
+        access_conditions = get_access_conditions(supabase, user_id)
         query = query.or_(",".join(access_conditions))
         
         # Add ordering

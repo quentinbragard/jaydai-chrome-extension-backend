@@ -4,6 +4,7 @@ Utility functions for folder operations in the prompts system.
 from typing import Dict, List, Optional, Any
 from supabase import Client
 from .locales import extract_localized_field
+from utils.access_control import apply_access_conditions
 
 def determine_folder_type(folder: Dict) -> str:
     """
@@ -77,33 +78,18 @@ async def fetch_folders_by_type(
         List of processed folder dicts
     """
     query = supabase.table("prompt_folders").select("*")
-    
-    # Apply filters based on folder type
-    if folder_type == "user" and user_id:
-        query = query.eq("user_id", user_id).is_("company_id", "null")
-    elif folder_type == "organization":
-        if company_id:
-            query = query.eq("company_id", organization_id).is_("user_id", "null")
-        elif user_id:
-            # Get user's organization from metadata
-            user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
-            if user_metadata.data and user_metadata.data.get("company_id"):
-                query = query.eq("company_id", user_metadata.data["company_id"]).is_("user_id", "null")
-            else:
-                # User has no organization, return empty
-                return []
-    elif folder_type == "official":
-        query = query.is_("user_id", "null").is_("company_id", "null")
-    
-    # Filter by specific folder IDs if provided
+
+    if folder_type:
+        query = query.eq("type", folder_type)
+
     if folder_ids:
         query = query.in_("id", folder_ids)
+
+    if user_id:
+        query = apply_access_conditions(query, supabase, user_id)
     
     response = query.execute()
     folders = response.data or []
-    if folder_type == "organization":
-        print(f"Folders: {folders}")
-    
     # Process folders for response
     return [process_folder_for_response(folder, locale) for folder in folders]
 

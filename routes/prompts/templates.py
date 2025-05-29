@@ -10,6 +10,7 @@ from utils.prompts import (
     validate_block_access,
     normalize_localized_field
 )
+from utils.access_control import get_user_metadata
 import dotenv
 from models.prompts.templates import TemplateCreate, TemplateUpdate, TemplateResponse, TemplateMetadata
 from models.common import APIResponse
@@ -483,9 +484,12 @@ async def get_template_by_id(
             raise HTTPException(status_code=403, detail="Access denied")
         elif template_data.get("type") == "organization":
             # Check if user belongs to the same organization
-            user_metadata = supabase.table("users_metadata").select("organization_id").eq("user_id", user_id).single().execute()
-            user_org_id = user_metadata.data.get("organization_id") if user_metadata.data else None
-            if template_data.get("organization_id") != user_org_id:
+            metadata = get_user_metadata(supabase, user_id)
+            if template_data.get("organization_id") not in (metadata.get("organization_ids") or []):
+                raise HTTPException(status_code=403, detail="Access denied")
+        elif template_data.get("type") == "company":
+            metadata = get_user_metadata(supabase, user_id)
+            if template_data.get("company_id") != metadata.get("company_id"):
                 raise HTTPException(status_code=403, detail="Access denied")
         
         # Process template for response
@@ -521,10 +525,12 @@ async def duplicate_template(
         if original_template.get("type") == "user" and original_template.get("user_id") != user_id:
             raise HTTPException(status_code=403, detail="Access denied")
         elif original_template.get("type") == "organization":
-            # Check if user belongs to the same organization
-            user_metadata = supabase.table("users_metadata").select("organization_id").eq("user_id", user_id).single().execute()
-            user_org_id = user_metadata.data.get("organization_id") if user_metadata.data else None
-            if original_template.get("organization_id") != user_org_id:
+            metadata = get_user_metadata(supabase, user_id)
+            if original_template.get("organization_id") not in (metadata.get("organization_ids") or []):
+                raise HTTPException(status_code=403, detail="Access denied")
+        elif original_template.get("type") == "company":
+            metadata = get_user_metadata(supabase, user_id)
+            if original_template.get("company_id") != metadata.get("company_id"):
                 raise HTTPException(status_code=403, detail="Access denied")
         
         # Validate referenced blocks
