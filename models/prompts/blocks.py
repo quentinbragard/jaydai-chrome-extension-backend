@@ -19,10 +19,11 @@ class BlockType(str, Enum):
     OUTPUT_LANGUAGE = "output_language"
     MAIN_CONTEXT = "main_context"
     MAIN_GOAL = "main_goal"
-    CONSTRAINTS = "constraints"
+    CONSTRAINT = "constraint"
     THINKING_STEPS = "thinking_steps"
     ADDITIONAL_CONTEXT = "additional_context"
     CUSTOM = "custom"
+    
 
 class BlockBase(BaseModel):
     type: BlockType
