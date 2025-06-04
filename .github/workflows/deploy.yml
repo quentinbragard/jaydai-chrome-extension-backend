@@ -140,6 +140,10 @@ jobs:
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
         
+      - name: Install gcloud beta components
+        run: |
+          gcloud components install beta --quiet
+        
       # Repository should already exist, so we skip creation
         
       - name: Configure Docker for Artifact Registry
