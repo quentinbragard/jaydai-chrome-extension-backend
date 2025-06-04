@@ -14,6 +14,7 @@ async def pin_folder(
 ) -> APIResponse[dict]:
     """Pin a folder for a user."""
     try:
+
         if folder_type not in ["official", "organization"]:
             raise HTTPException(status_code=400, detail="Invalid folder type")
 
@@ -24,15 +25,15 @@ async def pin_folder(
         actual_type = determine_folder_type(folder.data)
         if actual_type != folder_type:
             raise HTTPException(status_code=400, detail=f"Folder is not of type {folder_type}")
-
+        
         pinned_folders = await get_user_pinned_folders(supabase, user_id)
 
-        if folder_id not in pinned_folders[folder_type]:
+        if folder_id not in pinned_folders:
             pinned_folders[folder_type].append(folder_id)
 
         await update_user_pinned_folders(supabase, user_id, folder_type, pinned_folders[folder_type])
 
-        return APIResponse(success=True, data=pinned_folders[folder_type])
+        return APIResponse(success=True, data=pinned_folders)
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
