@@ -178,12 +178,13 @@ jobs:
           echo "Setting up custom domain: ${{ env.CUSTOM_DOMAIN }}"
           
           # Check if domain mapping already exists
-          if ! gcloud beta run domain-mappings describe ${{ env.CUSTOM_DOMAIN }} --platform=managed &>/dev/null; then
+          if ! gcloud beta run domain-mappings describe ${{ env.CUSTOM_DOMAIN }} --platform=managed --region=${{ env.REGION }} &>/dev/null; then
             echo "Creating domain mapping for ${{ env.CUSTOM_DOMAIN }}"
             gcloud beta run domain-mappings create \
               --service=${{ env.SERVICE_NAME }} \
               --domain=${{ env.CUSTOM_DOMAIN }} \
-              --platform=managed
+              --platform=managed \
+              --region=${{ env.REGION }}
           else
             echo "Domain mapping already exists for ${{ env.CUSTOM_DOMAIN }}"
             echo "Skipping domain mapping creation as it already exists"
@@ -217,7 +218,6 @@ jobs:
           # Version branches use production credentials
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
           echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
-          
 
       - name: Google Auth
         id: auth
