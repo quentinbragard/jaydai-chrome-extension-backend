@@ -174,13 +174,12 @@ jobs:
           echo "Setting up custom domain: ${{ env.CUSTOM_DOMAIN }}"
           
           # Check if domain mapping already exists
-          if ! gcloud run domain-mappings describe ${{ env.CUSTOM_DOMAIN }} --platform=managed --region=${{ env.REGION }} &>/dev/null; then
+          if ! gcloud run domain-mappings describe ${{ env.CUSTOM_DOMAIN }} --platform=managed &>/dev/null; then
             echo "Creating domain mapping for ${{ env.CUSTOM_DOMAIN }}"
             gcloud run domain-mappings create \
               --service=${{ env.SERVICE_NAME }} \
               --domain=${{ env.CUSTOM_DOMAIN }} \
-              --platform=managed \
-              --region=${{ env.REGION }}
+              --platform=managed
           else
             echo "Domain mapping already exists for ${{ env.CUSTOM_DOMAIN }}"
             echo "Skipping domain mapping creation as it already exists"
