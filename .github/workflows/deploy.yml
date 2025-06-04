@@ -5,7 +5,6 @@ on:
     branches:
       - main  # Production branch
       - develop  # Development branch
-      - 'v*'  # Add this to match version branches
   pull_request:
     branches:
       - main
@@ -15,7 +14,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REPOSITORY: jaydai-backend
   IMAGE_NAME: archimind-backend
-  REGION: europe-west9  # Using your preferred region
+  REGION: europe-west1  # Using your preferred region
 
 jobs:
   test:
@@ -80,10 +79,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
+      - name: Set environment variables for migrations
+        id: set-migration-env
+        run: |
+          if [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
+          elif [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY}}" >> $GITHUB_ENV
+          else
+            # Default to dev for other branches
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
+          fi
+        
       - name: Run migrations
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           chmod +x scripts/run-migrations.sh
           ./scripts/run-migrations.sh
@@ -103,9 +114,21 @@ jobs:
           if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
             echo "ENVIRONMENT=prod" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-prod" >> $GITHUB_ENV
-          else
+            echo "CUSTOM_DOMAIN=api.jayd.ai" >> $GITHUB_ENV
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          elif [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
+            echo "CUSTOM_DOMAIN=api.dev.jayd.ai" >> $GITHUB_ENV
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
+          else
+            # Default to dev for other branches (like PRs)
+            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+            echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
           fi
           
       - name: Google Auth
@@ -150,11 +173,38 @@ jobs:
           image: ${{ env.IMAGE_TAG }}
           flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --min-instances=0 --max-instances=10'
           env_vars: |
-            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            SUPABASE_URL=${{ env.SUPABASE_URL }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Setup Custom Domain
+        if: env.CUSTOM_DOMAIN != ''
+        run: |
+          echo "Setting up custom domain: ${{ env.CUSTOM_DOMAIN }}"
+          
+          # Check if domain mapping already exists
+          if ! gcloud run domain-mappings describe --domain=${{ env.CUSTOM_DOMAIN }} --region=${{ env.REGION }} &>/dev/null; then
+            echo "Creating domain mapping for ${{ env.CUSTOM_DOMAIN }}"
+            gcloud run domain-mappings create \
+              --service=${{ env.SERVICE_NAME }} \
+              --domain=${{ env.CUSTOM_DOMAIN }} \
+              --region=${{ env.REGION }}
+          else
+            echo "Domain mapping already exists for ${{ env.CUSTOM_DOMAIN }}"
+            # Update the mapping to point to the current service
+            gcloud run domain-mappings update \
+              --service=${{ env.SERVICE_NAME }} \
+              --domain=${{ env.CUSTOM_DOMAIN }} \
+              --region=${{ env.REGION }}
+          fi
+          
+          echo "Custom domain URL: https://${{ env.CUSTOM_DOMAIN }}"
             
       - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
+        run: |
+          echo "Cloud Run URL: ${{ steps.deploy.outputs.url }}"
+          if [[ -n "${{ env.CUSTOM_DOMAIN }}" ]]; then
+            echo "Custom Domain URL: https://${{ env.CUSTOM_DOMAIN }}"
+          fi
 
   deploy-version:
     name: Deploy Version to Cloud Run
@@ -172,6 +222,9 @@ jobs:
           echo "ENVIRONMENT=version" >> $GITHUB_ENV
           echo "SERVICE_NAME=api-$VERSION" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          # Version branches use production credentials
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
 
       - name: Google Auth
         id: auth
@@ -203,8 +256,8 @@ jobs:
           image: ${{ env.IMAGE_TAG }}
           flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --min-instances=0 --max-instances=10'
           env_vars: |
-            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            SUPABASE_URL=${{ env.SUPABASE_URL }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
             VERSION=${{ env.VERSION }}
 
       - name: Show Output
