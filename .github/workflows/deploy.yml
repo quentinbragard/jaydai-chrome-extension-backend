@@ -217,6 +217,7 @@ jobs:
           # Version branches use production credentials
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
           echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
+          
 
       - name: Google Auth
         id: auth
