@@ -172,33 +172,6 @@ jobs:
             SUPABASE_URL=${{ env.SUPABASE_URL }}
             SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
 
-      - name: Setup Custom Domain
-        if: env.CUSTOM_DOMAIN != ''
-        continue-on-error: true
-        run: |
-          echo "Setting up custom domain: ${{ env.CUSTOM_DOMAIN }}"
-          
-          # Try to describe the domain mapping first
-          if gcloud beta run domain-mappings describe ${{ env.CUSTOM_DOMAIN }} --platform=managed --region=${{ env.REGION }} &>/dev/null; then
-            echo "✅ Domain mapping already exists for ${{ env.CUSTOM_DOMAIN }}"
-            echo "Custom domain URL: https://${{ env.CUSTOM_DOMAIN }}"
-          else
-            echo "Domain mapping not found, attempting to create..."
-            if gcloud beta run domain-mappings create \
-              --service=${{ env.SERVICE_NAME }} \
-              --domain=${{ env.CUSTOM_DOMAIN }} \
-              --platform=managed \
-              --region=${{ env.REGION }} 2>/dev/null; then
-              echo "✅ Domain mapping created successfully for ${{ env.CUSTOM_DOMAIN }}"
-              echo "Custom domain URL: https://${{ env.CUSTOM_DOMAIN }}"
-            else
-              echo "⚠️  Could not create domain mapping (may already exist or need verification)"
-              echo "If ${{ env.CUSTOM_DOMAIN }} is accessible, the mapping was likely created manually"
-              echo "Custom domain URL: https://${{ env.CUSTOM_DOMAIN }} (may work if manually configured)"
-            fi
-          fi
-          
-          echo "Note: If custom domain doesn't work, use Cloud Run URL instead"
             
       - name: Show Output
         run: |
