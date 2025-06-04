@@ -86,8 +86,8 @@ jobs:
             echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
             echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
           elif [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY}}" >> $GITHUB_ENV
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
           else
             # Default to dev for other branches
             echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
@@ -115,8 +115,8 @@ jobs:
             echo "ENVIRONMENT=prod" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-prod" >> $GITHUB_ENV
             echo "CUSTOM_DOMAIN=api.jayd.ai" >> $GITHUB_ENV
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
           elif [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
@@ -140,15 +140,7 @@ jobs:
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
         
-      - name: Create Artifact Registry Repository
-        run: |
-          # Check if repository exists, create if it doesn't
-          if ! gcloud artifacts repositories describe ${{ env.REPOSITORY }} --location=${{ env.REGION }} &>/dev/null; then
-            gcloud artifacts repositories create ${{ env.REPOSITORY }} \
-              --repository-format=docker \
-              --location=${{ env.REGION }} \
-              --description="Docker repository for Jayd.ai backend"
-          fi
+      # Repository should already exist, so we skip creation
         
       - name: Configure Docker for Artifact Registry
         run: |
@@ -182,19 +174,16 @@ jobs:
           echo "Setting up custom domain: ${{ env.CUSTOM_DOMAIN }}"
           
           # Check if domain mapping already exists
-          if ! gcloud run domain-mappings describe --domain=${{ env.CUSTOM_DOMAIN }} --region=${{ env.REGION }} &>/dev/null; then
+          if ! gcloud run domain-mappings describe ${{ env.CUSTOM_DOMAIN }} --platform=managed --region=${{ env.REGION }} &>/dev/null; then
             echo "Creating domain mapping for ${{ env.CUSTOM_DOMAIN }}"
             gcloud run domain-mappings create \
               --service=${{ env.SERVICE_NAME }} \
               --domain=${{ env.CUSTOM_DOMAIN }} \
+              --platform=managed \
               --region=${{ env.REGION }}
           else
             echo "Domain mapping already exists for ${{ env.CUSTOM_DOMAIN }}"
-            # Update the mapping to point to the current service
-            gcloud run domain-mappings update \
-              --service=${{ env.SERVICE_NAME }} \
-              --domain=${{ env.CUSTOM_DOMAIN }} \
-              --region=${{ env.REGION }}
+            echo "Skipping domain mapping creation as it already exists"
           fi
           
           echo "Custom domain URL: https://${{ env.CUSTOM_DOMAIN }}"
@@ -223,8 +212,8 @@ jobs:
           echo "SERVICE_NAME=api-$VERSION" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           # Version branches use production credentials
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
-          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
 
       - name: Google Auth
         id: auth
