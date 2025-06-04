@@ -237,3 +237,46 @@ async def get_folders_with_prompts(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching folders with prompts: {str(e)}")
+    
+
+@router.get("/onboarding/status")
+async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    try:
+        # Get user metadata for pinned folders
+        metadata = supabase.table("users_metadata") \
+            .select("job_type, job_industry, job_seniority, interests, signup_source") \
+            .eq("user_id", user_id) \
+            .single() \
+            .execute()
+
+        # Debug logging
+        print(f"Metadata response: {metadata.data}")
+
+        # Check if metadata exists and has any of the required fields
+        has_completed = False
+        if metadata.data:
+            job_type = metadata.data.get("job_type")
+            job_industry = metadata.data.get("job_industry")
+            job_seniority = metadata.data.get("job_seniority")
+            interests = metadata.data.get("interests")
+            signup_source = metadata.data.get("signup_source")
+            
+            has_completed = bool(job_type or job_industry or job_seniority or interests or signup_source)
+            
+            # Debug logging
+            print(f"Fields found: job_type={job_type}, job_industry={job_industry}, "
+                  f"job_seniority={job_seniority}, interests={interests}, "
+                  f"signup_source={signup_source}")
+            
+            print(has_completed)
+
+        return {
+            "success": True,
+            "data": {"has_completed_onboarding": has_completed}
+        }
+    except Exception as e:
+        print(f"Error in onboarding status: {str(e)}")  # Debug logging
+        raise HTTPException(status_code=500, detail=f"Error checking onboarding status: {str(e)}")
+
+    
+    
