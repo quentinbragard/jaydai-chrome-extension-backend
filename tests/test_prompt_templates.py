@@ -25,6 +25,55 @@ def test_get_templates(test_client, mock_supabase, valid_auth_header, mock_authe
     assert response.json()["success"] is True
     assert len(response.json()["data"]) == 1
 
+def test_get_templates_by_folder_ids(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test filtering templates by folder IDs."""
+    returned_templates = [
+        {
+            "id": 2,
+            "folder_id": 5,
+            "title": {"en": "Folder Template"},
+            "content": {"en": "Folder content"},
+            "type": "user",
+            "usage_count": 0,
+            "created_at": "2025-03-15T12:00:00+00:00"
+        }
+    ]
+
+    execute_mock = MagicMock()
+    execute_mock.data = returned_templates
+    mock_supabase["templates"].table().select().in_().execute.return_value = execute_mock
+
+    response = test_client.get("/prompts/templates/?folder_ids=5", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["data"][0]["folder_id"] == 5
+
+def test_metadata_filtering(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Ensure metadata with null values is removed from the response."""
+    returned_templates = [
+        {
+            "id": 4,
+            "folder_id": 1,
+            "title": {"en": "Meta Template"},
+            "content": {"en": "Some content"},
+            "type": "user",
+            "metadata": {"goal": 302, "role": 35, "context": None},
+            "usage_count": 0,
+            "created_at": "2025-03-15T12:00:00+00:00"
+        }
+    ]
+
+    execute_mock = MagicMock()
+    execute_mock.data = returned_templates
+    mock_supabase["templates"].table().select().execute.return_value = execute_mock
+
+    response = test_client.get("/prompts/templates/", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["data"][0]["metadata"] == {"goal": 302, "role": 35}
+
 # Fix for test_get_templates_by_type
 def test_get_templates_by_type(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Test getting templates by type."""
