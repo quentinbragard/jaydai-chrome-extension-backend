@@ -159,5 +159,5 @@ def mock_user_id():
 @pytest.fixture
 def mock_authenticate_user(mock_supabase, mock_user_id):
     """Mock the authentication process to return a valid user ID."""
-    with patch('utils.notification_service.create_first_notification'):  # Mock the async function
+    with patch('utils.notification_service.NotificationService.create_welcome_notification'):
         return mock_user_id
