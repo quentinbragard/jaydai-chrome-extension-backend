@@ -37,6 +37,14 @@ def process_template_for_response(template_data: dict, locale: str = "en") -> di
         "company_id": template_data.get("company_id"),
         "folder": template_data.get("folder")
     }
+
+    metadata = template_data.get("metadata") or {}
+    filtered_metadata = {
+        k: v for k, v in metadata.items()
+        if v not in (None, 0, [], {})
+    }
+    if filtered_metadata:
+        processed["metadata"] = filtered_metadata
     
     return processed
 
