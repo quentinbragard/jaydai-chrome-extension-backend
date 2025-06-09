@@ -4,24 +4,15 @@ from typing import Optional, Dict
 from enum import Enum
 
 class BlockType(str, Enum):
-    # Content blocks
-    CONTENT = "content"
-    CONTEXT = "context"
-    EXAMPLE = "example"
-    FORMAT = "format"
-    AUDIENCE = "audience"
-    
-    # New block types for structured prompts
     ROLE = "role"
+    CONTEXT = "context"
     GOAL = "goal"
     TONE_STYLE = "tone_style"
     OUTPUT_FORMAT = "output_format"
-    OUTPUT_LANGUAGE = "output_language"
-    MAIN_CONTEXT = "main_context"
-    MAIN_GOAL = "main_goal"
+    AUDIENCE = "audience"
+    EXAMPLE = "example"
     CONSTRAINT = "constraint"
-    THINKING_STEPS = "thinking_steps"
-    ADDITIONAL_CONTEXT = "additional_context"
+    THINKING_STEP = "thinking_step"
     CUSTOM = "custom"
     
 
@@ -36,14 +27,12 @@ class BlockCreate(BlockBase):
     title: Optional[Dict[str, str]] = None
     description: Optional[Dict[str, str]] = None
     content: Optional[Dict[str, str]] = None
-    category: Optional[str] = None  # For grouping similar blocks
-
+    
 class BlockUpdate(BaseModel):
     type: Optional[BlockType] = None
     content: Optional[Dict[str, str]] = None
     title: Optional[Dict[str, str]] = None
     description: Optional[Dict[str, str]] = None
-    category: Optional[str] = None
 
 class BlockResponse(BlockBase):
     id: int
@@ -53,4 +42,3 @@ class BlockResponse(BlockBase):
     user_id: Optional[str]
     title: Optional[Dict[str, str]] = None
     description: Optional[Dict[str, str]] = None
-    category: Optional[str] = None
