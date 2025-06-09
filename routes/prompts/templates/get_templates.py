@@ -9,7 +9,7 @@ from . import router, supabase
 @router.get("", response_model=APIResponse[List[TemplateResponse]])
 async def get_templates(
     type: Optional[str] = None,
-    folder_ids: Optional[List[int]] = Query(None),
+    folder_ids: Optional[str] = None,
     locale: Optional[str] = "en",
     expand_blocks: bool = True,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
@@ -22,7 +22,12 @@ async def get_templates(
             query = query.eq("type", type)
 
         if folder_ids:
-            query = query.in_("folder_id", folder_ids)
+            try:
+                folder_id_list = [int(fid) for fid in folder_ids.split(',') if fid.strip()]
+            except ValueError as e:
+                raise HTTPException(status_code=400, detail=f"Invalid folder ID format: {str(e)}")
+            if folder_id_list:
+                query = query.in_("folder_id", folder_id_list)
 
         response = query.execute()
         templates = []
