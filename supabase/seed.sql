@@ -961,7 +961,7 @@ Generate a clear, reassuring, and engaging marketing FAQ that covers:
 - Possible objections and appropriate responses
 - Credibility and social proof (if relevant)
 
-Use a tone that is professional, simple, direct, and educational. Organize the FAQ with questions in bold and clear answers, sometimes with concrete examples.
+Use a tone that is professional, simple, direct, and educational. Organize the FAQ with questions in bold and clear answers, sometimes with concrete example.
 
 If some answers require me to fill in missing elements (e.g., free trial duration, compatibility, etc.), leave a [variable] so I can adapt them.', 'Tu es un expert en marketing, en ventes et en copywriting. Ton rôle est de générer une FAQ ultra pertinente à destination des potentiels clients d''une solution.
 
@@ -1020,7 +1020,7 @@ Mention the exact texts with their date and include links if possible.
 Detailed analysis of the regulations
 
 Obligations, rights, limits, or legal uncertainties. In this section, you must really develop your answers as much as possible
-Concrete cases or examples if relevant.
+Concrete cases or example if relevant.
 
 
 Risks and sanctions
@@ -1087,7 +1087,7 @@ Received email: [Content of the email you''re responding to]
 Name & title: [Name and/or title of the recipient]
 Recipient''s position: [Professional position of the recipient]
 Company name: [Name of the recipient''s company]
-[Specific constraints: length, points to address, mandatory information]
+[Specific constraint: length, points to address, mandatory information]
 Personal style: [An example of your communication style (optional)]
 Generation instructions:
 Guidelines for generating the response:
