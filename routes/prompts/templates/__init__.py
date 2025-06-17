@@ -1,34 +1,18 @@
+# routes/prompts/templates/__init__.py
 from fastapi import APIRouter
 
 router = APIRouter(tags=["Templates"])
 
-from .helpers import (
-    supabase,
-    get_user_organizations,
-    get_user_company,
-    get_user_templates,
-    get_official_templates,
-    get_company_templates,
-    get_all_templates,
-)
-
-# Import endpoints so they register with the router
-from . import get_templates
-from . import get_unorganized_templates
-from . import create_template
-from . import update_template
-from . import delete_template
-from . import track_template_usage
-from . import get_template_by_id
-from . import duplicate_template
-
-__all__ = [
-    "router",
-    "supabase",
-    "get_user_organizations",
-    "get_user_company",
-    "get_user_templates",
-    "get_official_templates",
-    "get_company_templates",
-    "get_all_templates",
-]
+# Import all route modules to register them with the router
+from . import get_folders
+from . import create_folder
+from . import update_folder
+from . import delete_folder
+from . import pin_folder
+from . import unpin_folder
+from . import update_pinned_folders_endpoint
+from . import get_template_folders
+from . import reorder_folders
+from . import toggle_priority
+from . import move_folder
+from . import get_available_parents
