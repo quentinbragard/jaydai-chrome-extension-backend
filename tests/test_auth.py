@@ -76,8 +76,7 @@ def test_sign_in_success(test_client, mock_supabase):
         "additional_email": "test@example.com",
         "phone_number": None,
         "additional_organization": None,
-        "pinned_official_folder_ids": [1],
-        "pinned_organization_folder_ids": []
+        "pinned_folder_ids": []
     }
     
     # Mock the metadata query
