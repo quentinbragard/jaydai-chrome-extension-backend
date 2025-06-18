@@ -1,7 +1,8 @@
 from fastapi import Depends, HTTPException
 from models.common import APIResponse
 from utils import supabase_helpers
-from .helpers import router, supabase, FolderCreate, create_localized_field
+from .helpers import router, supabase, create_localized_field
+from models.prompts.folders import FolderCreate
 
 @router.post("")
 async def create_folder(

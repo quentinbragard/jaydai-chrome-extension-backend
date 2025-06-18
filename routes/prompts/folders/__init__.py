@@ -9,8 +9,6 @@ router = APIRouter(tags=["Folders"])
 from .helpers import (
     router,
     supabase,
-    FolderCreate,
-    FolderUpdate,
     PromptType,
     get_user_organizations,
     get_user_company,
