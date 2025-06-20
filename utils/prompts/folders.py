@@ -36,6 +36,7 @@ def process_folder_for_response(folder_data: dict, locale: str = "en") -> dict:
         "user_id": folder_data.get("user_id"),
         "organization_id": folder_data.get("organization_id"),
         "company_id": folder_data.get("company_id"),
+        "parent_folder_id": folder_data.get("parent_folder_id"),
     }
 
 async def get_user_pinned_folders(supabase: Client, user_id: str) -> List[int]:
