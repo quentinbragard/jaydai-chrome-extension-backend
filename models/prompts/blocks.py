@@ -28,10 +28,10 @@ class BlockCreate(BaseModel):
     content: str
     
 class BlockUpdate(BaseModel):
-    type: BlockType
-    content: str
-    title: str
-    description: str
+    type: Optional[BlockType] = None
+    content: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
 
 class BlockResponse(BlockBase):
     id: int
