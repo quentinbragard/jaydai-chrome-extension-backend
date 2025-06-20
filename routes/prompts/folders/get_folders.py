@@ -229,7 +229,7 @@ async def fetch_templates_for_all_folders(
 async def build_nested_folder_structure(
     folders: List[Dict],
     templates_by_folder: Dict[int, List[Dict]],
-    parent_id: Optional[int] = None,
+    parent_folder_id: Optional[int] = None,
     with_templates: bool = False,
     processed_ids: Optional[set] = None
 ) -> List[Dict]:
@@ -241,14 +241,14 @@ async def build_nested_folder_structure(
     
     result = []
     
-    # Find folders with the specified parent_id
+    # Find folders with the specified parent_folder_id
     child_folders = []
     for f in folders:
-        folder_parent_id = f.get("parent_folder_id")
+        folder_parent_folder_id = f.get("parent_folder_id")
         folder_id = f.get("id")
         
         # Skip circular references (folder cannot be its own parent)
-        if folder_id == folder_parent_id:
+        if folder_id == folder_parent_folder_id:
             print(f"Debug: Skipping circular reference for folder {folder_id}")
             continue
             
@@ -256,7 +256,7 @@ async def build_nested_folder_structure(
         if folder_id in processed_ids:
             continue
             
-        if folder_parent_id == parent_id:
+        if folder_parent_folder_id == parent_folder_id:
             child_folders.append(f)
     
     for folder in child_folders:

@@ -25,7 +25,7 @@ async def create_folder(
             "organization_id": None,
             "company_id": None,
             "type": "user",
-            "parent_folder_id": folder.parent_id,
+            "parent_folder_id": folder.parent_folder_id,
             "title": localized_title,
             "description": localized_description,
         }).execute()
