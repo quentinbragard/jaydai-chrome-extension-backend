@@ -4,7 +4,7 @@ from typing import Optional, Dict
 from enum import Enum
 
 class FolderBase(BaseModel):
-    id: int
+    id: Optional[int] = None
     title: Dict[str, str]
     
 class FolderCreate(FolderBase):

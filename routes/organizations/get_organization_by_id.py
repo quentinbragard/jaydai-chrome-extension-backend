@@ -10,14 +10,10 @@ import os
 # Initialize Supabase client
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
-from fastapi import APIRouter
-router = APIRouter(tags=["Organizations"])
-
 class OrganizationResponse(BaseModel):
     id: str
     name: str
     image_url: Optional[str] = None
-    description: Optional[str] = None
     created_at: Optional[str] = None
 
 class APIResponse(BaseModel):
@@ -25,7 +21,6 @@ class APIResponse(BaseModel):
     data: Optional[OrganizationResponse] = None
     message: Optional[str] = None
 
-@router.get("/{organization_id}", response_model=APIResponse)
 async def get_organization_by_id(
     organization_id: str,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
@@ -40,7 +35,7 @@ async def get_organization_by_id(
             raise HTTPException(status_code=403, detail="Access denied to this organization")
         
         # Fetch organization data
-        response = supabase.table("organizations").select("id, name, image_url, description, created_at").eq("id", organization_id).single().execute()
+        response = supabase.table("organizations").select("id, name, image_url, created_at").eq("id", organization_id).single().execute()
         
         if not response.data:
             raise HTTPException(status_code=404, detail="Organization not found")
@@ -50,8 +45,6 @@ async def get_organization_by_id(
             id=org_data["id"],
             name=org_data["name"],
             image_url=org_data.get("image_url"),
-            description=org_data.get("description"),
-            created_at=org_data.get("created_at")
         )
         
         return APIResponse(success=True, data=organization)

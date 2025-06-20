@@ -17,21 +17,21 @@ class BlockType(str, Enum):
 
 class BlockBase(BaseModel):
     type: BlockType
-    content: Dict[str, str]  # {"en": "...", "fr": "..."}
+    content: str
 
-class BlockCreate(BlockBase):
+class BlockCreate(BaseModel):
     company_id: Optional[str] = None
     organization_id: Optional[str] = None
     type: BlockType
-    title: Optional[Dict[str, str]] = None
-    description: Optional[Dict[str, str]] = None
-    content: Optional[Dict[str, str]] = None
+    title: str
+    description: Optional[str] = None
+    content: str
     
 class BlockUpdate(BaseModel):
-    type: Optional[BlockType] = None
-    content: Optional[Dict[str, str]] = None
-    title: Optional[Dict[str, str]] = None
-    description: Optional[Dict[str, str]] = None
+    type: BlockType
+    content: str
+    title: str
+    description: str
 
 class BlockResponse(BlockBase):
     id: int
@@ -39,5 +39,5 @@ class BlockResponse(BlockBase):
     company_id: Optional[str]
     organization_id: Optional[str]
     user_id: Optional[str]
-    title: Optional[Dict[str, str]] = None
-    description: Optional[Dict[str, str]] = None
+    title: str
+    description: Optional[str] = None
