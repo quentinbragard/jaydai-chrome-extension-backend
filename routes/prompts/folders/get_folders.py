@@ -1,22 +1,24 @@
 # Updated routes/prompts/folders/get_folders.py
 
 from typing import List, Optional, Dict, Any
-from fastapi import Depends, HTTPException, Query
+from fastapi import Depends, HTTPException, Query, Request
 from models.common import APIResponse
 from utils import supabase_helpers
 from .helpers import supabase, router
 from utils.prompts import process_folder_for_response, process_template_for_response
 from utils.access_control import get_user_metadata
+from utils.middleware.localization import extract_locale_from_request
 
 async def fetch_accessible_folders(
     supabase,
     user_id: str,
     folder_types: List[str],
-    locale: str = "en"
+    locale: str,
 ) -> Dict[str, List[Dict]]:
     """
     Fetch all accessible folders by type with proper access control.
     """
+    
     user_metadata = get_user_metadata(supabase, user_id)
     
     folders_by_type = {}
@@ -70,16 +72,17 @@ async def fetch_accessible_folders(
 
 @router.get("", response_model=APIResponse[Dict])
 async def get_folders(
+    request: Request,
     type: Optional[str] = Query(None, description="Folder type filter (user, company, organization)"),
     withSubfolders: bool = Query(False, description="Include nested subfolders"),
     withTemplates: bool = Query(False, description="Include templates for each folder"),
-    locale: Optional[str] = Query("en", description="Locale for localized content"),
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ) -> APIResponse[Dict]:
     """
     Get folders with optional nested structure and templates.
     """
     try:
+        locale = extract_locale_from_request(request)
         # Determine which folder types to fetch
         if type:
             if type not in ["user", "company", "organization"]:
@@ -130,26 +133,6 @@ async def get_folders(
                     
                     # Add root templates to folder_id = 0
                     templates_by_folder[0] = processed_root_templates
-                    
-                    # Create virtual root folder
-                    virtual_root_folder = {
-                        "id": 0,
-                        "created_at": None,
-                        "user_id": user_id,
-                        "organization_id": None,
-                        "parent_folder_id": None,
-                        "content": {
-                            "en": "Root Templates",
-                            "fr": "Modèles Racine"
-                        },
-                        "description": "Templates not assigned to any folder",
-                        "company_id": None,
-                        "type": "user",
-                        "name": "Root Templates"
-                    }
-                    
-                    # Add the virtual folder to the beginning of folders list
-                    folders = [virtual_root_folder] + folders
             
             if not folders:
                 result["folders"][folder_type] = []

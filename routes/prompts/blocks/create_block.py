@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, Request  # ADD Request import
+from fastapi import Depends, HTTPException, Request 
 from models.prompts.blocks import BlockCreate, BlockResponse
 from models.common import APIResponse
 from utils import supabase_helpers
@@ -9,7 +9,7 @@ from .helpers import router, supabase, process_block_for_response
 @router.post("", response_model=APIResponse[BlockResponse])
 async def create_block(
     block: BlockCreate,
-    request: Request,  # ADD this parameter
+    request: Request,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ):
     """Create a new block"""

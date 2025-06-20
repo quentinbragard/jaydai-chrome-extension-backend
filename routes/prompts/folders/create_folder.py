@@ -32,7 +32,7 @@ async def create_folder(
 
         if response.data:
             from utils.prompts.folders import process_folder_for_response
-            processed_folder = process_folder_for_response(response.data[0])
+            processed_folder = process_folder_for_response(response.data[0, locale])
 
         return APIResponse(success=True, data=processed_folder)
     except Exception as e:
