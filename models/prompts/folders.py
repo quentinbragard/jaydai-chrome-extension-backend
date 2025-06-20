@@ -5,10 +5,10 @@ from enum import Enum
 
 class FolderBase(BaseModel):
     id: Optional[int] = None
-    title: Dict[str, str]
+    title: str
     
 class FolderCreate(FolderBase):
-    description: Optional[Dict[str, str]] = None
+    description: str = None
     user_id: Optional[str] = None
     organization_id: Optional[str] = None
     company_id: Optional[str] = None
@@ -20,8 +20,8 @@ class FolderUpdate(FolderCreate):
 
 class FolderResponse(FolderBase):
     id: int
-    title: Dict[str, str]
-    description: Optional[Dict[str, str]] = None
+    title: str
+    description: Optional[str] = None
     user_id: Optional[str] = None
     organization_id: Optional[str] = None
     company_id: Optional[str] = None

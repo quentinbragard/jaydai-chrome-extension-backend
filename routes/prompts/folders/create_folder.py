@@ -1,18 +1,24 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from models.common import APIResponse
 from utils import supabase_helpers
 from .helpers import router, supabase, create_localized_field
 from models.prompts.folders import FolderCreate
+from utils.middleware.localization import extract_locale_from_request 
+from utils.prompts.locales import ensure_localized_field
+
 
 @router.post("")
 async def create_folder(
     folder: FolderCreate,
+    request: Request,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ) -> APIResponse[dict]:
     """Create a new user folder."""
     try:
-        title_json = create_localized_field(folder.name)
-        description_json = create_localized_field(folder.description) if folder.description else {}
+        locale = extract_locale_from_request(request)
+        localized_title = ensure_localized_field(folder.title, locale) if folder.title else {}
+        localized_description = ensure_localized_field(folder.description, locale) if folder.description else {}
+
 
         response = supabase.table("prompt_folders").insert({
             "user_id": user_id,
@@ -20,9 +26,8 @@ async def create_folder(
             "company_id": None,
             "type": "user",
             "parent_folder_id": folder.parent_id,
-            "title": title_json,
-            "content": title_json,
-            "description": description_json,
+            "title": localized_title,
+            "description": localized_description,
         }).execute()
 
         if response.data:
