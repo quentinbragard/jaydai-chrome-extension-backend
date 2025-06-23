@@ -22,9 +22,6 @@ async def pin_folder(
         
         folder_type = determine_folder_type(folder.data)
         
-        # Only allow pinning of official and company folders
-        if folder_type == "user":
-            raise HTTPException(status_code=400, detail="Cannot pin user folders")
         
         # Verify user has access to this folder
         if folder_type == "company":
@@ -33,7 +30,7 @@ async def pin_folder(
             if not user_metadata.data or user_metadata.data.get("company_id") != folder.data.get("company_id"):
                 raise HTTPException(status_code=403, detail="Access denied to this company folder")
         
-        elif folder_type == "official" and folder.data.get("organization_id"):
+        elif folder_type == "organization" and folder.data.get("organization_id"):
             # Check if user belongs to this organization
             user_metadata = supabase.table("users_metadata").select("organization_ids").eq("user_id", user_id).single().execute()
             if not user_metadata.data:

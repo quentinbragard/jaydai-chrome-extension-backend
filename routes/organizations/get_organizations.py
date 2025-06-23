@@ -14,6 +14,7 @@ class OrganizationResponse(BaseModel):
     id: str
     name: str
     image_url: Optional[str] = None
+    banner_url: Optional[str] = None
     created_at: Optional[str] = None
 
 class APIResponse(BaseModel):
@@ -34,7 +35,7 @@ async def get_organizations(
             return APIResponse(success=True, data=[])
         
         # Fetch organizations data
-        response = supabase.table("organizations").select("id, name, image_url").in_("id", organization_ids).execute()
+        response = supabase.table("organizations").select("id, name, image_url, banner_url").in_("id", organization_ids).execute()
         
         organizations = []
         for org_data in (response.data or []):
@@ -42,6 +43,7 @@ async def get_organizations(
                 id=org_data["id"],
                 name=org_data["name"],
                 image_url=org_data.get("image_url"),
+                banner_url=org_data.get("banner_url"),
             )
             organizations.append(organization)
         

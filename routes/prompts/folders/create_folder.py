@@ -14,6 +14,7 @@ async def create_folder(
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ) -> APIResponse[dict]:
     """Create a new user folder."""
+
     try:
         locale = extract_locale_from_request(request)
         localized_title = ensure_localized_field(folder.title, locale) if folder.title else {}
@@ -30,10 +31,10 @@ async def create_folder(
             "description": localized_description,
         }).execute()
 
-        if response.data:
-            from utils.prompts.folders import process_folder_for_response
-            processed_folder = process_folder_for_response(response.data[0, locale])
+        if response.data and len(response.data) > 0:
+            return APIResponse(success=True, data=response.data[0])
+        else:
+            return APIResponse(success=False, data=None)
 
-        return APIResponse(success=True, data=processed_folder)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating folder: {str(e)}")
