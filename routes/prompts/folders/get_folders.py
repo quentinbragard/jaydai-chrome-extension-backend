@@ -20,6 +20,7 @@ async def fetch_accessible_folders(
     """
     
     user_metadata = get_user_metadata(supabase, user_id)
+    print(f"User metadataaaaaaaaa: {user_metadata}")
     
     folders_by_type = {}
     
@@ -55,7 +56,8 @@ async def fetch_accessible_folders(
                     .or_(",".join(conditions)) \
                     .execute()
                 # Filter to only pinned folders
-                folders = response.data or []        
+                folders = response.data or []
+                print(f"Reeeesponse: {response}")
         
             else:
                 print("Debug: No pinned folder IDs found for organization folders")
