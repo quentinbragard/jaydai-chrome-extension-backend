@@ -4,6 +4,8 @@ from .schemas import SignUpData
 from utils.notification_service import NotificationService
 from utils.prompts import get_all_folder_ids_by_type
 
+JAYDAI_ORG_ID="19864b30-936d-4a8d-996a-27d17f11f00f"
+
 @router.post("/sign_up")
 async def sign_up(sign_up_data: SignUpData):
     """Sign up a new user and pin all available folders."""
@@ -19,6 +21,7 @@ async def sign_up(sign_up_data: SignUpData):
                 "user_id": response.user.id,
                 "pinned_folder_ids": [],
                 "name": sign_up_data.name,
+                "organization_ids": [JAYDAI_ORG_ID],
                 "additional_email": None,
                 "phone_number": None,
                 "additional_organization": None

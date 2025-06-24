@@ -4,6 +4,8 @@ from .schemas import GoogleAuthRequest
 from utils.notification_service import NotificationService
 from utils.prompts import get_all_folder_ids_by_type
 
+JAYDAI_ORG_ID="19864b30-936d-4a8d-996a-27d17f11f00f"
+
 @router.post("/sign_in_with_google")
 async def sign_in_with_google(google_sign_in_data: GoogleAuthRequest):
     """Authenticate user via Google OAuth and pin all available folders for new users."""
@@ -29,6 +31,7 @@ async def sign_in_with_google(google_sign_in_data: GoogleAuthRequest):
                 "user_id": user_id,
                 "name": user_name,
                 "email": user_email,
+                "organization_ids": [JAYDAI_ORG_ID],
                 "google_id": response.user.user_metadata.get("sub", ""),
                 "pinned_folder_ids": [],
             }).execute()
