@@ -14,8 +14,7 @@ async def get_templates(
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ):
     """Get templates filtered by type or folder IDs."""
-    print("=================================")
-    #try:
+    try:
         query = supabase.table("prompt_templates").select("*")
 
         if type:
@@ -38,5 +37,5 @@ async def get_templates(
 
         return APIResponse(success=True, data=templates)
 
-    #except Exception as e:
-    #    raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving templates: {str(e)}")
