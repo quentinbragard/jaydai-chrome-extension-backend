@@ -283,7 +283,7 @@ def test_track_template_usage(test_client, mock_supabase, valid_auth_header, moc
     assert mock_supabase["templates"].table().update.called
 
 
-def test_pin_template_v2(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+def test_pin_template(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Test pinning a template using the pinned_template_ids field."""
 
     def table_side_effect(table_name):
@@ -327,7 +327,7 @@ def test_pin_template_v2(test_client, mock_supabase, valid_auth_header, mock_aut
     mock_supabase["templates"].table.side_effect = table_side_effect
 
     with patch('routes.prompts.templates.helpers.supabase', mock_supabase["templates"]):
-        response = test_client.post("/prompts/templates/pin-v2/1", headers=valid_auth_header)
+        response = test_client.post("/prompts/templates/pin/1", headers=valid_auth_header)
 
     assert response.status_code == 200
     assert response.json()["success"] is True

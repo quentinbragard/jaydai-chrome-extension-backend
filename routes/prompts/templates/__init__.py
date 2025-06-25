@@ -12,7 +12,7 @@ from . import track_template_usage
 from . import update_template
 from . import pin_template
 from . import get_pinned_templates
-from . import pin_template_v2
+from . import pin_template
 
 __all__ = [
     "router",
@@ -26,7 +26,6 @@ __all__ = [
     "get_unorganized_templates",
     "track_template_usage",
     "update_template",
-    "pin_template",  # Add this
-    "get_pinned_templates",  # Add this
-    "pin_template_v2",
+    "pin_template",
+    "get_pinned_templates"
 ]
