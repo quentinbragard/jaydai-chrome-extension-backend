@@ -3,8 +3,9 @@
 from fastapi import Depends, HTTPException
 from models.common import APIResponse
 from utils import supabase_helpers
-from .helpers import router, supabase, determine_folder_type
+from .helpers import router, supabase
 from utils.prompts.folders import add_folder_to_pinned
+from utils.access_control import user_has_access_to_folder
 
 @router.post("/pin/{folder_id}")
 async def pin_folder(
@@ -15,30 +16,11 @@ async def pin_folder(
     Pin a folder for a user (works with unified pinned_folder_ids).
     """
     try:
-        # Verify folder exists and determine its type
-        folder = supabase.table("prompt_folders").select("*").eq("id", folder_id).single().execute()
-        if not folder.data:
+        access = user_has_access_to_folder(supabase, user_id, folder_id)
+        if access is None:
             raise HTTPException(status_code=404, detail="Folder not found")
-        
-        folder_type = determine_folder_type(folder.data)
-        
-        
-        # Verify user has access to this folder
-        if folder_type == "company":
-            # Check if user belongs to the same company
-            user_metadata = supabase.table("users_metadata").select("company_id").eq("user_id", user_id).single().execute()
-            if not user_metadata.data or user_metadata.data.get("company_id") != folder.data.get("company_id"):
-                raise HTTPException(status_code=403, detail="Access denied to this company folder")
-        
-        elif folder_type == "organization" and folder.data.get("organization_id"):
-            # Check if user belongs to this organization
-            user_metadata = supabase.table("users_metadata").select("organization_ids").eq("user_id", user_id).single().execute()
-            if not user_metadata.data:
-                raise HTTPException(status_code=403, detail="Access denied to this organization folder")
-            
-            org_ids = user_metadata.data.get("organization_ids", [])
-            if folder.data.get("organization_id") not in org_ids:
-                raise HTTPException(status_code=403, detail="Access denied to this organization folder")
+        if not access:
+            raise HTTPException(status_code=403, detail="Access denied to this folder")
         
         # Add folder to pinned list
         result = await add_folder_to_pinned(supabase, user_id, folder_id)

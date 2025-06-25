@@ -287,19 +287,7 @@ def test_pin_template(test_client, mock_supabase, valid_auth_header, mock_authen
     """Test pinning a template using the pinned_template_ids field."""
 
     def table_side_effect(table_name):
-        if table_name == "prompt_templates":
-            table_mock = MagicMock()
-            select_mock = MagicMock()
-            eq_mock = MagicMock()
-            single_mock = MagicMock()
-            execute_mock = MagicMock()
-            execute_mock.data = {"id": 1, "type": "user", "user_id": mock_authenticate_user}
-            table_mock.select.return_value = select_mock
-            select_mock.eq.return_value = eq_mock
-            eq_mock.single.return_value = single_mock
-            single_mock.execute.return_value = execute_mock
-            return table_mock
-        elif table_name == "users_metadata":
+        if table_name == "users_metadata":
             table_mock = MagicMock()
             select_mock = MagicMock()
             eq_mock = MagicMock()
@@ -326,7 +314,8 @@ def test_pin_template(test_client, mock_supabase, valid_auth_header, mock_authen
 
     mock_supabase["templates"].table.side_effect = table_side_effect
 
-    with patch('routes.prompts.templates.helpers.supabase', mock_supabase["templates"]):
+    with patch('routes.prompts.templates.helpers.supabase', mock_supabase["templates"]), \
+         patch('routes.prompts.templates.pin_template.user_has_access_to_template', return_value=True):
         response = test_client.post("/prompts/templates/pin/1", headers=valid_auth_header)
 
     assert response.status_code == 200
