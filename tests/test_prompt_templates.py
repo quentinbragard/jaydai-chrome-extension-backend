@@ -281,3 +281,54 @@ def test_track_template_usage(test_client, mock_supabase, valid_auth_header, moc
     mock_supabase["templates"].table.assert_called_with("prompt_templates")
     assert mock_supabase["templates"].table().select().eq.called
     assert mock_supabase["templates"].table().update.called
+
+
+def test_pin_template_v2(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test pinning a template using the pinned_template_ids field."""
+
+    def table_side_effect(table_name):
+        if table_name == "prompt_templates":
+            table_mock = MagicMock()
+            select_mock = MagicMock()
+            eq_mock = MagicMock()
+            single_mock = MagicMock()
+            execute_mock = MagicMock()
+            execute_mock.data = {"id": 1, "type": "user", "user_id": mock_authenticate_user}
+            table_mock.select.return_value = select_mock
+            select_mock.eq.return_value = eq_mock
+            eq_mock.single.return_value = single_mock
+            single_mock.execute.return_value = execute_mock
+            return table_mock
+        elif table_name == "users_metadata":
+            table_mock = MagicMock()
+            select_mock = MagicMock()
+            eq_mock = MagicMock()
+            single_mock = MagicMock()
+            execute_mock = MagicMock()
+            execute_mock.data = {"pinned_template_ids": [2]}
+            table_mock.select.return_value = select_mock
+            select_mock.eq.return_value = eq_mock
+            eq_mock.single.return_value = single_mock
+            single_mock.execute.return_value = execute_mock
+
+            update_mock = MagicMock()
+            table_mock.update.return_value = update_mock
+            update_eq_mock = MagicMock()
+            update_mock.eq.return_value = update_eq_mock
+            update_eq_mock.execute.return_value = MagicMock(data=[])
+
+            insert_mock = MagicMock()
+            table_mock.insert.return_value = insert_mock
+            insert_mock.execute.return_value = MagicMock(data=[])
+
+            return table_mock
+        return MagicMock()
+
+    mock_supabase["templates"].table.side_effect = table_side_effect
+
+    with patch('routes.prompts.templates.helpers.supabase', mock_supabase["templates"]):
+        response = test_client.post("/prompts/templates/pin-v2/1", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+
