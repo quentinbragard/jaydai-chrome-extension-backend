@@ -5,7 +5,7 @@ from .helpers import router, supabase
 from utils.access_control import user_has_access_to_template
 
 @router.post("/pin/{template_id}")
-async def pin_template_v2(
+async def pin_template(
     template_id: int,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ) -> APIResponse[dict]:
@@ -25,6 +25,10 @@ async def pin_template_v2(
         .execute()
     )
     current_ids = user_meta_resp.data.get("pinned_template_ids", []) if user_meta_resp.data else []
+    current_ids = current_ids if type(current_ids) == list else []
+    print(f"User metadata response: {user_meta_resp}")
+    print(f"Current IDs: {current_ids}")
+    print(f"Template ID: {template_id}")
 
     if template_id not in current_ids:
         new_ids = current_ids + [template_id]
