@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, save, stats, notifications, prompts, user, organizations
+from routes import auth, save, stats, notifications, prompts, user, organizations, onboarding
 import time
 import json
 from supabase import create_client, Client
@@ -28,6 +28,7 @@ app.include_router(notifications.router)
 app.include_router(user.router)
 app.include_router(prompts.router)
 app.include_router(organizations.router, prefix="/organizations")  # New organizations router
+app.include_router(onboarding.router, prefix="/onboarding")  # New onboarding router
 
 @app.get("/")
 async def root():

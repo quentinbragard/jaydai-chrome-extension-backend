@@ -1,3 +1,4 @@
+# utils/prompts/locales.py
 """
 Utility functions for handling localization in prompts system.
 """
