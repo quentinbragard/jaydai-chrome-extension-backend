@@ -23,4 +23,5 @@ def process_block_for_response(block_data: dict, locale: str = "en") -> dict:
         "user_id": block_data.get("user_id"),
         "organization_id": block_data.get("organization_id"),
         "company_id": block_data.get("company_id"),
+        "published": block_data.get("published"),
     }
