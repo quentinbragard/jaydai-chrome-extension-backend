@@ -34,6 +34,7 @@ async def create_block(
             "user_id": user_id,
             "organization_id": block.organization_id,
             "company_id": block.company_id,
+            "published": True
         }
         
         response = supabase.table("prompt_blocks").insert(block_data).execute()

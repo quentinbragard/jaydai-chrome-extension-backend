@@ -16,6 +16,7 @@ class OrganizationResponse(BaseModel):
     image_url: Optional[str] = None
     banner_url: Optional[str] = None
     created_at: Optional[str] = None
+    website_url: Optional[str] = None
 
 class APIResponse(BaseModel):
     success: bool
@@ -36,7 +37,7 @@ async def get_organization_by_id(
             raise HTTPException(status_code=403, detail="Access denied to this organization")
         
         # Fetch organization data
-        response = supabase.table("organizations").select("id, name, image_url, banner_url, created_at").eq("id", organization_id).single().execute()
+        response = supabase.table("organizations").select("id, name, image_url, banner_url, created_at, website_url").eq("id", organization_id).single().execute()
         if not response.data:
             raise HTTPException(status_code=404, detail="Organization not found")
         
@@ -46,6 +47,7 @@ async def get_organization_by_id(
             name=org_data["name"],
             image_url=org_data.get("image_url"),
             banner_url=org_data.get("banner_url"),
+            website_url=org_data.get("website_url"),
         )
         
         return APIResponse(success=True, data=organization)

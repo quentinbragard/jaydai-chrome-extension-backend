@@ -26,12 +26,14 @@ class BlockCreate(BaseModel):
     title: str
     description: Optional[str] = None
     content: str
+    published: Optional[bool] = True
     
 class BlockUpdate(BaseModel):
     type: Optional[BlockType] = None
     content: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
+    published: Optional[bool] = True
 
 class BlockResponse(BlockBase):
     id: int
@@ -41,3 +43,4 @@ class BlockResponse(BlockBase):
     user_id: Optional[str]
     title: str
     description: Optional[str] = None
+    published: Optional[bool] = False
