@@ -18,10 +18,6 @@ def get_access_conditions(supabase: Client, user_id: str) -> list[str]:
     """Build OR conditions to filter records accessible by the user."""
     metadata = get_user_metadata(supabase, user_id)
     conditions = [f"user_id.eq.{user_id}"]
-    conditions.append(
-        "user_id.is.null,company_id.is.null,organization_id.is.null"
-    )
-
     company_id = metadata.get("company_id")
     if company_id:
         conditions.append(f"company_id.eq.{company_id}")

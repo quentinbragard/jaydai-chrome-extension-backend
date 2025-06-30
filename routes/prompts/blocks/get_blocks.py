@@ -16,7 +16,6 @@ async def get_blocks(
     try:
         # Extract locale from request
         locale = extract_locale_from_request(request)
-        print(f"🌍 GET_BLOCKS - LOCALE DETECTED: {locale}")  # DEBUG PRINT
         
         query = supabase.table("prompt_blocks").select("*")
         if type:
@@ -25,6 +24,7 @@ async def get_blocks(
         query = query.or_(",".join(access_conditions))
         query = query.order("created_at", desc=True)
         response = query.execute()
+
         
         # Process blocks for localized response
         processed_blocks = []
