@@ -31,6 +31,8 @@ async def get_blocks(
         for block_data in (response.data or []):
             processed_block = process_block_for_response(block_data, locale)
             processed_blocks.append(processed_block)
+            
+
         
         print(f"📤 GET_BLOCKS - RETURNING {len(processed_blocks)} blocks in {locale}")  # DEBUG PRINT
         
