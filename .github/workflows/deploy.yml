@@ -14,7 +14,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REPOSITORY: jaydai-backend
   IMAGE_NAME: archimind-backend
-  REGION: europe-west1  # Using your preferred region
+  REGION: europe-west9  # Using your preferred region
 
 jobs:
   test:
