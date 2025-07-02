@@ -12,7 +12,7 @@ import argparse
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Your assistant ID
-assistant_id = "asst_FlqEOzX2HkgxE0t43IOjjtNr"
+assistant_id = "asst_1ZMYZIZlCXTPV5I3slc33VNt"
 
 def call_assistant_and_get_response(assistant_id, user_prompt):
     """

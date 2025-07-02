@@ -34,7 +34,6 @@ async def get_templates(
             processed = process_template_for_response(template_data, locale)
             templates.append(processed)
             
-
         return APIResponse(success=True, data=templates)
 
     except Exception as e:
