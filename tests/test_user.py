@@ -9,8 +9,7 @@ def test_get_user_metadata(test_client, mock_supabase, valid_auth_header, mock_a
         "additional_email": "test@example.com",
         "phone_number": "+123456789",
         "additional_organization": "Test Org",
-        "pinned_official_folder_ids": [1, 2],
-        "pinned_organization_folder_ids": [3]
+        "pinned_folder_ids": [1, 2, 3]
     }
     
     # Create a mock response
@@ -27,7 +26,7 @@ def test_get_user_metadata(test_client, mock_supabase, valid_auth_header, mock_a
     assert "data" in response.json()
     assert response.json()["data"]["name"] == "Test User"
     assert response.json()["data"]["additional_email"] == "test@example.com"
-    assert response.json()["data"]["pinned_official_folder_ids"] == [1, 2]
+    assert response.json()["data"]["pinned_folder_ids"] == [1, 2, 3]
     
     # Verify Supabase client was called correctly - use assert_called instead of assert_called_once
     mock_supabase["user"].table.assert_called_with("users_metadata")
@@ -51,15 +50,13 @@ def test_get_user_metadata_not_found(test_client, mock_supabase, valid_auth_head
     # Check default values are provided
     assert response.json()["data"]["name"] is None
     assert response.json()["data"]["additional_email"] is None
-    assert response.json()["data"]["pinned_official_folder_ids"] == []
-    assert response.json()["data"]["pinned_organization_folder_ids"] == []
+    assert response.json()["data"]["pinned_folder_ids"] == []
 
 def test_get_folders_with_prompts(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Test getting folders with prompts."""
     # Mock the metadata response for pinned folders
     mock_metadata = {
-        "pinned_official_folder_ids": [1],
-        "pinned_organization_folder_ids": [3]
+        "pinned_folder_ids": [1, 2, 3]
     }
     
     metadata_mock = MagicMock()

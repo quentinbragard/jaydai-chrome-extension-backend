@@ -130,8 +130,9 @@ def test_pin_folder(test_client, mock_supabase, valid_auth_header, mock_authenti
     updated_pinned_folders = [1, 2]
     
     # Directly patch the function calls in the route
-    with patch('routes.prompts.folders.get_user_pinned_folders') as mock_get_pinned, \
-         patch('routes.prompts.folders.update_user_pinned_folders') as mock_update_pinned:
+    with patch('utils.prompts.folders.get_user_pinned_folders') as mock_get_pinned, \
+         patch('utils.prompts.folders.update_user_pinned_folders') as mock_update_pinned, \
+         patch('routes.prompts.folders.pin_folder.user_has_access_to_folder', return_value=True):
         
         # Setup mock responses
         mock_get_pinned.return_value = mock_pinned_folders
@@ -159,8 +160,8 @@ def test_unpin_folder(test_client, mock_supabase, valid_auth_header, mock_authen
     updated_pinned_folders = [2]
     
     # Directly patch the function calls in the route
-    with patch('routes.prompts.folders.get_user_pinned_folders') as mock_get_pinned, \
-         patch('routes.prompts.folders.update_user_pinned_folders') as mock_update_pinned:
+    with patch('utils.prompts.folders.get_user_pinned_folders') as mock_get_pinned, \
+         patch('utils.prompts.folders.update_user_pinned_folders') as mock_update_pinned:
         
         # Setup mock responses
         mock_get_pinned.return_value = mock_pinned_folders

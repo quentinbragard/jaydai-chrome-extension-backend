@@ -14,7 +14,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REPOSITORY: jaydai-backend
   IMAGE_NAME: archimind-backend
-  REGION: europe-west9  # Using your preferred region
+  REGION: europe-west1  # Using your preferred region
 
 jobs:
   test:
@@ -79,10 +79,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
+      - name: Set environment variables for migrations
+        id: set-migration-env
+        run: |
+          if [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
+          elif [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
+          else
+            # Default to dev for other branches
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
+          fi
+        
       - name: Run migrations
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           chmod +x scripts/run-migrations.sh
           ./scripts/run-migrations.sh
@@ -102,9 +114,21 @@ jobs:
           if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
             echo "ENVIRONMENT=prod" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-prod" >> $GITHUB_ENV
-          else
+            echo "CUSTOM_DOMAIN=api.jayd.ai" >> $GITHUB_ENV
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
+          elif [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
+            echo "CUSTOM_DOMAIN=api.dev.jayd.ai" >> $GITHUB_ENV
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
+          else
+            # Default to dev for other branches (like PRs)
+            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+            echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
           fi
           
       - name: Google Auth
@@ -116,15 +140,11 @@ jobs:
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
         
-      - name: Create Artifact Registry Repository
+      - name: Install gcloud beta components
         run: |
-          # Check if repository exists, create if it doesn't
-          if ! gcloud artifacts repositories describe ${{ env.REPOSITORY }} --location=${{ env.REGION }} &>/dev/null; then
-            gcloud artifacts repositories create ${{ env.REPOSITORY }} \
-              --repository-format=docker \
-              --location=${{ env.REGION }} \
-              --description="Docker repository for Jayd.ai backend"
-          fi
+          gcloud components install beta --quiet
+        
+      # Repository should already exist, so we skip creation
         
       - name: Configure Docker for Artifact Registry
         run: |
@@ -149,8 +169,70 @@ jobs:
           image: ${{ env.IMAGE_TAG }}
           flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --min-instances=0 --max-instances=10'
           env_vars: |
-            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            SUPABASE_URL=${{ env.SUPABASE_URL }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+
             
+      - name: Show Output
+        run: |
+          echo "Cloud Run URL: ${{ steps.deploy.outputs.url }}"
+          if [[ -n "${{ env.CUSTOM_DOMAIN }}" ]]; then
+            echo "Custom Domain URL: https://${{ env.CUSTOM_DOMAIN }}"
+          fi
+
+  deploy-version:
+    name: Deploy Version to Cloud Run
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/heads/v.')
+    needs: [test, migrate-database]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set environment for version branch
+        id: set-env
+        run: |
+          VERSION="${GITHUB_REF#refs/heads/}"
+          echo "ENVIRONMENT=version" >> $GITHUB_ENV
+          echo "SERVICE_NAME=api-$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          # Version branches use production credentials
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{ github.sha }}"
+          echo "Building image: $IMAGE_TAG"
+          docker build -t $IMAGE_TAG -f Dockerfile.prod .
+          docker push $IMAGE_TAG
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          image: ${{ env.IMAGE_TAG }}
+          flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --min-instances=0 --max-instances=10'
+          env_vars: |
+            SUPABASE_URL=${{ env.SUPABASE_URL }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+            VERSION=${{ env.VERSION }}
+
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}

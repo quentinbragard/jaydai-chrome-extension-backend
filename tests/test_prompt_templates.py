@@ -3,86 +3,102 @@ from unittest.mock import patch, MagicMock
 
 def test_get_templates(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Test getting all templates."""
-    # Create a direct mock response instead of relying on get_all_templates
-    mock_response = {
-        "success": True,
-        "pinnedFolders": {
-            "userTemplates": {
-                "templates": [
-                    {
-                        "id": 1,
-                        "folder_id": 1,
-                        "title": "User Template 1",
-                        "content": "This is a user template",
-                        "type": "user",
-                        "tags": ["personal"],
-                        "locale": "en"
-                    }
-                ],
-                "folders": [{"id": 1, "path": "/user/folder1"}]
-            },
-            "officialTemplates": {
-                "templates": [
-                    {
-                        "id": 3,
-                        "folder_id": 3,
-                        "title": "Official Template 1",
-                        "content": "This is an official template",
-                        "type": "official",
-                        "tags": ["starter"],
-                        "locale": "en"
-                    }
-                ],
-                "folders": [{"id": 3, "path": "/official/folder1", "is_pinned": True}]
-            },
-            "organizationTemplates": {
-                "templates": [],
-                "folders": []
-            }
+    returned_templates = [
+        {
+            "id": 1,
+            "folder_id": 1,
+            "title": {"en": "User Template 1"},
+            "content": {"en": "This is a user template"},
+            "type": "user",
+            "usage_count": 0,
+            "created_at": "2025-03-15T12:00:00+00:00"
         }
-    }
-    
-    # Patch the route function directly instead of mocking supabase client
-    with patch('routes.prompts.templates.get_all_templates', return_value=mock_response):
-        # Make the request
-        response = test_client.get("/prompts/templates/", headers=valid_auth_header)
-    
-    # Assertions
+    ]
+
+    execute_mock = MagicMock()
+    execute_mock.data = returned_templates
+    mock_supabase["templates"].table().select().execute.return_value = execute_mock
+
+    response = test_client.get("/prompts/templates/", headers=valid_auth_header)
+
     assert response.status_code == 200
-    assert "success" in response.json()
-    assert response.json()["success"] == True
-    assert "pinnedFolders" in response.json()
+    assert response.json()["success"] is True
+    assert len(response.json()["data"]) == 1
+
+def test_get_templates_by_folder_ids(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test filtering templates by folder IDs."""
+    returned_templates = [
+        {
+            "id": 2,
+            "folder_id": 5,
+            "title": {"en": "Folder Template"},
+            "content": {"en": "Folder content"},
+            "type": "user",
+            "usage_count": 0,
+            "created_at": "2025-03-15T12:00:00+00:00"
+        }
+    ]
+
+    execute_mock = MagicMock()
+    execute_mock.data = returned_templates
+    mock_supabase["templates"].table().select().in_().execute.return_value = execute_mock
+
+    response = test_client.get("/prompts/templates/?folder_ids=5", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["data"][0]["folder_id"] == 5
+
+def test_metadata_filtering(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Ensure metadata with null values is removed from the response."""
+    returned_templates = [
+        {
+            "id": 4,
+            "folder_id": 1,
+            "title": {"en": "Meta Template"},
+            "content": {"en": "Some content"},
+            "type": "user",
+            "metadata": {"goal": 302, "role": 35, "context": None},
+            "usage_count": 0,
+            "created_at": "2025-03-15T12:00:00+00:00"
+        }
+    ]
+
+    execute_mock = MagicMock()
+    execute_mock.data = returned_templates
+    mock_supabase["templates"].table().select().execute.return_value = execute_mock
+
+    response = test_client.get("/prompts/templates/", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["data"][0]["metadata"] == {"goal": 302, "role": 35}
 
 # Fix for test_get_templates_by_type
 def test_get_templates_by_type(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Test getting templates by type."""
-    # Mock the templates response for a specific type
-    mock_response = {
-        "success": True,
-        "templates": [
-            {
-                "id": 3,
-                "folder_id": 3,
-                "title": "Official Template 1",
-                "content": "This is an official template",
-                "type": "official",
-                "tags": ["starter"],
-                "locale": "en"
-            }
-        ],
-        "folders": ["official/folder1", "official/folder2"]
-    }
-    
-    # Patch the route function directly
-    with patch('routes.prompts.templates.get_official_templates', return_value=mock_response), \
-         patch('utils.supabase_helpers.supabase.auth.get_user'):
-        # Make the request
-        response = test_client.get("/prompts/templates/?type=official", headers=valid_auth_header)
+    returned_templates = [
+        {
+            "id": 3,
+            "folder_id": 3,
+            "title": {"en": "Official Template 1"},
+            "content": {"en": "This is an official template"},
+            "type": "official",
+            "usage_count": 0,
+            "created_at": "2025-03-15T12:00:00+00:00"
+        }
+    ]
+
+    execute_mock = MagicMock()
+    execute_mock.data = returned_templates
+    mock_supabase["templates"].table().select().eq().execute.return_value = execute_mock
+
+    response = test_client.get("/prompts/templates/?type=official", headers=valid_auth_header)
     
     # Assertions
     assert response.status_code == 200
-    assert "success" in response.json()
-    assert response.json()["success"] == True
+    assert response.json()["success"] is True
+    assert len(response.json()["data"]) == 1
 
 def test_create_template(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Test creating a new template."""
@@ -265,3 +281,43 @@ def test_track_template_usage(test_client, mock_supabase, valid_auth_header, moc
     mock_supabase["templates"].table.assert_called_with("prompt_templates")
     assert mock_supabase["templates"].table().select().eq.called
     assert mock_supabase["templates"].table().update.called
+
+
+def test_pin_template(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test pinning a template using the pinned_template_ids field."""
+
+    def table_side_effect(table_name):
+        if table_name == "users_metadata":
+            table_mock = MagicMock()
+            select_mock = MagicMock()
+            eq_mock = MagicMock()
+            single_mock = MagicMock()
+            execute_mock = MagicMock()
+            execute_mock.data = {"pinned_template_ids": [2]}
+            table_mock.select.return_value = select_mock
+            select_mock.eq.return_value = eq_mock
+            eq_mock.single.return_value = single_mock
+            single_mock.execute.return_value = execute_mock
+
+            update_mock = MagicMock()
+            table_mock.update.return_value = update_mock
+            update_eq_mock = MagicMock()
+            update_mock.eq.return_value = update_eq_mock
+            update_eq_mock.execute.return_value = MagicMock(data=[])
+
+            insert_mock = MagicMock()
+            table_mock.insert.return_value = insert_mock
+            insert_mock.execute.return_value = MagicMock(data=[])
+
+            return table_mock
+        return MagicMock()
+
+    mock_supabase["templates"].table.side_effect = table_side_effect
+
+    with patch('routes.prompts.templates.helpers.supabase', mock_supabase["templates"]), \
+         patch('routes.prompts.templates.pin_template.user_has_access_to_template', return_value=True):
+        response = test_client.post("/prompts/templates/pin/1", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+

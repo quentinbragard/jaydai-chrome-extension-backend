@@ -2,8 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from supabase import create_client, Client
 from utils import supabase_helpers
+from utils.prompts import (
+    get_all_folder_ids_by_type,
+    process_folder_for_response,
+    process_template_for_response
+)
 import dotenv
 import os
+from typing import List
 
 dotenv.load_dotenv()
 
@@ -17,28 +23,15 @@ class UserMetadata(BaseModel):
     additional_email: str | None = None
     phone_number: str | None = None
     additional_organization: str | None = None
-    organization_id: int | None = None  # Added field for organization_id
-    pinned_official_folder_ids: list[int] | None = None
-    pinned_organization_folder_ids: list[int] | None = None
-
-async def get_organization_folder_ids(organization_id):
-    """Get all folder IDs for a specific organization."""
-    if not organization_id:
-        return []
-        
-    try:
-        response = supabase.table("organization_folders").select("id").eq("organization_id", organization_id).execute()
-        return [folder['id'] for folder in (response.data or [])]
-    except Exception as e:
-        print(f"Error fetching organization folder IDs: {str(e)}")
-        return []
+    company_id: str | None = None
+    pinned_folder_ids: list[int] | None = None
 
 @router.get("/metadata")
 async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     """Get metadata for a specific user."""
     try:
         response = supabase.table("users_metadata") \
-            .select("name, additional_email, phone_number, additional_organization, organization_id, pinned_official_folder_ids, pinned_organization_folder_ids") \
+            .select("name, additional_email, phone_number, additional_organization, company_id, pinned_folder_ids, pinned_template_ids") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
@@ -51,9 +44,9 @@ async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_fro
                     "additional_email": None,
                     "phone_number": None,
                     "additional_organization": None,
-                    "organization_id": None,
-                    "pinned_official_folder_ids": [],
-                    "pinned_organization_folder_ids": []
+                    "company_id": None,
+                    "pinned_folder_ids": [],
+                    "pinned_template_ids": []
                 }
             }
             
@@ -70,7 +63,7 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
     try:
         # Check if user metadata exists
         existing_metadata = supabase.table("users_metadata") \
-            .select("organization_id, pinned_organization_folder_ids") \
+            .select("user_id") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
@@ -90,23 +83,24 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
         if metadata.additional_organization is not None:
             update_data["additional_organization"] = metadata.additional_organization
         
-        # Handle organization_id update and auto-pin organization folders
-        if metadata.organization_id is not None:
+        # Handle company_id update and auto-pin organization folders
+        if metadata.company_id is not None:
             # If organization has changed or is being set for the first time
-            current_org_id = existing_metadata.data.get("organization_id") if existing_metadata.data else None
-            if metadata.organization_id != current_org_id:
-                update_data["organization_id"] = metadata.organization_id
+            current_org_id = existing_metadata.data.get("company_id") if existing_metadata.data else None
+            if metadata.company_id != current_org_id:
+                update_data["company_id"] = metadata.organization_id
                 
-                # Auto-pin all folders for this organization
-                organization_folder_ids = await get_organization_folder_ids(metadata.organization_id)
+                # Auto-pin all folders for this organization using utility
+                organization_folder_ids = await get_all_folder_ids_by_type(
+                    supabase, 
+                    "organization", 
+                    str(metadata.organization_id)
+                )
                 update_data["pinned_organization_folder_ids"] = organization_folder_ids
         
         # Handle explicit updates to pinned folder IDs (only if provided)
-        if metadata.pinned_official_folder_ids is not None:
-            update_data["pinned_official_folder_ids"] = metadata.pinned_official_folder_ids
-            
-        if metadata.pinned_organization_folder_ids is not None:
-            update_data["pinned_organization_folder_ids"] = metadata.pinned_organization_folder_ids
+        if metadata.pinned_folder_ids is not None:
+            update_data["pinned_folder_ids"] = metadata.pinned_folder_ids
         
         # Only proceed if there are changes to make
         if update_data:
@@ -138,38 +132,50 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
 
 @router.get("/folders-with-prompts")
 async def get_folders_with_prompts(
-    locale: str = "en",  # Added locale parameter for content selection
+    locale: str = "en",
     user_id: str = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """Get all folders with their prompts, including pinned status."""
     try:
         # Get user metadata for pinned folders
         metadata = supabase.table("users_metadata") \
-            .select("pinned_official_folder_ids, pinned_organization_folder_ids") \
+            .select("pinned_folder_ids, company_id") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
             
-        pinned_official_folders = metadata.data.get('pinned_official_folder_ids', []) if metadata.data else []
-        pinned_org_folders = metadata.data.get('pinned_organization_folder_ids', []) if metadata.data else []
+        # Get the unified pinned folder IDs list
+        pinned_folder_ids = metadata.data.get('pinned_folder_ids', []) if metadata.data else []
+        user_company_id = metadata.data.get('company_id') if metadata.data else None
+        
+        print(f"Debug: Found pinned folder IDs for user {user_id}: {pinned_folder_ids}")
 
         # Get all prompts
         prompts = supabase.table("prompt_templates") \
             .select("*") \
             .execute()
 
-        # Get all folders
-        official_folders = supabase.table("official_folders") \
+        # Get folders from unified table
+        # Official folders (type = 'official')
+        official_folders_response = supabase.table("prompt_folders") \
             .select("*") \
+            .eq("type", "official") \
             .execute()
-            
-        org_folders = supabase.table("organization_folders") \
-            .select("*") \
-            .execute()
-            
-        user_folders = supabase.table("user_folders") \
+        
+        # Organization/Company folders (type = 'organization' or 'company')
+        company_folders_response = None
+        if user_company_id:
+            company_folders_response = supabase.table("prompt_folders") \
+                .select("*") \
+                .eq("company_id", user_company_id) \
+                .in_("type", ["organization", "company"]) \
+                .execute()
+        
+        # User folders (type = 'user')
+        user_folders_response = supabase.table("prompt_folders") \
             .select("*") \
             .eq("user_id", user_id) \
+            .eq("type", "user") \
             .execute()
 
         # Organize prompts by folder and type
@@ -180,127 +186,89 @@ async def get_folders_with_prompts(
         }
 
         # Process official folders
-        for folder in official_folders.data or []:
-            processed_folder = folder.copy()
-            
-            # Handle locale-specific folder name
-            name_field = f"name_{locale}" if locale in ["en", "fr"] else "name_en"
-            fallback_field = "name_en"
-            
-            if name_field in folder and folder[name_field]:
-                processed_folder["name"] = folder[name_field]
-            elif fallback_field in folder and folder[fallback_field]:
-                processed_folder["name"] = folder[fallback_field]
-            else:
-                processed_folder["name"] = "Unnamed Folder"
-                
-            # Remove locale-specific fields
-            processed_folder.pop("name_en", None)
-            processed_folder.pop("name_fr", None)
+        for folder in official_folders_response.data or []:
+            processed_folder = process_folder_for_response(folder, locale)
             
             # Process prompts for this folder
             folder_prompts = []
-            for p in prompts.data:
+            for p in prompts.data or []:
                 if p.get("folder_id") == folder["id"] and p.get("type") == "official":
-                    processed_prompt = p.copy()
-                    
-                    # Select content based on locale
-                    content_field = f"content_{locale}" if locale in ["en", "fr"] else "content_en"
-                    fallback_content = "content_en"
-                    
-                    if content_field in p and p[content_field]:
-                        processed_prompt["content"] = p[content_field]
-                    elif fallback_content in p and p[fallback_content]:
-                        processed_prompt["content"] = p[fallback_content]
-                    else:
-                        processed_prompt["content"] = ""
-                        
-                    # Handle title if it has locale versions
-                    title_field = f"title_{locale}" if locale in ["en", "fr"] else "title_en"
-                    fallback_title = "title_en"
-                    
-                    if title_field in p and p[title_field]:
-                        processed_prompt["title"] = p[title_field]
-                    elif fallback_title in p and p[fallback_title]:
-                        processed_prompt["title"] = p[fallback_title]
-                        
-                    # Remove locale fields
-                    processed_prompt.pop("content_en", None)
-                    processed_prompt.pop("content_fr", None)
-                    processed_prompt.pop("title_en", None)
-                    processed_prompt.pop("title_fr", None)
-                    
+                    processed_prompt = process_template_for_response(p, locale)
                     folder_prompts.append(processed_prompt)
                     
             processed_folder["prompts"] = folder_prompts
-            processed_folder["is_pinned"] = folder["id"] in pinned_official_folders
+            # Check if this folder is pinned using the unified list
+            processed_folder["is_pinned"] = folder["id"] in pinned_folder_ids
             organized_folders["official"].append(processed_folder)
 
-        # Process organization folders (similarly to official folders)
-        for folder in org_folders.data or []:
-            processed_folder = folder.copy()
-            
-            # Handle locale-specific folder name
-            name_field = f"name_{locale}" if locale in ["en", "fr"] else "name_en"
-            fallback_field = "name_en"
-            
-            if name_field in folder and folder[name_field]:
-                processed_folder["name"] = folder[name_field]
-            elif fallback_field in folder and folder[fallback_field]:
-                processed_folder["name"] = folder[fallback_field]
-            else:
-                processed_folder["name"] = "Unnamed Folder"
+        # Process organization/company folders
+        if company_folders_response:
+            for folder in company_folders_response.data or []:
+                processed_folder = process_folder_for_response(folder, locale)
                 
-            # Remove locale-specific fields
-            processed_folder.pop("name_en", None)
-            processed_folder.pop("name_fr", None)
-            
-            # Process prompts for this folder
-            folder_prompts = []
-            for p in prompts.data:
-                if p.get("folder_id") == folder["id"] and p.get("type") == "organization":
-                    processed_prompt = p.copy()
-                    
-                    # Select content based on locale
-                    content_field = f"content_{locale}" if locale in ["en", "fr"] else "content_en"
-                    fallback_content = "content_en"
-                    
-                    if content_field in p and p[content_field]:
-                        processed_prompt["content"] = p[content_field]
-                    elif fallback_content in p and p[fallback_content]:
-                        processed_prompt["content"] = p[fallback_content]
-                    else:
-                        processed_prompt["content"] = ""
+                # Process prompts for this folder
+                folder_prompts = []
+                for p in prompts.data or []:
+                    # Check for both 'organization' and 'company' type templates
+                    if (p.get("folder_id") == folder["id"] and 
+                        p.get("type") in ["organization", "company"]):
+                        processed_prompt = process_template_for_response(p, locale)
+                        folder_prompts.append(processed_prompt)
                         
-                    # Handle title if it has locale versions
-                    title_field = f"title_{locale}" if locale in ["en", "fr"] else "title_en"
-                    fallback_title = "title_en"
-                    
-                    if title_field in p and p[title_field]:
-                        processed_prompt["title"] = p[title_field]
-                    elif fallback_title in p and p[fallback_title]:
-                        processed_prompt["title"] = p[fallback_title]
-                        
-                    # Remove locale fields
-                    processed_prompt.pop("content_en", None)
-                    processed_prompt.pop("content_fr", None)
-                    processed_prompt.pop("title_en", None)
-                    processed_prompt.pop("title_fr", None)
-                    
-                    folder_prompts.append(processed_prompt)
-                    
-            processed_folder["prompts"] = folder_prompts
-            processed_folder["is_pinned"] = folder["id"] in pinned_org_folders
-            organized_folders["organization"].append(processed_folder)
+                processed_folder["prompts"] = folder_prompts
+                # Check if this folder is pinned using the unified list
+                processed_folder["is_pinned"] = folder["id"] in pinned_folder_ids
+                organized_folders["organization"].append(processed_folder)
 
-        # Process user folders (no name locale handling needed)
-        for folder in user_folders.data or []:
-            folder_prompts = [
-                p for p in prompts.data 
-                if p.get("folder_id") == folder["id"] and p.get("type") == "user"
-            ]
-            folder["prompts"] = folder_prompts
-            organized_folders["user"].append(folder)
+        # Process user folders + root templates
+        # First, handle folders with IDs
+        for folder in user_folders_response.data or []:
+            processed_folder = process_folder_for_response(folder, locale)
+            
+            # Get prompts for this folder
+            folder_prompts = []
+            for p in prompts.data or []:
+                if p.get("folder_id") == folder["id"] and p.get("type") == "user":
+                    processed_prompt = process_template_for_response(p, locale)
+                    folder_prompts.append(processed_prompt)
+            
+            processed_folder["prompts"] = folder_prompts
+            # User folders are never pinned (pinning only applies to official/org folders)
+            processed_folder["is_pinned"] = False
+            organized_folders["user"].append(processed_folder)
+
+        # Handle root templates (user templates with no folder_id)
+        root_prompts = []
+        for p in prompts.data or []:
+            if (p.get("folder_id") is None and 
+                p.get("type") == "user" and 
+                p.get("user_id") == user_id):
+                processed_prompt = process_template_for_response(p, locale)
+                root_prompts.append(processed_prompt)
+        
+        # If there are root prompts, create a virtual root folder
+        if root_prompts:
+            virtual_root_folder = {
+                "id": 0,
+                "created_at": None,
+                "user_id": user_id,
+                "organization_id": None,
+                "parent_folder_id": None,
+                "content": {
+                    "en": "Root Templates",
+                    "fr": "Modèles Racine"
+                },
+                "description": "Templates not assigned to any folder",
+                "company_id": None,
+                "type": "user",
+                "name": "Root Templates",
+                "prompts": root_prompts,
+                "is_pinned": False
+            }
+            
+            # Add virtual root folder at the beginning
+            organized_folders["user"].insert(0, virtual_root_folder)
+            print(f"Debug: Added virtual root folder with {len(root_prompts)} templates")
 
         return {
             "success": True,
@@ -308,3 +276,45 @@ async def get_folders_with_prompts(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching folders with prompts: {str(e)}")
+    
+@router.get("/onboarding/status")
+async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    try:
+        # Get user metadata for pinned folders
+        metadata = supabase.table("users_metadata") \
+            .select("job_type, job_industry, job_seniority, interests, signup_source") \
+            .eq("user_id", user_id) \
+            .single() \
+            .execute()
+
+        # Debug logging
+        print(f"Metadata response: {metadata.data}")
+
+        # Check if metadata exists and has any of the required fields
+        has_completed = False
+        if metadata.data:
+            job_type = metadata.data.get("job_type")
+            job_industry = metadata.data.get("job_industry")
+            job_seniority = metadata.data.get("job_seniority")
+            interests = metadata.data.get("interests")
+            signup_source = metadata.data.get("signup_source")
+            
+            has_completed = bool(job_type or job_industry or job_seniority or interests or signup_source)
+            
+            # Debug logging
+            print(f"Fields found: job_type={job_type}, job_industry={job_industry}, "
+                  f"job_seniority={job_seniority}, interests={interests}, "
+                  f"signup_source={signup_source}")
+            
+            print(has_completed)
+
+        return {
+            "success": True,
+            "data": {"has_completed_onboarding": has_completed}
+        }
+    except Exception as e:
+        print(f"Error in onboarding status: {str(e)}")  # Debug logging
+        raise HTTPException(status_code=500, detail=f"Error checking onboarding status: {str(e)}")
+
+    
+    
