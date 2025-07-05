@@ -41,7 +41,7 @@ app.include_router(onboarding.router, prefix="/onboarding")
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to Jaaaaaaydai API", "status": "running"}
+    return {"message": "Welcome to Jaydai API", "status": "running"}
 
 @app.get("/health")
 async def health_check():
