@@ -144,8 +144,6 @@ jobs:
         run: |
           gcloud components install beta --quiet
         
-      # Repository should already exist, so we skip creation
-        
       - name: Configure Docker for Artifact Registry
         run: |
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
@@ -172,8 +170,25 @@ jobs:
             SUPABASE_URL=${{ env.SUPABASE_URL }}
             SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
 
-      - name: Configure Custom Domain Mapping
+      - name: Check Domain Verification
         if: env.CUSTOM_DOMAIN != ''
+        id: check-domain
+        run: |
+          echo "Checking if domain ${{ env.CUSTOM_DOMAIN }} is verified..."
+          
+          # Check if domain is verified by attempting to list verified domains
+          VERIFIED_DOMAINS=$(gcloud domains list-user-verified --format="value(domain)" 2>/dev/null || echo "")
+          
+          if echo "$VERIFIED_DOMAINS" | grep -q "^${{ env.CUSTOM_DOMAIN }}$" || echo "$VERIFIED_DOMAINS" | grep -q "^jayd.ai$"; then
+            echo "DOMAIN_VERIFIED=true" >> $GITHUB_ENV
+            echo "Domain is verified!"
+          else
+            echo "DOMAIN_VERIFIED=false" >> $GITHUB_ENV
+            echo "Domain is not verified."
+          fi
+
+      - name: Configure Custom Domain Mapping
+        if: env.CUSTOM_DOMAIN != '' && env.DOMAIN_VERIFIED == 'true'
         run: |
           echo "Configuring custom domain mapping for ${{ env.CUSTOM_DOMAIN }}"
           
@@ -202,13 +217,27 @@ jobs:
           echo "DNS Records to configure:"
           cat dns_records.txt
 
+      - name: Domain Verification Instructions
+        if: env.CUSTOM_DOMAIN != '' && env.DOMAIN_VERIFIED == 'false'
+        run: |
+          echo "⚠️  Domain ${{ env.CUSTOM_DOMAIN }} is not verified!"
+          echo ""
+          echo "To verify your domain, please:"
+          echo "1. Go to Google Cloud Console → Cloud Run → Manage Custom Domains"
+          echo "2. Click 'Add Mapping' and enter: ${{ env.CUSTOM_DOMAIN }}"
+          echo "3. Follow the verification steps provided by Google"
+          echo "4. Add the required DNS records to your domain registrar"
+          echo ""
+          echo "Your service is deployed and accessible at: ${{ steps.deploy.outputs.url }}"
+          echo "Once domain is verified, re-run the deployment to configure custom domain mapping."
             
       - name: Show Output
         run: |
           echo "Cloud Run URL: ${{ steps.deploy.outputs.url }}"
-          if [[ -n "${{ env.CUSTOM_DOMAIN }}" ]]; then
+          if [[ "${{ env.DOMAIN_VERIFIED }}" == "true" && -n "${{ env.CUSTOM_DOMAIN }}" ]]; then
             echo "Custom Domain URL: https://${{ env.CUSTOM_DOMAIN }}"
-            echo "⚠️  Don't forget to configure your DNS records as shown above!"
+          elif [[ -n "${{ env.CUSTOM_DOMAIN }}" ]]; then
+            echo "Custom Domain: ${{ env.CUSTOM_DOMAIN }} (verification required)"
           fi
 
   deploy-version:
