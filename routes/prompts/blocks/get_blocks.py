@@ -10,6 +10,8 @@ from utils.middleware.localization import extract_locale_from_request
 async def get_blocks(
     request: Request,
     type: Optional[BlockType] = None,
+    published: Optional[bool] = None,
+    q: Optional[str] = None,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ):
     """Get blocks accessible to the user"""
@@ -21,6 +23,10 @@ async def get_blocks(
     print("query", query)
     if type:
         query = query.eq("type", type)
+    if published is not None:
+        query = query.eq("published", published)
+    if q:
+        query = query.or_(f"title.ilike.%{q}%,content.ilike.%{q}%")
     access_conditions = get_access_conditions(supabase, user_id)
     print("access_conditions", access_conditions)
     query = query.or_(",".join(access_conditions))

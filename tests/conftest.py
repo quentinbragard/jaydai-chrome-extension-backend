@@ -1,6 +1,13 @@
+import os
 import pytest
 from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
+
+
+# Ensure required environment variables for Supabase client
+os.environ.setdefault("SUPABASE_URL", "http://localhost")
+os.environ.setdefault("SUPABASE_SERVICE_ROLE_KEY", "eyJhbGciOiJIUzI1NiJ9.fake.fake")
+
 from main import app
 
 @pytest.fixture
@@ -18,6 +25,7 @@ def mock_supabase():
          patch("routes.prompts.supabase") as mock_prompts_supabase, \
          patch("routes.prompts.folders.supabase") as mock_folders_supabase, \
          patch("routes.prompts.templates.supabase") as mock_templates_supabase, \
+         patch("routes.prompts.templates.get_templates.supabase") as mock_get_templates_supabase, \
          patch("routes.user.supabase") as mock_user_supabase, \
          patch("utils.supabase_helpers.supabase") as mock_helpers_supabase, \
          patch("utils.notification_service.supabase") as mock_notification_service_supabase:
@@ -31,6 +39,7 @@ def mock_supabase():
             "prompts": mock_prompts_supabase,
             "folders": mock_folders_supabase,
             "templates": mock_templates_supabase,
+            "get_templates": mock_get_templates_supabase,
             "user": mock_user_supabase,
             "helpers": mock_helpers_supabase,
             "notification_service": mock_notification_service_supabase
@@ -75,10 +84,16 @@ def mock_supabase():
             # Setup mock for in_() method
             select_mock.in_.return_value = eq_mock
             eq_mock.in_.return_value = eq_mock
-            
+
             # Setup mock for is_() method
             select_mock.is_.return_value = eq_mock
             eq_mock.is_.return_value = eq_mock
+
+            # Setup or_ and ilike methods used in access control and search
+            select_mock.or_.return_value = eq_mock
+            eq_mock.or_.return_value = eq_mock
+            select_mock.ilike.return_value = eq_mock
+            eq_mock.ilike.return_value = eq_mock
             
             # Setup order method
             select_mock.order.return_value = eq_mock
