@@ -49,6 +49,54 @@ def test_get_templates_by_folder_ids(test_client, mock_supabase, valid_auth_head
     assert response.json()["success"] is True
     assert response.json()["data"][0]["folder_id"] == 5
 
+def test_get_templates_by_folder_id(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test filtering templates by a single folder ID."""
+    returned_templates = [
+        {
+            "id": 3,
+            "folder_id": 7,
+            "title": {"en": "Single Folder"},
+            "content": {"en": "Folder content"},
+            "type": "user",
+            "usage_count": 0,
+            "created_at": "2025-03-15T12:00:00+00:00"
+        }
+    ]
+
+    execute_mock = MagicMock()
+    execute_mock.data = returned_templates
+    mock_supabase["templates"].table().select().or_().eq().execute.return_value = execute_mock
+
+    response = test_client.get("/prompts/templates/?folder_id=7", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["data"][0]["folder_id"] == 7
+
+def test_get_templates_search(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Test searching templates by query string."""
+    returned_templates = [
+        {
+            "id": 4,
+            "folder_id": 1,
+            "title": {"en": "Query Template"},
+            "content": {"en": "Contains keyword"},
+            "type": "user",
+            "usage_count": 0,
+            "created_at": "2025-03-15T12:00:00+00:00"
+        }
+    ]
+
+    execute_mock = MagicMock()
+    execute_mock.data = returned_templates
+    mock_supabase["templates"].table().select().or_().execute.return_value = execute_mock
+
+    response = test_client.get("/prompts/templates/?q=keyword", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert len(response.json()["data"]) == 1
+
 def test_metadata_filtering(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Ensure metadata with null values is removed from the response."""
     returned_templates = [
