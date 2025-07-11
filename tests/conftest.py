@@ -1,6 +1,9 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
+import os
+os.environ.setdefault("SUPABASE_URL", "https://test.supabase.co")
+os.environ.setdefault("SUPABASE_SERVICE_ROLE_KEY", "ey.AA.BB")
 from main import app
 
 @pytest.fixture
