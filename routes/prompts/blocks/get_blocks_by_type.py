@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import Depends, HTTPException, Request  # ADD Request import
 from .helpers import router, supabase, get_access_conditions, process_block_for_response  # ADD process_block_for_response import
 from models.prompts.blocks import BlockResponse
@@ -10,6 +10,8 @@ from utils.middleware.localization import extract_locale_from_request  # ADD thi
 async def get_blocks_by_type(
     block_type: str,
     request: Request,  # ADD this parameter
+    published: Optional[bool] = None,
+    q: Optional[str] = None,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ):
     """Get all blocks of a specific type accessible to the user."""
@@ -19,6 +21,10 @@ async def get_blocks_by_type(
         print(f"🌍 GET_BLOCKS_BY_TYPE - LOCALE DETECTED: {locale} for type: {block_type}")  # DEBUG PRINT
         
         query = supabase.table("prompt_blocks").select("*").eq("type", block_type)
+        if published is not None:
+            query = query.eq("published", published)
+        if q:
+            query = query.or_(f"title.ilike.%{q}%,content.ilike.%{q}%")
         access_conditions = get_access_conditions(supabase, user_id)
         query = query.or_(",".join(access_conditions))
         query = query.order("created_at", desc=True)
