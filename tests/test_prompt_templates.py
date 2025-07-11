@@ -321,3 +321,36 @@ def test_pin_template(test_client, mock_supabase, valid_auth_header, mock_authen
     assert response.status_code == 200
     assert response.json()["success"] is True
 
+
+def test_get_template_by_id_success(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Template should be returned when user has access."""
+    template = {
+        "id": "1",
+        "title": {"en": "My Template"},
+        "content": {"en": "body"},
+        "type": "user",
+    }
+
+    response_mock = MagicMock()
+    response_mock.data = template
+    mock_supabase["templates"].table().select().eq().single().execute.return_value = response_mock
+
+    with patch('routes.prompts.templates.get_template_by_id.apply_access_conditions', side_effect=lambda q, *_: q):
+        response = test_client.get("/prompts/templates/1", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["data"]["id"] == "1"
+
+
+def test_get_template_by_id_not_found(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """A 404 should be returned when template is not accessible."""
+    response_mock = MagicMock()
+    response_mock.data = None
+    mock_supabase["templates"].table().select().eq().single().execute.return_value = response_mock
+
+    with patch('routes.prompts.templates.get_template_by_id.apply_access_conditions', side_effect=lambda q, *_: q):
+        response = test_client.get("/prompts/templates/1", headers=valid_auth_header)
+
+    assert response.status_code == 404
+
