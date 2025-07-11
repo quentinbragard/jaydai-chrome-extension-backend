@@ -4,7 +4,7 @@ from models.prompts.templates import TemplateResponse
 from models.common import APIResponse
 from utils import supabase_helpers
 from utils.prompts import process_template_for_response
-from utils.access_control import get_user_metadata
+from utils.access_control import apply_access_conditions
 from . import router, supabase
 
 @router.get("/{template_id}", response_model=APIResponse[TemplateResponse])
@@ -15,23 +15,14 @@ async def get_template_by_id(
 ):
     """Get a specific template by ID."""
     try:
-        response = supabase.table("prompt_templates").select("*").eq("id", template_id).single().execute()
+        query = supabase.table("prompt_templates").select("*").eq("id", template_id)
+        query = apply_access_conditions(query, supabase, user_id)
+        response = query.single().execute()
 
         if not response.data:
             raise HTTPException(status_code=404, detail="Template not found")
 
         template_data = response.data
-
-        if template_data.get("type") == "user" and template_data.get("user_id") != user_id:
-            raise HTTPException(status_code=403, detail="Access denied")
-        elif template_data.get("type") == "organization":
-            metadata = get_user_metadata(supabase, user_id)
-            if template_data.get("organization_id") not in (metadata.get("organization_ids") or []):
-                raise HTTPException(status_code=403, detail="Access denied")
-        elif template_data.get("type") == "company":
-            metadata = get_user_metadata(supabase, user_id)
-            if template_data.get("company_id") != metadata.get("company_id"):
-                raise HTTPException(status_code=403, detail="Access denied")
 
         processed_template = process_template_for_response(template_data, locale)
 

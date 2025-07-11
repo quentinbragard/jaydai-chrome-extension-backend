@@ -6,7 +6,7 @@ from models.common import APIResponse
 from utils import supabase_helpers
 from .helpers import supabase, router
 from utils.prompts import process_folder_for_response, process_template_for_response
-from utils.access_control import get_user_metadata
+from utils.access_control import get_user_metadata, apply_access_conditions
 from utils.middleware.localization import extract_locale_from_request
 
 async def fetch_accessible_folders(
@@ -21,46 +21,17 @@ async def fetch_accessible_folders(
     
     user_metadata = get_user_metadata(supabase, user_id)
     print(f"User metadataaaaaaaaa: {user_metadata}")
-    
+
     folders_by_type = {}
-    
+
     for folder_type in folder_types:
         folders = []
-        
-        if folder_type == "user":
-            # Get all user folders (not filtered by pinned for user folders)
-            response = supabase.table("prompt_folders").select("*").eq("user_id", user_id).eq("type", "user").execute()
+
+        if folder_type in ["user", "company", "organization"]:
+            query = supabase.table("prompt_folders").select("*").eq("type", folder_type)
+            query = apply_access_conditions(query, supabase, user_id)
+            response = query.execute()
             folders = response.data or []
-            
-                        
-        elif folder_type == "company":
-            # Get pinned company folders
-            company_id = user_metadata.get("company_id")
-            if company_id:
-                response = supabase.table("prompt_folders").select("*") \
-                    .eq("type", "company") \
-                    .eq("company_id", company_id) \
-                    .execute()
-                # Filter to only pinned folders
-                folders = response.data or []
-        
-        elif folder_type == "organization":
-            # Get pinned organization folders
-            organization_ids = user_metadata.get("organization_ids")
-            if organization_ids  and len(organization_ids) > 0:
-                conditions = []
-                for org_id in organization_ids:
-                    conditions.append(f"organization_id.eq.{org_id}")
-                response = supabase.table("prompt_folders").select("*") \
-                    .eq("type", "organization") \
-                    .or_(",".join(conditions)) \
-                    .execute()
-                # Filter to only pinned folders
-                folders = response.data or []
-                print(f"Reeeesponse: {response}")
-        
-            else:
-                print("Debug: No pinned folder IDs found for organization folders")
         
         # Process folders for response
         processed_folders = []
@@ -118,10 +89,10 @@ async def get_folders(
             # Handle special case for user folders with root templates
             if folder_type == "user" and withTemplates:
                 print(f"Debug: Fetching root templates for user_id: {user_id}")
-                root_templates_response = supabase.table("prompt_templates").select("*") \
-                    .eq("user_id", user_id) \
-                    .is_("folder_id", "null") \
-                    .execute()
+                root_query = supabase.table("prompt_templates").select("*") \
+                    .is_("folder_id", "null")
+                root_query = apply_access_conditions(root_query, supabase, user_id)
+                root_templates_response = root_query.execute()
                 
                 root_templates = root_templates_response.data or []
                 print(f"Debug: Found {len(root_templates)} root templates for user")

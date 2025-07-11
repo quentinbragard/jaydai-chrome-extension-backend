@@ -204,3 +204,81 @@ def test_update_pinned_folders(test_client, mock_supabase, valid_auth_header, mo
     
     # Verify the function was called twice
     assert mock_update_pinned.call_count == 2
+
+
+def test_get_folders_filters_inaccessible(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Ensure folders from other owners are not returned."""
+    user_id = mock_authenticate_user
+    metadata = {"company_id": "company1", "organization_ids": ["org1"]}
+
+    folders = [
+        {"id": 1, "type": "user", "user_id": user_id},
+        {"id": 2, "type": "user", "user_id": "other"},
+        {"id": 3, "type": "company", "company_id": "company1"},
+        {"id": 4, "type": "company", "company_id": "company2"},
+        {"id": 5, "type": "organization", "organization_id": "org1"},
+        {"id": 6, "type": "organization", "organization_id": "org2"},
+    ]
+
+    class QueryMock:
+        def __init__(self, data):
+            self.data = data
+            self.filters = []
+            self.or_str = None
+
+        def select(self, *args, **kwargs):
+            return self
+
+        def eq(self, field, value):
+            self.filters.append(("eq", field, value))
+            return self
+
+        def is_(self, field, value):
+            self.filters.append(("is", field, value))
+            return self
+
+        def in_(self, field, values):
+            self.filters.append(("in", field, values))
+            return self
+
+        def or_(self, cond):
+            self.or_str = cond
+            return self
+
+        def execute(self):
+            result = self.data
+            for typ, field, value in self.filters:
+                if typ == "eq":
+                    result = [r for r in result if r.get(field) == value]
+                elif typ == "is":
+                    if value == "null":
+                        result = [r for r in result if r.get(field) is None]
+                    else:
+                        result = [r for r in result if r.get(field) == value]
+                elif typ == "in":
+                    result = [r for r in result if r.get(field) in value]
+
+            if self.or_str:
+                conds = [c.split(".eq.") for c in self.or_str.split(",")]
+                result = [r for r in result if any(str(r.get(f)) == v for f, v in conds)]
+
+            return MagicMock(data=result)
+
+    def table_side_effect(name):
+        if name == "prompt_folders":
+            return QueryMock(folders)
+        return QueryMock([])
+
+    mock_supabase["folders"].table.side_effect = table_side_effect
+
+    with patch("routes.prompts.folders.helpers.supabase", mock_supabase["folders"]), \
+         patch("routes.prompts.folders.get_folders.supabase", mock_supabase["folders"]), \
+         patch("routes.prompts.folders.get_folders.get_user_metadata", return_value=metadata), \
+         patch("utils.access_control.get_user_metadata", return_value=metadata):
+        response = test_client.get("/prompts/folders/", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    data = response.json()["data"]["folders"]
+    assert [f["id"] for f in data.get("user", [])] == [1]
+    assert [f["id"] for f in data.get("company", [])] == [3]
+    assert [f["id"] for f in data.get("organization", [])] == [5]
