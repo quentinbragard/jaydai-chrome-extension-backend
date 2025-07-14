@@ -29,11 +29,13 @@ from . import (
     customer_portal,
     verify_session,
     pricing,
-    webhooks
+    webhooks,
+    extension_redirect
 )
 
 __all__ = [
     "router",
     "supabase",
     "stripe_service",
+    "extension_redirect",
 ]

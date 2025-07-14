@@ -8,6 +8,11 @@ from fastapi.testclient import TestClient
 os.environ.setdefault("SUPABASE_URL", "http://localhost")
 os.environ.setdefault("SUPABASE_SERVICE_ROLE_KEY", "eyJhbGciOiJIUzI1NiJ9.fake.fake")
 
+# Set dummy Stripe configuration for tests
+os.environ.setdefault("STRIPE_SECRET_KEY", "sk_test_dummy")
+os.environ.setdefault("STRIPE_MONTHLY_PRICE_ID", "price_dummy_month")
+os.environ.setdefault("STRIPE_YEARLY_PRICE_ID", "price_dummy_year")
+
 from main import app
 
 @pytest.fixture
