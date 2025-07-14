@@ -173,6 +173,10 @@ jobs:
           env_vars: |
             SUPABASE_URL=${{ env.SUPABASE_URL }}
             SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+            STRIPE_SECRET_KEY=${{ env.STRIPE_SECRET_KEY }}
+            STRIPE_WEBHOOK_SECRET=${{ env.STRIPE_WEBHOOK_SECRET }}
+            STRIPE_MONTHLY_PRICE_ID=${{ env.STRIPE_MONTHLY_PRICE_ID }}
+            STRIPE_YEARLY_PRICE_ID=${{ env.STRIPE_YEARLY_PRICE_ID }}
 
       - name: Check Domain Verification
         if: env.CUSTOM_DOMAIN != ''
@@ -263,6 +267,10 @@ jobs:
           # Version branches use production credentials
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
           echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
+          echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_PROD }}" >> $GITHUB_ENV
+          echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}" >> $GITHUB_ENV
+          echo "STRIPE_MONTHLY_PRICE_ID=${{ secrets.STRIPE_MONTHLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
+          echo "STRIPE_YEARLY_PRICE_ID=${{ secrets.STRIPE_YEARLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
 
       - name: Google Auth
         id: auth
@@ -296,6 +304,10 @@ jobs:
           env_vars: |
             SUPABASE_URL=${{ env.SUPABASE_URL }}
             SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+            STRIPE_SECRET_KEY=${{ env.STRIPE_SECRET_KEY }}
+            STRIPE_WEBHOOK_SECRET=${{ env.STRIPE_WEBHOOK_SECRET }}
+            STRIPE_MONTHLY_PRICE_ID=${{ env.STRIPE_MONTHLY_PRICE_ID }}
+            STRIPE_YEARLY_PRICE_ID=${{ env.STRIPE_YEARLY_PRICE_ID }}
             VERSION=${{ env.VERSION }}
 
       - name: Show Output
