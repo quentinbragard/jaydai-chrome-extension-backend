@@ -1,5 +1,6 @@
 # routes/stripe/create_checkout_session.py - UUID Corrected
 from fastapi import HTTPException, Depends
+from urllib.parse import urlparse
 from . import router, stripe_service
 from models.stripe import CreateCheckoutSessionRequest, CreateCheckoutSessionResponse
 from utils.auth import get_current_user, require_user_access
@@ -16,7 +17,13 @@ async def create_checkout_session(
     try:
         # Verify the user ID matches the authenticated user
         require_user_access(current_user, request.userId)
-        
+
+        # Validate success and cancel URLs
+        success_parts = urlparse(request.successUrl)
+        cancel_parts = urlparse(request.cancelUrl)
+        if success_parts.scheme not in ("http", "https") or cancel_parts.scheme not in ("http", "https"):
+            raise HTTPException(status_code=400, detail="Invalid redirect URL")
+
         result = await stripe_service.create_checkout_session(
             price_id=request.priceId,
             user_id=request.userId,
