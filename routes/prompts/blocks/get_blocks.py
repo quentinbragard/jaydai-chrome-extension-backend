@@ -27,9 +27,9 @@ async def get_blocks(
         query = query.eq("published", published)
     if q:
         query = query.or_(f"title.ilike.%{q}%,content.ilike.%{q}%")
-    access_conditions = get_access_conditions(supabase, user_id)
-    print("access_conditions", access_conditions)
-    query = query.or_(",".join(access_conditions))
+    #access_conditions = get_access_conditions(supabase, user_id)
+    #print("access_conditions", access_conditions)
+    #query = query.or_(",".join(access_conditions))
     query = query.order("created_at", desc=True)
     response = query.execute()
 
