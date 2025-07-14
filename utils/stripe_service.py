@@ -26,7 +26,20 @@ class StripeService:
         try:
             # Check if customer already exists
             customer = await self._get_or_create_customer(user_id, user_email)
-            
+
+            # Validate return URLs to avoid Stripe API errors
+            from urllib.parse import urlparse
+
+            for url_name, url_value in {"success_url": success_url, "cancel_url": cancel_url}.items():
+                parsed = urlparse(url_value)
+                scheme = parsed.scheme
+                if scheme not in ("http", "https"):
+                    logger.error(f"Invalid {url_name} provided: {url_value}")
+                    return {
+                        "success": False,
+                        "error": f"Invalid {url_name}"
+                    }
+
             # Create checkout session
             session = stripe.checkout.Session.create(
                 customer=customer.id,
