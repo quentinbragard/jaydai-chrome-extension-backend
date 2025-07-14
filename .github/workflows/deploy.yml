@@ -123,6 +123,10 @@ jobs:
             echo "CUSTOM_DOMAIN=api.dev.jayd.ai" >> $GITHUB_ENV
             echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
             echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_MONTHLY_PRICE_ID=${{ secrets.STRIPE_MONTHLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_YEARLY_PRICE_ID=${{ secrets.STRIPE_YEARLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
           else
             # Default to dev for other branches (like PRs)
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
