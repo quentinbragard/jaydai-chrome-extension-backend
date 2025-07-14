@@ -14,6 +14,7 @@ os.environ.setdefault("STRIPE_WEBHOOK_SECRET", "whsec_test")
 os.environ.setdefault("STRIPE_MONTHLY_PRICE_ID", "price_monthly")
 os.environ.setdefault("STRIPE_YEARLY_PRICE_ID", "price_yearly")
 
+
 from main import app
 
 @pytest.fixture
