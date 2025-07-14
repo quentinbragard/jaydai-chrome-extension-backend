@@ -18,11 +18,6 @@ async def create_checkout_session(
         # Verify the user ID matches the authenticated user
         require_user_access(current_user, request.userId)
 
-        # Validate success and cancel URLs
-        success_parts = urlparse(request.successUrl)
-        cancel_parts = urlparse(request.cancelUrl)
-        if success_parts.scheme not in ("http", "https") or cancel_parts.scheme not in ("http", "https"):
-            raise HTTPException(status_code=400, detail="Invalid redirect URL")
 
         result = await stripe_service.create_checkout_session(
             price_id=request.priceId,

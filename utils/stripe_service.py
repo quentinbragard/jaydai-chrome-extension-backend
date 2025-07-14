@@ -36,7 +36,7 @@ class StripeService:
                     'quantity': 1,
                 }],
                 mode='subscription',
-                success_url=success_url + '&session_id={CHECKOUT_SESSION_ID}',
+                success_url=success_url,
                 cancel_url=cancel_url,
                 metadata={
                     'user_id': user_id
