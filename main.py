@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, save, stats, notifications, prompts, user, organizations, onboarding
+from routes import auth, save, stats, notifications, prompts, user, organizations, onboarding, stripe
 import time
 import json
 from supabase import create_client, Client
@@ -36,6 +36,8 @@ app.include_router(user.router)
 app.include_router(prompts.router)
 app.include_router(organizations.router, prefix="/organizations")
 app.include_router(onboarding.router, prefix="/onboarding")
+# ADD THIS LINE - Include Stripe router
+app.include_router(stripe.router)
 
 # Rest of your existing main.py code remains unchanged...
 
