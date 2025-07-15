@@ -6,6 +6,7 @@ from datetime import datetime
 from supabase import Client
 from utils.stripe_config import stripe_config
 from models.stripe import SubscriptionStatusResponse
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,12 @@ class StripeService:
             # Check if customer already exists
             customer = await self._get_or_create_customer(user_id, user_email)
             
+            # Determine if the environment is production
+            is_prod = os.getenv("ENVIRONMENT") == "prod"
+            success_url_suffix = '&session-id={CHECKOUT_SESSION_ID}'
+            if not is_prod:
+                success_url_suffix += '&dev=true'
+            
             # Create checkout session
             session = stripe.checkout.Session.create(
                 customer=customer.id,
@@ -36,7 +43,7 @@ class StripeService:
                     'quantity': 1,
                 }],
                 mode='subscription',
-                success_url=success_url,
+                success_url=success_url + success_url_suffix,
                 cancel_url=cancel_url,
                 metadata={
                     'user_id': user_id
