@@ -346,16 +346,6 @@ class StripeService:
             current = self.supabase.table("users_metadata").select(
                 "subscription_status, subscription_plan"
             ).eq("user_id", user_id).single().execute()
-            print("current -->", current)
-            print("======================== ")
-            print("current.data -->", current.data)
-            print("======================== ")
-            print("current.data[subscription_status] -->", current.data["subscription_status"])
-            print("======================== ")
-            print("current.data[subscription_plan] -->", current.data["subscription_plan"])
-            print("======================== ")
-            print("subscription.items.data[0].price.id -->", subscription.items.data[0].price.id)
-            print("======================== ")
             if current.data:
                 old_status = current.data["subscription_status"]
                 old_plan = current.data["subscription_plan"]
@@ -364,6 +354,7 @@ class StripeService:
                 old_plan = None
 
             # Determine plan type from price ID
+            print("OKKKKKKKKK 1")
             price_id = subscription.items.data[0].price.id
             print("price_id -->", price_id)
             plan_id = None
@@ -372,6 +363,7 @@ class StripeService:
                 plan_id = "monthly"
             elif price_id == self.config.yearly_price_id:
                 plan_id = "yearly"
+            print("OKKKKKKKKK 2")
             print("plan_id -->", plan_id)
             
             # Update database
@@ -385,6 +377,7 @@ class StripeService:
                 ).isoformat(),
                 "subscription_cancel_at_period_end": subscription.cancel_at_period_end
             }
+            print("OKKKKKKKKK 3")
             print("update_data -->", update_data)
             print("======================== ")
             self.supabase.table("users_metadata").update(update_data).eq(
