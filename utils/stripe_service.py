@@ -397,7 +397,7 @@ class StripeService:
 
         record_id = await self._record_webhook_event(event_id, event_type, event_data)
         success = True
-        print("handle_webhook_event", event_type, event_data)
+        print("handle_webhook_event", event_type)
         try:
             if event_type == "customer.subscription.created":
                 await self._handle_subscription_created(event_id, event_data["object"])
@@ -429,8 +429,9 @@ class StripeService:
     
     async def _handle_subscription_created(self, event_id: str, subscription: Dict[str, Any]):
         """Handle subscription created event."""
-        print("subscription created", subscription)
+        print("Product -->", subscription["product"])
         user_id = subscription["metadata"].get("user_id")
+        print("user_id -->", user_id)
         if user_id:
             # Convert subscription dict to Stripe object for consistency
             stripe_subscription = stripe.Subscription.construct_from(subscription, stripe.api_key)
