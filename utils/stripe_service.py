@@ -355,12 +355,14 @@ class StripeService:
 
             # Determine plan type from price ID
             price_id = subscription.items.data[0].price.id
+            print("price_id -->", price_id)
             plan_id = None
             
             if price_id == self.config.monthly_price_id:
                 plan_id = "monthly"
             elif price_id == self.config.yearly_price_id:
                 plan_id = "yearly"
+            print("plan_id -->", plan_id)
             
             # Update database
             update_data = {
@@ -373,7 +375,8 @@ class StripeService:
                 ).isoformat(),
                 "subscription_cancel_at_period_end": subscription.cancel_at_period_end
             }
-            
+            print("update_data -->", update_data)
+            print("======================== ")
             self.supabase.table("users_metadata").update(update_data).eq(
                 "user_id", user_id
             ).execute()
