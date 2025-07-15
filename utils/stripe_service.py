@@ -350,11 +350,11 @@ class StripeService:
             print("======================== ")
             print("current.data -->", current.data)
             print("======================== ")
-            print("current[data] -->", current["data"])
+            print("current.data[subscription_status] -->", current.data["subscription_status"])
+            print("======================== ")
+            print("current.data[subscription_plan] -->", current.data["subscription_plan"])
             print("======================== ")
             print("subscription.items.data[0].price.id -->", subscription.items.data[0].price.id)
-            print("======================== ")
-            print("subscription.items.data[0].price.product -->", subscription.items.data[0].price.product)
             print("======================== ")
             if current.data:
                 old_status = current.data["subscription_status"]
