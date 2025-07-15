@@ -338,33 +338,42 @@ class StripeService:
         subscription: stripe.Subscription,
         stripe_event_id: Optional[str] = None,
     ):
-        print("IN HEEEEEEERE< USER ID -->", user_id)
         """Update user's subscription status in the database."""
         try:
-            current = self.supabase.table("users_metadata").select(
-                "subscription_status, subscription_plan"
-            ).eq("user_id", user_id).single().execute()
-            print("current -->", current)
-            print("======================== ")
-            if current.data:
-                old_status = current.data.get("subscription_status")
-                old_plan = current.data.get("subscription_plan")
-            else:
+            # Get current subscription status with better error handling
+            try:
+                current_response = self.supabase.table("users_metadata").select(
+                    "subscription_status, subscription_plan"
+                ).eq("user_id", user_id).maybe_single().execute()
+                
+                logger.info(f"Current response type: {type(current_response)}")
+                logger.info(f"Current response data: {current_response.data if hasattr(current_response, 'data') else 'No data attribute'}")
+                
+                if hasattr(current_response, 'data') and current_response.data:
+                    old_status = current_response.data.get("subscription_status")
+                    old_plan = current_response.data.get("subscription_plan")
+                else:
+                    old_status = None
+                    old_plan = None
+                    
+            except Exception as e:
+                logger.error(f"Error fetching current subscription status: {str(e)}")
                 old_status = None
                 old_plan = None
 
             # Determine plan type from price ID
             price_id = subscription.items.data[0].price.id
-            print("price_id -->", price_id)
-            plan_id = None
+            logger.info(f"Processing subscription with price_id: {price_id}")
             
+            plan_id = None
             if price_id == self.config.monthly_price_id:
                 plan_id = "monthly"
             elif price_id == self.config.yearly_price_id:
                 plan_id = "yearly"
-            print("plan_id -->", plan_id)
+            else:
+                logger.warning(f"Unknown price_id: {price_id}")
             
-            # Update database
+            # Prepare update data
             update_data = {
                 "stripe_customer_id": subscription.customer,
                 "stripe_subscription_id": subscription.id,
@@ -375,29 +384,58 @@ class StripeService:
                 ).isoformat(),
                 "subscription_cancel_at_period_end": subscription.cancel_at_period_end
             }
-            print("update_data -->", update_data)
-            print("======================== ")
-            self.supabase.table("users_metadata").update(update_data).eq(
-                "user_id", user_id
-            ).execute()
+            
+            logger.info(f"Updating user {user_id} with data: {update_data}")
+            
+            # Update database with upsert to handle both update and insert cases
+            try:
+                update_response = self.supabase.table("users_metadata").upsert(
+                    {
+                        "user_id": user_id,
+                        **update_data
+                    },
+                    on_conflict="user_id"
+                ).execute()
+                
+                logger.info(f"Update response: {update_response}")
+                
+                if not hasattr(update_response, 'data') or not update_response.data:
+                    logger.warning(f"Update may have failed for user {user_id}")
+                    
+            except Exception as e:
+                logger.error(f"Error updating subscription status: {str(e)}")
+                # Try with a regular update instead
+                try:
+                    update_response = self.supabase.table("users_metadata").update(
+                        update_data
+                    ).eq("user_id", user_id).execute()
+                    
+                    logger.info(f"Fallback update response: {update_response}")
+                    
+                except Exception as e2:
+                    logger.error(f"Fallback update also failed: {str(e2)}")
+                    raise e2
 
-            logger.info(
-                f"Updated subscription status for user {user_id}: {subscription.status}"
-            )
+            logger.info(f"Successfully updated subscription status for user {user_id}: {subscription.status}")
 
+            # Log subscription change if status or plan changed
             if old_status != update_data["subscription_status"] or old_plan != update_data["subscription_plan"]:
-                await self._log_subscription_change(
-                    user_id,
-                    old_status,
-                    update_data["subscription_status"],
-                    old_plan,
-                    update_data["subscription_plan"],
-                    stripe_event_id,
-                    {"subscription_id": subscription.id},
-                )
+                try:
+                    await self._log_subscription_change(
+                        user_id,
+                        old_status,
+                        update_data["subscription_status"],
+                        old_plan,
+                        update_data["subscription_plan"],
+                        stripe_event_id,
+                        {"subscription_id": subscription.id},
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to log subscription change: {str(e)}")
 
         except Exception as e:
             logger.error(f"Failed to update subscription status for user {user_id}: {str(e)}")
+            raise e
     
     async def handle_webhook_event(self, event: Dict[str, Any]) -> bool:
         """Handle Stripe webhook events and persist them."""
