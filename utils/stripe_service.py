@@ -350,6 +350,17 @@ class StripeService:
     ):
         """Update user's subscription status in the database."""
         try:
+            # Ensure required subscription fields are present. Some webhook
+            # payloads omit certain attributes, so fetch the full subscription
+            # object from Stripe when needed.
+            if not getattr(subscription, "current_period_end", None):
+                try:
+                    subscription = stripe.Subscription.retrieve(subscription.id)
+                except Exception as e:  # noqa: BLE001
+                    logger.warning(
+                        f"Failed to retrieve subscription {subscription.id}: {e}"
+                    )
+
             current = self.supabase.table("users_metadata").select(
                 "subscription_status, subscription_plan"
             ).eq("user_id", user_id).single().execute()
@@ -375,15 +386,14 @@ class StripeService:
                     plan_id = "yearly"
             
             # Update database
+            period_end = getattr(subscription, "current_period_end", None)
             update_data = {
                 "stripe_customer_id": subscription.customer,
                 "stripe_subscription_id": subscription.id,
                 "subscription_status": subscription.status,
                 "subscription_plan": plan_id,
-                "subscription_current_period_end": datetime.fromtimestamp(
-                    subscription.current_period_end
-                ).isoformat(),
-                "subscription_cancel_at_period_end": subscription.cancel_at_period_end
+                "subscription_current_period_end": datetime.fromtimestamp(period_end).isoformat() if period_end else None,
+                "subscription_cancel_at_period_end": subscription.cancel_at_period_end,
             }
             self.supabase.table("users_metadata").update(update_data).eq(
                 "user_id", user_id
