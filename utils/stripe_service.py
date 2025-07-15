@@ -429,7 +429,21 @@ class StripeService:
     
     async def _handle_subscription_created(self, event_id: str, subscription: Dict[str, Any]):
         """Handle subscription created event."""
-        print("Product -->", subscription["product"])
+        print("subscription -->", subscription)
+        print("======================== ")
+        print("Product -->", subscription["items"]["data"][0]["price"]["product"])
+        print("======================== ")
+        print("Product 2 -->", subscription.get("items", {}).get("data", [{}])[0].get("price", {}).get("product"))
+        print("======================== ")
+        print("Product 3 -->", subscription.get("product"))
+        print("======================== ")
+        print("Product 4 -->", subscription.get("items", {}).get("data", [{}])[0].get("price", {}).get("product"))
+        print("======================== ")
+        print("Product 5 -->", subscription.get("items", {}).get("data", [{}])[0].get("price", {}).get("product"))
+        print("======================== ")
+        print("Product 6 -->", subscription.get("items", {}).get("data", [{}])[0].get("price", {}).get("product"))
+
+
         user_id = subscription["metadata"].get("user_id")
         print("user_id -->", user_id)
         if user_id:
@@ -476,7 +490,6 @@ class StripeService:
         """Handle successful payment."""
         # Payment succeeded - subscription should be active
         subscription_id = invoice.get("subscription")
-        print("invoice", invoice)
         if subscription_id:
             try:
                 subscription = stripe.Subscription.retrieve(subscription_id)
