@@ -348,6 +348,14 @@ class StripeService:
             ).eq("user_id", user_id).single().execute()
             print("current -->", current)
             print("======================== ")
+            print("current.data -->", current.data)
+            print("======================== ")
+            print("current[data] -->", current["data"])
+            print("======================== ")
+            print("subscription.items.data[0].price.id -->", subscription.items.data[0].price.id)
+            print("======================== ")
+            print("subscription.items.data[0].price.product -->", subscription.items.data[0].price.product)
+            print("======================== ")
             if current.data:
                 old_status = current.data["subscription_status"]
                 old_plan = current.data["subscription_plan"]
