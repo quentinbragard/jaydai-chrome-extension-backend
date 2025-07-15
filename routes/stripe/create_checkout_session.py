@@ -23,7 +23,7 @@ async def create_checkout_session(
             price_id=request.priceId,
             user_id=request.userId,
             user_email=request.userEmail,
-            success_url=request.successUrl + f"?auth_token={get_auth_token(request)}",
+            success_url=request.successUrl + f"?auth_token={get_auth_token()}",
             cancel_url=request.cancelUrl
         )
         
