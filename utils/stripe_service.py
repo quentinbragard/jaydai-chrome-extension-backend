@@ -101,7 +101,7 @@ class StripeService:
                 )
             
             user_data = user_response.data
-            stripe_subscription_id = user_data.get("stripe_subscription_id")
+            stripe_subscription_id = user_data["stripe_subscription_id"]
             
             # If we have a subscription ID, verify with Stripe
             if stripe_subscription_id:
@@ -113,17 +113,17 @@ class StripeService:
                     is_active = stripe_status in ['active', 'trialing']
                     
                     # Update database if status has changed
-                    if user_data.get("subscription_status") != stripe_status:
+                    if user_data["subscription_status"] != stripe_status:
                         await self._update_subscription_status(user_id, subscription)
                     
                     return SubscriptionStatusResponse(
                         isActive=is_active,
-                        planId=user_data.get("subscription_plan"),
+                        planId=user_data["subscription_plan"],
                         currentPeriodEnd=datetime.fromtimestamp(
                             subscription.current_period_end
                         ).isoformat() if subscription.current_period_end else None,
                         cancelAtPeriodEnd=subscription.cancel_at_period_end or False,
-                        stripeCustomerId=user_data.get("stripe_customer_id"),
+                        stripeCustomerId=user_data["stripe_customer_id"],
                         stripeSubscriptionId=stripe_subscription_id
                     )
                     
@@ -132,11 +132,11 @@ class StripeService:
             
             # Return local status if Stripe lookup fails
             return SubscriptionStatusResponse(
-                isActive=user_data.get("subscription_status") == "active",
-                planId=user_data.get("subscription_plan"),
-                currentPeriodEnd=user_data.get("subscription_current_period_end"),
-                cancelAtPeriodEnd=user_data.get("subscription_cancel_at_period_end", False),
-                stripeCustomerId=user_data.get("stripe_customer_id"),
+                isActive=user_data["subscription_status"] == "active",
+                planId=user_data["subscription_plan"],
+                currentPeriodEnd=user_data["subscription_current_period_end"],
+                cancelAtPeriodEnd=user_data["subscription_cancel_at_period_end"],
+                stripeCustomerId=user_data["stripe_customer_id"],
                 stripeSubscriptionId=stripe_subscription_id
             )
             
@@ -159,7 +159,7 @@ class StripeService:
                 "stripe_subscription_id"
             ).eq("user_id", user_id).single().execute()
             
-            if not user_response.data or not user_response.data.get("stripe_subscription_id"):
+            if not user_response.data or not user_response.data["stripe_subscription_id"]:
                 logger.warning(f"No subscription found for user {user_id}")
                 return False
             
@@ -197,6 +197,8 @@ class StripeService:
                 return None
             
             customer_id = user_response.data["stripe_customer_id"]
+            print("customer_id -->", customer_id)
+            print("======================== ")
             
             # Create portal session
             session = stripe.billing_portal.Session.create(
@@ -267,7 +269,7 @@ class StripeService:
             "stripe_customer_id, name"
         ).eq("user_id", user_id).single().execute()
         
-        customer_id = user_response.data.get("stripe_customer_id") if user_response.data else None
+        customer_id = user_response.data["stripe_customer_id"]
         
         if customer_id:
             try:
@@ -276,7 +278,7 @@ class StripeService:
                 logger.warning(f"Stripe customer {customer_id} not found, creating new one")
         
         # Create new customer
-        customer_name = user_response.data.get("name") if user_response.data else None
+        customer_name = user_response.data["name"]
         customer = stripe.Customer.create(
             email=user_email,
             name=customer_name,
@@ -347,8 +349,8 @@ class StripeService:
             print("current -->", current)
             print("======================== ")
             if current.data:
-                old_status = current.data.get("subscription_status")
-                old_plan = current.data.get("subscription_plan")
+                old_status = current.data["subscription_status"]
+                old_plan = current.data["subscription_plan"]
             else:
                 old_status = None
                 old_plan = None
@@ -468,8 +470,8 @@ class StripeService:
             current = self.supabase.table("users_metadata").select(
                 "subscription_status, subscription_plan"
             ).eq("user_id", user_id).single().execute()
-            old_status = current.data.get("subscription_status") if current.data else None
-            old_plan = current.data.get("subscription_plan") if current.data else None
+            old_status = current.data["subscription_status"]
+            old_plan = current.data["subscription_plan"]
             print("old_status -->", old_status)
             print("old_plan -->", old_plan)
             print("======================== ")
