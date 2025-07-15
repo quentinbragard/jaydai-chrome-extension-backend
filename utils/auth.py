@@ -6,6 +6,7 @@ import os
 import jwt
 import uuid
 import logging
+from fastapi import Request
 
 logger = logging.getLogger(__name__)
 
@@ -157,3 +158,61 @@ def require_user_access(authenticated_user_id: str, target_user_id: str) -> None
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied: You can only access your own data"
         )
+        
+def verify_token(token: str) -> str:
+    """
+    Verify a JWT token and return the user ID.
+    This is a standalone function that can be used without FastAPI dependencies.
+    """
+    try:
+        # If using Supabase JWT
+        supabase_jwt_secret = os.getenv("SUPABASE_JWT_SECRET")
+        if supabase_jwt_secret:
+            decoded = jwt.decode(token, supabase_jwt_secret, algorithms=["HS256"])
+            return decoded.get("sub")
+        
+        # If using custom JWT - adjust according to your implementation
+        jwt_secret = os.getenv("JWT_SECRET")
+        if jwt_secret:
+            decoded = jwt.decode(token, jwt_secret, algorithms=["HS256"])
+            return decoded.get("user_id") or decoded.get("sub")
+        
+        # If no secret available, try to validate with Supabase
+        supabase_url = os.getenv("SUPABASE_URL")
+        supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+        
+        if supabase_url and supabase_key:
+            supabase = create_client(supabase_url, supabase_key)
+            # Try to get user with the token
+            user = supabase.auth.get_user(token)
+            if user and user.user:
+                return user.user.id
+        
+        raise Exception("Unable to verify token")
+        
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"Token verification error: {str(e)}")
+        raise HTTPException(status_code=401, detail="Token verification failed")
+
+def get_current_user_optional(request: Request) -> str | None:
+    """
+    Get current user from request, return None if not authenticated.
+    This is useful for endpoints that can work with or without authentication.
+    """
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return None
+            
+        if not auth_header.startswith('Bearer '):
+            return None
+            
+        token = auth_header[7:]  # Remove 'Bearer ' prefix
+        return verify_token(token)
+        
+    except Exception:
+        return None
