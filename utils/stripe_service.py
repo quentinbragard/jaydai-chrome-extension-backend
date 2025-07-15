@@ -380,10 +380,12 @@ class StripeService:
         """Handle successful payment."""
         # Payment succeeded - subscription should be active
         subscription_id = invoice.get("subscription")
+        print("invoice", invoice)
         if subscription_id:
             try:
                 subscription = stripe.Subscription.retrieve(subscription_id)
                 user_id = subscription.metadata.get("user_id")
+                print("user_id", user_id)
                 if user_id:
                     await self._update_subscription_status(user_id, subscription)
             except stripe.error.StripeError as e:
