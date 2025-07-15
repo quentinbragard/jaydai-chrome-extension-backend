@@ -23,8 +23,9 @@ async def create_checkout_session(
         result = await stripe_service.create_checkout_session(
             price_id=request.priceId,
             user_id=request.userId,
+            auth_token=auth_token,
             user_email=request.userEmail,
-            success_url=request.successUrl + f"?auth_token={auth_token}",
+            success_url=request.successUrl,
             cancel_url=request.cancelUrl
         )
         

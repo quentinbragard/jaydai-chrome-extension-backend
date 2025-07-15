@@ -19,6 +19,7 @@ class StripeService:
         self, 
         price_id: str, 
         user_id: str, 
+        auth_token: str,
         user_email: str, 
         success_url: str, 
         cancel_url: str
@@ -31,6 +32,8 @@ class StripeService:
             # Determine if the environment is production
             is_prod = os.getenv("ENVIRONMENT") == "prod"
             success_url_suffix = '&session-id={CHECKOUT_SESSION_ID}'
+            if auth_token:
+                success_url_suffix += f'&auth_token={auth_token}'
             if not is_prod:
                 success_url_suffix += '&dev=true'
             
