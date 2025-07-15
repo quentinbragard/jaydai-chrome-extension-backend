@@ -36,17 +36,13 @@ async def handle_stripe_webhook(
             logger.error("Invalid signature in webhook")
             raise HTTPException(status_code=400, detail="Invalid signature")
         
-        # Handle the event
-        event_type = event['type']
-        event_data = event['data']
-        
-        logger.info(f"Received webhook event: {event_type}")
-        
+        logger.info(f"Received webhook event: {event['type']}")
+
         # Process the event
-        success = await stripe_service.handle_webhook_event(event_type, event_data)
+        success = await stripe_service.handle_webhook_event(event)
         
         if not success:
-            logger.error(f"Failed to process webhook event: {event_type}")
+            logger.error(f"Failed to process webhook event: {event['type']}")
             raise HTTPException(status_code=500, detail="Failed to process webhook event")
         
         return {"success": True, "received": True}
