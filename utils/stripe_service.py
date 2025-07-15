@@ -55,7 +55,8 @@ class StripeService:
                 }
             )
             
-            logger.info(f"Created checkout session {session.id} for user {user_id}")
+            print(f"Created checkout session {session.id} for user {user_id}")
+            print(f"Success URL: {success_url + success_url_suffix}")
             
             return {
                 "success": True,
