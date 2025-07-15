@@ -3,7 +3,7 @@ from fastapi import HTTPException, Depends
 from urllib.parse import urlparse
 from . import router, stripe_service
 from models.stripe import CreateCheckoutSessionRequest, CreateCheckoutSessionResponse
-from utils.auth import get_current_user, require_user_access, get_auth_token
+from utils.auth import get_current_user, require_user_access, get_auth_token_dependency
 import logging
 
 logger = logging.getLogger(__name__)
@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 @router.post("/create-checkout-session", response_model=CreateCheckoutSessionResponse)
 async def create_checkout_session(
     request: CreateCheckoutSessionRequest,
-    current_user: str = Depends(get_current_user)
+    current_user: str = Depends(get_current_user),
+    auth_token: str = Depends(get_auth_token_dependency)
 ):
     """Create a Stripe checkout session for subscription payment."""
     try:
@@ -23,7 +24,7 @@ async def create_checkout_session(
             price_id=request.priceId,
             user_id=request.userId,
             user_email=request.userEmail,
-            success_url=request.successUrl + f"?auth_token={get_auth_token()}",
+            success_url=request.successUrl + f"?auth_token={auth_token}",
             cancel_url=request.cancelUrl
         )
         

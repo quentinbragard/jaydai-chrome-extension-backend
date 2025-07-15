@@ -216,10 +216,36 @@ def get_current_user_optional(request: Request) -> str | None:
         
     except Exception:
         return None
-    
-def get_auth_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+
+def get_auth_token_from_credentials(credentials: HTTPAuthorizationCredentials) -> str:
     """
-    Extract and validate user ID from JWT token.
-    Returns the user ID as a string UUID if valid, raises HTTPException if invalid.
+    Extract auth token from HTTPAuthorizationCredentials.
+    This is for use with FastAPI dependencies.
+    """
+    return credentials.credentials
+
+def get_auth_token_from_request(request: Request) -> str | None:
+    """
+    Extract auth token from request headers.
+    Returns the token string if present, None otherwise.
+    """
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return None
+            
+        if not auth_header.startswith('Bearer '):
+            return None
+            
+        return auth_header[7:]  # Remove 'Bearer ' prefix
+        
+    except Exception:
+        return None
+
+# If you need a dependency function for getting just the token:
+async def get_auth_token_dependency(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    """
+    FastAPI dependency to extract auth token from request.
+    Use this as a dependency in route handlers.
     """
     return credentials.credentials
