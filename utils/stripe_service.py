@@ -338,6 +338,7 @@ class StripeService:
         subscription: stripe.Subscription,
         stripe_event_id: Optional[str] = None,
     ):
+        print("IN HEEEEEEERE< USER ID -->", user_id)
         """Update user's subscription status in the database."""
         try:
             current = self.supabase.table("users_metadata").select(
@@ -429,26 +430,19 @@ class StripeService:
     
     async def _handle_subscription_created(self, event_id: str, subscription: Dict[str, Any]):
         """Handle subscription created event."""
-        print("subscription -->", subscription)
-        print("======================== ")
-        print("Product -->", subscription["items"]["data"][0]["price"]["product"])
-        print("======================== ")
-        print("Product 2 -->", subscription.get("items", {}).get("data", [{}])[0].get("price", {}).get("product"))
-        print("======================== ")
-        print("Product 3 -->", subscription.get("product"))
-        print("======================== ")
-        print("Product 4 -->", subscription.get("items", {}).get("data", [{}])[0].get("price", {}).get("product"))
-        print("======================== ")
-        print("Product 5 -->", subscription.get("items", {}).get("data", [{}])[0].get("price", {}).get("product"))
-        print("======================== ")
-        print("Product 6 -->", subscription.get("items", {}).get("data", [{}])[0].get("price", {}).get("product"))
 
 
         user_id = subscription["metadata"].get("user_id")
+        product_id = subscription["items"]["data"][0]["price"]["product"]
+        print("product_id -->", product_id)
+        print("======================== ")
         print("user_id -->", user_id)
+        print("======================== ")
         if user_id:
             # Convert subscription dict to Stripe object for consistency
             stripe_subscription = stripe.Subscription.construct_from(subscription, stripe.api_key)
+            print("stripe_subscription -->", stripe_subscription)
+            print("======================== ")
             await self._update_subscription_status(user_id, stripe_subscription, event_id)
     
     async def _handle_subscription_updated(self, event_id: str, subscription: Dict[str, Any]):
