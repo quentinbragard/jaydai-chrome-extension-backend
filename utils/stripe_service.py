@@ -159,7 +159,7 @@ class StripeService:
                 "stripe_subscription_id"
             ).eq("user_id", user_id).single().execute()
             
-            if not user_response.data or not user_response.data.get("stripe_subscription_id"):
+            if not user_response.data or not user_response.data["stripe_subscription_id"]:
                 logger.warning(f"No subscription found for user {user_id}")
                 return False
             
@@ -192,7 +192,7 @@ class StripeService:
                 "stripe_customer_id"
             ).eq("user_id", user_id).single().execute()
             
-            if not user_response.data or not user_response.data.get("stripe_customer_id"):
+            if not user_response.data or not user_response.data["stripe_customer_id"]:
                 logger.warning(f"No Stripe customer found for user {user_id}")
                 return None
             
@@ -468,8 +468,8 @@ class StripeService:
             current = self.supabase.table("users_metadata").select(
                 "subscription_status, subscription_plan"
             ).eq("user_id", user_id).single().execute()
-            old_status = current.data.get("subscription_status") if current.data else None
-            old_plan = current.data.get("subscription_plan") if current.data else None
+            old_status = current.data["subscription_status"]
+            old_plan = current.data["subscription_plan"]
 
             self.supabase.table("users_metadata").update({
                 "subscription_status": "cancelled",
