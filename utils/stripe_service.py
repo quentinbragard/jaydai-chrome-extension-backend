@@ -344,8 +344,14 @@ class StripeService:
             current = self.supabase.table("users_metadata").select(
                 "subscription_status, subscription_plan"
             ).eq("user_id", user_id).single().execute()
-            old_status = current.data.get("subscription_status") if current.data else None
-            old_plan = current.data.get("subscription_plan") if current.data else None
+            print("current -->", current)
+            print("======================== ")
+            if current.data:
+                old_status = current.data.get("subscription_status")
+                old_plan = current.data.get("subscription_plan")
+            else:
+                old_status = None
+                old_plan = None
 
             # Determine plan type from price ID
             price_id = subscription.items.data[0].price.id
