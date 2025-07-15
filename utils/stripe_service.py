@@ -354,7 +354,7 @@ class StripeService:
                 old_plan = None
 
             # Determine plan type from price ID
-            print("OKKKKKKKKK 1")
+            print("OKKKKKKKKK 1", subscription)
             price_id = subscription.items.data[0].price.id
             print("price_id -->", price_id)
             plan_id = None
