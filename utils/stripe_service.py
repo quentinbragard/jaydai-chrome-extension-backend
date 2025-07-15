@@ -38,6 +38,20 @@ class StripeService:
                 success_url_suffix += '&dev=true'
             
             # Create checkout session
+            # Determine plan identifier based on the provided price ID. This
+            # information will be stored on both the checkout session and the
+            # resulting subscription so that webhook processing can reliably
+            # update the user's plan even if price IDs change.
+            plan_id = None
+            if price_id == self.config.monthly_price_id:
+                plan_id = "monthly"
+            elif price_id == self.config.yearly_price_id:
+                plan_id = "yearly"
+
+            metadata = {"user_id": user_id}
+            if plan_id:
+                metadata["plan_id"] = plan_id
+
             session = stripe.checkout.Session.create(
                 customer=customer.id,
                 payment_method_types=['card'],
@@ -48,18 +62,14 @@ class StripeService:
                 mode='subscription',
                 success_url=success_url + success_url_suffix,
                 cancel_url=cancel_url,
-                metadata={
-                    'user_id': user_id
-                },
-                subscription_data={
-                    'metadata': {
-                        'user_id': user_id
-                    }
-                }
+                metadata=metadata,
+                subscription_data={'metadata': metadata}
             )
             
-            print(f"Created checkout session {session.id} for user {user_id}")
-            print(f"Success URL: {success_url + success_url_suffix}")
+            logger.info(
+                f"Created checkout session {session.id} for user {user_id}; "
+                f"Success URL: {success_url + success_url_suffix}"
+            )
             
             return {
                 "success": True,
@@ -197,8 +207,6 @@ class StripeService:
                 return None
             
             customer_id = user_response.data["stripe_customer_id"]
-            print("customer_id -->", customer_id)
-            print("======================== ")
             
             # Create portal session
             session = stripe.billing_portal.Session.create(
@@ -340,7 +348,6 @@ class StripeService:
         subscription: stripe.Subscription,
         stripe_event_id: Optional[str] = None,
     ):
-        print("IN HEEEEEEERE< USER ID -->", user_id)
         """Update user's subscription status in the database."""
         try:
             current = self.supabase.table("users_metadata").select(
@@ -353,18 +360,19 @@ class StripeService:
                 old_status = None
                 old_plan = None
 
-            # Determine plan type from price ID
-            print("OKKKKKKKKK 1", subscription)
-            price_id = subscription.items.data[0].price.id
-            print("price_id -->", price_id)
-            plan_id = None
-            
-            if price_id == self.config.monthly_price_id:
-                plan_id = "monthly"
-            elif price_id == self.config.yearly_price_id:
-                plan_id = "yearly"
-            print("OKKKKKKKKK 2")
-            print("plan_id -->", plan_id)
+            # Determine the plan ID. Prefer the value stored in the
+            # subscription metadata (written during checkout creation). This
+            # fallback to price ID comparison maintains backwards compatibility
+            # with older sessions where the metadata may not be present.
+            plan_id = subscription.metadata.get("plan_id")
+
+            price_id = None
+            if not plan_id:
+                price_id = subscription.items.data[0].price.id
+                if price_id == self.config.monthly_price_id:
+                    plan_id = "monthly"
+                elif price_id == self.config.yearly_price_id:
+                    plan_id = "yearly"
             
             # Update database
             update_data = {
@@ -377,9 +385,6 @@ class StripeService:
                 ).isoformat(),
                 "subscription_cancel_at_period_end": subscription.cancel_at_period_end
             }
-            print("OKKKKKKKKK 3")
-            print("update_data -->", update_data)
-            print("======================== ")
             self.supabase.table("users_metadata").update(update_data).eq(
                 "user_id", user_id
             ).execute()
@@ -410,7 +415,6 @@ class StripeService:
 
         record_id = await self._record_webhook_event(event_id, event_type, event_data)
         success = True
-        print("handle_webhook_event", event_type)
         try:
             if event_type == "customer.subscription.created":
                 await self._handle_subscription_created(event_id, event_data["object"])
@@ -445,16 +449,9 @@ class StripeService:
 
 
         user_id = subscription["metadata"].get("user_id")
-        product_id = subscription["items"]["data"][0]["price"]["product"]
-        print("product_id -->", product_id)
-        print("======================== ")
-        print("user_id -->", user_id)
-        print("======================== ")
         if user_id:
             # Convert subscription dict to Stripe object for consistency
             stripe_subscription = stripe.Subscription.construct_from(subscription, stripe.api_key)
-            print("stripe_subscription -->", stripe_subscription)
-            print("======================== ")
             await self._update_subscription_status(user_id, stripe_subscription, event_id)
     
     async def _handle_subscription_updated(self, event_id: str, subscription: Dict[str, Any]):
@@ -473,9 +470,6 @@ class StripeService:
             ).eq("user_id", user_id).single().execute()
             old_status = current.data["subscription_status"]
             old_plan = current.data["subscription_plan"]
-            print("old_status -->", old_status)
-            print("old_plan -->", old_plan)
-            print("======================== ")
 
             self.supabase.table("users_metadata").update({
                 "subscription_status": "cancelled",
@@ -503,7 +497,6 @@ class StripeService:
             try:
                 subscription = stripe.Subscription.retrieve(subscription_id)
                 user_id = subscription.metadata.get("user_id")
-                print("user_id", user_id)
                 if user_id:
                     await self._update_subscription_status(user_id, subscription, event_id)
             except stripe.error.StripeError as e:
