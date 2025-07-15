@@ -30,7 +30,7 @@ class StripeService:
             
             # Determine if the environment is production
             is_prod = os.getenv("ENVIRONMENT") == "prod"
-            success_url_suffix = '?session-id={CHECKOUT_SESSION_ID}'
+            success_url_suffix = '&session-id={CHECKOUT_SESSION_ID}'
             if not is_prod:
                 success_url_suffix += '&dev=true'
             
