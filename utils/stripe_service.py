@@ -429,6 +429,7 @@ class StripeService:
     
     async def _handle_subscription_created(self, event_id: str, subscription: Dict[str, Any]):
         """Handle subscription created event."""
+        print("subscription created", subscription)
         user_id = subscription["metadata"].get("user_id")
         if user_id:
             # Convert subscription dict to Stripe object for consistency
