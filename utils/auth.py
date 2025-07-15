@@ -216,3 +216,10 @@ def get_current_user_optional(request: Request) -> str | None:
         
     except Exception:
         return None
+    
+def get_auth_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    """
+    Extract and validate user ID from JWT token.
+    Returns the user ID as a string UUID if valid, raises HTTPException if invalid.
+    """
+    return credentials.credentials

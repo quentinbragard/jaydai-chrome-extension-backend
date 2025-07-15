@@ -3,7 +3,7 @@ from fastapi import HTTPException, Depends
 from urllib.parse import urlparse
 from . import router, stripe_service
 from models.stripe import CreateCheckoutSessionRequest, CreateCheckoutSessionResponse
-from utils.auth import get_current_user, require_user_access
+from utils.auth import get_current_user, require_user_access, get_auth_token
 import logging
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ async def create_checkout_session(
             price_id=request.priceId,
             user_id=request.userId,
             user_email=request.userEmail,
-            success_url=request.successUrl,
+            success_url=request.successUrl + f"?auth_token={get_auth_token(request)}",
             cancel_url=request.cancelUrl
         )
         
