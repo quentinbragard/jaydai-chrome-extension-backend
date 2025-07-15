@@ -17,6 +17,7 @@ async def handle_stripe_webhook(
     try:
         # Get the raw body
         body = await request.body()
+        print("body", body)
         
         if not stripe_signature:
             raise HTTPException(status_code=400, detail="Missing stripe-signature header")

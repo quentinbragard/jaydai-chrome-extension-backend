@@ -327,6 +327,7 @@ class StripeService:
     
     async def handle_webhook_event(self, event_type: str, event_data: Dict[str, Any]) -> bool:
         """Handle Stripe webhook events."""
+        print("handle_webhook_event", event_type, event_data)
         try:
             if event_type == "customer.subscription.created":
                 await self._handle_subscription_created(event_data["object"])

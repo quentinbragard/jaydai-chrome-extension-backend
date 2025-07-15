@@ -29,7 +29,7 @@ from . import (
     customer_portal,
     verify_session,
     pricing,
-    webhooks
+    webhook
 )
 
 __all__ = [
