@@ -355,3 +355,23 @@ async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user
     except Exception as e:
         print(f"Error in onboarding status: {str(e)}")  # Debug logging
         raise HTTPException(status_code=500, detail=f"Error checking onboarding status: {str(e)}")
+    
+@router.get("/subscription-status")
+async def get_subscription_status(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    try:
+        # Get user metadata for subscription status
+        response = supabase.table("users_metadata") \
+            .select("subscription_status, subscription_plan") \
+            .eq("user_id", user_id) \
+            .single() \
+            .execute()
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Subscription status not found for user")
+
+        return {
+            "success": True,
+            "data": response.data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error checking subscription status: {str(e)}")

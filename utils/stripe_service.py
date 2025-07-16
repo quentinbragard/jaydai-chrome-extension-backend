@@ -360,7 +360,9 @@ class StripeService:
                     logger.warning(
                         f"Failed to retrieve subscription {subscription.id}: {e}"
                     )
-
+            print("==================================\n")
+            print(subscription)
+            print("==================================\n")
             current = self.supabase.table("users_metadata").select(
                 "subscription_status, subscription_plan"
             ).eq("user_id", user_id).single().execute()
