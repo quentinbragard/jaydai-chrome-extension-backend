@@ -128,8 +128,9 @@ jobs:
             echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
             echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_DEV }}" >> $GITHUB_ENV
             echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_MONTHLY_PRICE_ID=${{ secrets.STRIPE_MONTHLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_YEARLY_PRICE_ID=${{ secrets.STRIPE_YEARLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_DEV }}" >> $GITHUB_ENV
           else
             # Default to dev for other branches (like PRs)
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
@@ -178,8 +179,9 @@ jobs:
             SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
             STRIPE_SECRET_KEY=${{ env.STRIPE_SECRET_KEY }}
             STRIPE_WEBHOOK_SECRET=${{ env.STRIPE_WEBHOOK_SECRET }}
-            STRIPE_MONTHLY_PRICE_ID=${{ env.STRIPE_MONTHLY_PRICE_ID }}
-            STRIPE_YEARLY_PRICE_ID=${{ env.STRIPE_YEARLY_PRICE_ID }}
+            STRIPE_PLUS_MONTHLY_PRICE_ID=${{ env.STRIPE_PLUS_MONTHLY_PRICE_ID }}
+            STRIPE_PLUS_YEARLY_PRICE_ID=${{ env.STRIPE_PLUS_YEARLY_PRICE_ID }}
+            STRIPE_PLUS_PRODUCT_ID=${{ env.STRIPE_PLUS_PRODUCT_ID }}
 
       - name: Check Domain Verification
         if: env.CUSTOM_DOMAIN != ''
@@ -272,8 +274,9 @@ jobs:
           echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
           echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_PROD }}" >> $GITHUB_ENV
           echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}" >> $GITHUB_ENV
-          echo "STRIPE_MONTHLY_PRICE_ID=${{ secrets.STRIPE_MONTHLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
-          echo "STRIPE_YEARLY_PRICE_ID=${{ secrets.STRIPE_YEARLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
+          echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
+          echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
+          echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_PROD }}" >> $GITHUB_ENV
 
       - name: Google Auth
         id: auth
@@ -309,8 +312,9 @@ jobs:
             SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
             STRIPE_SECRET_KEY=${{ env.STRIPE_SECRET_KEY }}
             STRIPE_WEBHOOK_SECRET=${{ env.STRIPE_WEBHOOK_SECRET }}
-            STRIPE_MONTHLY_PRICE_ID=${{ env.STRIPE_MONTHLY_PRICE_ID }}
-            STRIPE_YEARLY_PRICE_ID=${{ env.STRIPE_YEARLY_PRICE_ID }}
+            STRIPE_PLUS_MONTHLY_PRICE_ID=${{ env.STRIPE_PLUS_MONTHLY_PRICE_ID }}
+            STRIPE_PLUS_YEARLY_PRICE_ID=${{ env.STRIPE_PLUS_YEARLY_PRICE_ID }}
+            STRIPE_PLUS_PRODUCT_ID=${{ env.STRIPE_PLUS_PRODUCT_ID }}
             VERSION=${{ env.VERSION }}
 
       - name: Show Output

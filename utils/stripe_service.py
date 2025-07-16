@@ -375,15 +375,11 @@ class StripeService:
             # subscription metadata (written during checkout creation). This
             # fallback to price ID comparison maintains backwards compatibility
             # with older sessions where the metadata may not be present.
-            plan_id = subscription.metadata.get("plan_id")
-
-            price_id = None
-            if not plan_id:
-                price_id = subscription.items.data[0].price.id
-                if price_id == self.config.monthly_price_id:
-                    plan_id = "monthly"
-                elif price_id == self.config.yearly_price_id:
-                    plan_id = "yearly"
+            product_id = subscription.get('items').get('data')[0].get('plan').get('product')
+            if product_id == self.config.plus_product_id:
+                subscription_plan = "plus"
+            else:
+                subscription_plan = None
             
             # Update database
             period_end = getattr(subscription, "current_period_end", None)
@@ -391,7 +387,7 @@ class StripeService:
                 "stripe_customer_id": subscription.customer,
                 "stripe_subscription_id": subscription.id,
                 "subscription_status": subscription.status,
-                "subscription_plan": plan_id,
+                "subscription_plan": subscription_plan,
                 "subscription_current_period_end": datetime.fromtimestamp(period_end).isoformat() if period_end else None,
                 "subscription_cancel_at_period_end": subscription.cancel_at_period_end,
             }

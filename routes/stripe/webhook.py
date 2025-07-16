@@ -17,7 +17,9 @@ async def handle_stripe_webhook(
     try:
         # Get the raw body
         body = await request.body()
-        print("body", body)
+        # for elem in json.loads(body):
+        #     print(f"{elem} -> {json.loads(body)[elem]}")
+        #     print("\n")
         
         if not stripe_signature:
             raise HTTPException(status_code=400, detail="Missing stripe-signature header")
@@ -29,6 +31,7 @@ async def handle_stripe_webhook(
                 stripe_signature, 
                 stripe_config.webhook_secret
             )
+            
         except ValueError:
             logger.error("Invalid payload in webhook")
             raise HTTPException(status_code=400, detail="Invalid payload")
@@ -36,7 +39,7 @@ async def handle_stripe_webhook(
             logger.error("Invalid signature in webhook")
             raise HTTPException(status_code=400, detail="Invalid signature")
         
-        logger.info(f"Received webhook event: {event['type']}")
+        print(f"Received webhook event: {event['type']}")
 
         # Process the event
         success = await stripe_service.handle_webhook_event(event)

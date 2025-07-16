@@ -12,8 +12,8 @@ SUPABASE_URL=<your-supabase-url>
 SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
 STRIPE_SECRET_KEY=<your-stripe-secret-key>
 STRIPE_WEBHOOK_SECRET=<your-stripe-webhook-secret>
-STRIPE_MONTHLY_PRICE_ID=<your-stripe-monthly-price-id>
-STRIPE_YEARLY_PRICE_ID=<your-stripe-yearly-price-id>
+STRIPE_PLUS_MONTHLY_PRICE_ID=<your-stripe-monthly-price-id>
+STRIPE_PLUS_YEARLY_PRICE_ID=<your-stripe-yearly-price-id>
 ```
 
 The Chrome extension's frontend also requires Stripe URLs that integrate with

@@ -1,3 +1,4 @@
+# routes/user.py
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from supabase import create_client, Client
@@ -26,12 +27,15 @@ class UserMetadata(BaseModel):
     company_id: str | None = None
     pinned_folder_ids: list[int] | None = None
 
+class DataCollectionRequest(BaseModel):
+    data_collection: bool
+
 @router.get("/metadata")
 async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     """Get metadata for a specific user."""
     try:
         response = supabase.table("users_metadata") \
-            .select("name, additional_email, phone_number, additional_organization, company_id, pinned_folder_ids, pinned_template_ids, organization_ids") \
+            .select("name, additional_email, phone_number, additional_organization, company_id, pinned_folder_ids, pinned_template_ids, organization_ids, data_collection") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
@@ -46,7 +50,8 @@ async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_fro
                     "additional_organization": None,
                     "company_id": None,
                     "pinned_folder_ids": [],
-                    "pinned_template_ids": []
+                    "pinned_template_ids": [],
+                    "data_collection": True  # Default to True
                 }
             }
             
@@ -129,6 +134,41 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error updating user metadata: {str(e)}")
+
+@router.put("/data-collection")
+async def update_data_collection(request: DataCollectionRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    """Update user's data collection preference."""
+    try:
+        # Check if user metadata exists
+        existing_metadata = supabase.table("users_metadata") \
+            .select("user_id") \
+            .eq("user_id", user_id) \
+            .single() \
+            .execute()
+        
+        update_data = {"data_collection": request.data_collection}
+        
+        if existing_metadata.data:
+            # Update existing record
+            response = supabase.table("users_metadata") \
+                .update(update_data) \
+                .eq("user_id", user_id) \
+                .execute()
+        else:
+            # Create new record
+            update_data["user_id"] = user_id
+            response = supabase.table("users_metadata") \
+                .insert(update_data) \
+                .execute()
+        
+        return {
+            "success": True,
+            "data": response.data[0] if response.data else None,
+            "message": f"Data collection {'enabled' if request.data_collection else 'disabled'}"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating data collection preference: {str(e)}")
 
 @router.get("/folders-with-prompts")
 async def get_folders_with_prompts(
@@ -315,6 +355,3 @@ async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user
     except Exception as e:
         print(f"Error in onboarding status: {str(e)}")  # Debug logging
         raise HTTPException(status_code=500, detail=f"Error checking onboarding status: {str(e)}")
-
-    
-    
