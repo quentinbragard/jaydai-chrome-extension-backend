@@ -13,14 +13,8 @@ async def create_customer_portal_session(supabase: Client, user_id: str, return_
     if not sub_resp.data:
         logger.warning("No Stripe customer found for user %s", user_id)
         return None
-
-    print("==================================\n")
-    print(sub_resp.data)
-    print("==================================\n")
     customer_id = sub_resp.data[0]["stripe_customer_id"]
-    print("==================================\n")
-    print(customer_id)
-    print("==================================\n")
+
     try:
         session = stripe.billing_portal.Session.create(customer=customer_id, return_url=return_url)
         logger.info("Created customer portal session for user %s", user_id)
