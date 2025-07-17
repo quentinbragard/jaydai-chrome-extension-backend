@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 
 def test_get_templates(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Test getting all templates."""
@@ -188,6 +188,25 @@ def test_create_template(test_client, mock_supabase, valid_auth_header, mock_aut
     # Verify Supabase client was called correctly
     mock_supabase["templates"].table.assert_called_with("prompt_templates")
     assert mock_supabase["templates"].table().insert.called
+
+
+def test_create_template_limit_paywall(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Should return 402 when user exceeds free template limit."""
+    count_response = MagicMock()
+    count_response.count = 5
+    count_response.data = [{}] * 5
+    mock_supabase["templates"].table().select().eq().execute.return_value = count_response
+
+    sub_status = MagicMock(isActive=False, planId=None)
+
+    with patch('routes.prompts.templates.create_template.stripe_service.get_subscription_status', AsyncMock(return_value=sub_status)):
+        response = test_client.post(
+            "/prompts/templates/",
+            json={"title": "t", "content": "c", "type": "user"},
+            headers=valid_auth_header,
+        )
+
+    assert response.status_code == 402
 
 def test_update_template(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
     """Test updating an existing template."""
@@ -401,4 +420,27 @@ def test_get_template_by_id_not_found(test_client, mock_supabase, valid_auth_hea
         response = test_client.get("/prompts/templates/1", headers=valid_auth_header)
 
     assert response.status_code == 404
+
+
+def test_get_template_by_id_paywall(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Return 402 when template requires subscription and user has none."""
+    template = {
+        "id": "1",
+        "title": {"en": "My Template"},
+        "content": {"en": "body"},
+        "type": "user",
+        "is_free": True,
+    }
+
+    response_mock = MagicMock()
+    response_mock.data = template
+    mock_supabase["templates"].table().select().eq().single().execute.return_value = response_mock
+
+    sub_status = MagicMock(isActive=False, planId=None)
+
+    with patch('routes.prompts.templates.get_template_by_id.apply_access_conditions', side_effect=lambda q, *_: q), \
+         patch('routes.prompts.templates.get_template_by_id.stripe_service.get_subscription_status', AsyncMock(return_value=sub_status)):
+        response = test_client.get("/prompts/templates/1", headers=valid_auth_header)
+
+    assert response.status_code == 402
 

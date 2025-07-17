@@ -6,6 +6,8 @@ from utils import supabase_helpers
 from utils.prompts import process_template_for_response, validate_block_access, normalize_localized_field
 from utils.access_control import get_user_metadata, user_has_access_to_folder
 from utils.middleware.localization import extract_locale_from_request
+from utils.stripe_config import stripe_config
+from routes.stripe import stripe_service
 from . import router, supabase
 
 @router.post("", response_model=APIResponse[TemplateResponse])
@@ -24,6 +26,24 @@ async def create_template(
         
         # Get user metadata
         user_metadata = get_user_metadata(supabase, user_id)
+
+        # Enforce template limit for free users
+        count_resp = (
+            supabase.table("prompt_templates")
+            .select("id", count="exact")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        existing_count = getattr(count_resp, "count", None)
+        if existing_count is None:
+            existing_count = len(count_resp.data or [])
+        if existing_count >= 5:
+            sub_status = await stripe_service.get_subscription_status(user_id)
+            if not (
+                sub_status.isActive and
+                sub_status.planId == stripe_config.plus_product_id
+            ):
+                raise HTTPException(status_code=402, detail="Subscription required")
         
         # Validate folder access if folder_id is provided
         if template.folder_id:

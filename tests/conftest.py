@@ -13,6 +13,7 @@ os.environ.setdefault("STRIPE_SECRET_KEY", "sk_test_123")
 os.environ.setdefault("STRIPE_WEBHOOK_SECRET", "whsec_test")
 os.environ.setdefault("STRIPE_PLUS_MONTHLY_PRICE_ID", "price_monthly")
 os.environ.setdefault("STRIPE_PLUS_YEARLY_PRICE_ID", "price_yearly")
+os.environ.setdefault("STRIPE_PLUS_PRODUCT_ID", "plus")
 
 
 from main import app
@@ -35,7 +36,10 @@ def mock_supabase():
          patch("routes.prompts.templates.get_templates.supabase") as mock_get_templates_supabase, \
          patch("routes.user.supabase") as mock_user_supabase, \
          patch("utils.supabase_helpers.supabase") as mock_helpers_supabase, \
-         patch("utils.notification_service.supabase") as mock_notification_service_supabase:
+         patch("utils.notification_service.supabase") as mock_notification_service_supabase, \
+         patch("routes.prompts.templates.get_template_by_id.stripe_service.get_subscription_status") as mock_get_sub_status1, \
+         patch("routes.prompts.templates.create_template.stripe_service.get_subscription_status") as mock_get_sub_status2, \
+         patch("routes.prompts.blocks.create_block.stripe_service.get_subscription_status") as mock_get_sub_status3:
         
         # Configure all mocks to have the same behavior
         mocks = {
@@ -165,7 +169,12 @@ def mock_supabase():
                 
                 mock.get_user_templates = MagicMock()
                 mock.get_organization_templates = MagicMock()
-        
+
+        default_status = MagicMock(isActive=True, planId="plus")
+        mock_get_sub_status1.return_value = default_status
+        mock_get_sub_status2.return_value = default_status
+        mock_get_sub_status3.return_value = default_status
+
         yield mocks
 
 @pytest.fixture

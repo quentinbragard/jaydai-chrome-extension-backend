@@ -5,6 +5,8 @@ from models.common import APIResponse
 from utils import supabase_helpers
 from utils.prompts import process_template_for_response
 from utils.access_control import apply_access_conditions
+from utils.stripe_config import stripe_config
+from routes.stripe import stripe_service
 from . import router, supabase
 
 @router.get("/{template_id}", response_model=APIResponse[TemplateResponse])
@@ -23,6 +25,14 @@ async def get_template_by_id(
             raise HTTPException(status_code=404, detail="Template not found")
 
         template_data = response.data
+
+        if template_data.get("is_free"):
+            sub_status = await stripe_service.get_subscription_status(user_id)
+            if not (
+                sub_status.isActive and
+                sub_status.planId == stripe_config.plus_product_id
+            ):
+                raise HTTPException(status_code=402, detail="Subscription required")
 
         processed_template = process_template_for_response(template_data, locale)
 

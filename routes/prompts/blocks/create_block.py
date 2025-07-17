@@ -6,6 +6,8 @@ from utils import supabase_helpers
 from utils.middleware.localization import extract_locale_from_request 
 from utils.prompts.locales import ensure_localized_field
 from utils.access_control import get_user_metadata
+from utils.stripe_config import stripe_config
+from routes.stripe import stripe_service
 from .helpers import router, supabase, process_block_for_response
 
 @router.post("", response_model=APIResponse[BlockResponse])
@@ -20,6 +22,24 @@ async def create_block(
         
         # Get user metadata for validation
         user_metadata = get_user_metadata(supabase, user_id)
+
+        # Enforce block limit for free users
+        count_resp = (
+            supabase.table("prompt_blocks")
+            .select("id", count="exact")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        existing_count = getattr(count_resp, "count", None)
+        if existing_count is None:
+            existing_count = len(count_resp.data or [])
+        if existing_count >= 5:
+            sub_status = await stripe_service.get_subscription_status(user_id)
+            if not (
+                sub_status.isActive and
+                sub_status.planId == stripe_config.plus_product_id
+            ):
+                raise HTTPException(status_code=402, detail="Subscription required")
         
         # Validate organization/company access if specified
         if block.organization_id:
