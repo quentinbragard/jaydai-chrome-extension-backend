@@ -48,6 +48,11 @@ async def create_checkout_session(
 
     session_params = {
         "customer": customer.id,
+        "locale": "auto",
+        "customer_email": user_email,
+        "client_reference_id": user_id,
+        "automatic_tax": {"enabled": True},
+        "invoice_creation": {"enabled": True},
         "payment_method_types": ["card"],
         "line_items": [{"price": price_id, "quantity": 1}],
         "mode": "subscription",
