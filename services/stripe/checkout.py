@@ -1,6 +1,6 @@
 import os
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import stripe
 from supabase import Client
 
@@ -19,6 +19,7 @@ async def create_checkout_session(
     user_email: str,
     success_url: str,
     cancel_url: str,
+    redirect_url: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Create a Stripe checkout session."""
     existing = await subscriptions.get_subscription_status(supabase, user_id)
@@ -37,9 +38,11 @@ async def create_checkout_session(
         metadata["plan_id"] = plan_id
 
     is_prod = os.getenv("ENVIRONMENT") == "prod"
-    suffix = f"&session_id={{CHECKOUT_SESSION_ID}}"
+    suffix = f"?session_id={{CHECKOUT_SESSION_ID}}"
     if auth_token:
         suffix += f"&auth_token={auth_token}"
+    if redirect_url:
+        suffix += f"&redirect_url={redirect_url}"
     if not is_prod:
         suffix += "&dev=true"
 

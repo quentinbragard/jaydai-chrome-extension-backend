@@ -1,13 +1,14 @@
 # routes/stripe/subscription_status.py
 from fastapi import HTTPException, Depends, Path
 from . import router, stripe_service
+from models.common import APIResponse
 from models.stripe import SubscriptionStatusResponse
 from utils.auth import get_current_user
 import logging
 
 logger = logging.getLogger(__name__)
 
-@router.get("/subscription-status/{user_id}", response_model=SubscriptionStatusResponse)
+@router.get("/subscription-status/{user_id}", response_model=APIResponse[SubscriptionStatusResponse])
 async def get_subscription_status(
     user_id: str = Path(..., description="User ID to get subscription status for"),
     current_user: str = Depends(get_current_user)
@@ -19,7 +20,7 @@ async def get_subscription_status(
             raise HTTPException(status_code=403, detail="Unauthorized: Can only access your own subscription status")
         
         subscription_status = await stripe_service.get_subscription_status(user_id)
-        return subscription_status
+        return APIResponse(success=True, data=subscription_status)
         
     except HTTPException:
         raise
