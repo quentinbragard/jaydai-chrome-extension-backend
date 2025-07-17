@@ -8,15 +8,19 @@ logger = logging.getLogger(__name__)
 
 async def create_customer_portal_session(supabase: Client, user_id: str, return_url: str) -> Optional[str]:
     """Create a customer portal session for managing a subscription."""
-    user_response = supabase.table("users_metadata").select(
-        "stripe_customer_id"
-    ).eq("user_id", user_id).single().execute()
+    sub_resp = supabase.table("stripe_subscriptions").select("stripe_customer_id").eq("user_id", user_id).in_("status", ["active", "trialing"]).execute()
 
-    if not user_response.data or not user_response.data.get("stripe_customer_id"):
+    if not sub_resp.data:
         logger.warning("No Stripe customer found for user %s", user_id)
         return None
 
-    customer_id = user_response.data["stripe_customer_id"]
+    print("==================================\n")
+    print(sub_resp.data)
+    print("==================================\n")
+    customer_id = sub_resp.data[0]["stripe_customer_id"]
+    print("==================================\n")
+    print(customer_id)
+    print("==================================\n")
     try:
         session = stripe.billing_portal.Session.create(customer=customer_id, return_url=return_url)
         logger.info("Created customer portal session for user %s", user_id)
