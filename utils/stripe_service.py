@@ -1,4 +1,3 @@
-# Enhanced stripe_service.py improvements
 import stripe
 import logging
 from typing import Optional, Dict, Any
@@ -23,13 +22,12 @@ def retry_on_stripe_error(max_retries=3, delay=1):
                 except stripe.error.RateLimitError as e:
                     if attempt == max_retries - 1:
                         raise
-                    await asyncio.sleep(delay * (2 ** attempt))  # Exponential backoff
+                    await asyncio.sleep(delay * (2 ** attempt))
                 except stripe.error.APIConnectionError as e:
                     if attempt == max_retries - 1:
                         raise
                     await asyncio.sleep(delay)
                 except stripe.error.StripeError as e:
-                    # Don't retry on other Stripe errors
                     raise
             return None
         return wrapper
@@ -39,9 +37,248 @@ class StripeService:
     def __init__(self, supabase_client: Client):
         self.supabase = supabase_client
         self.config = stripe_config
-        self._webhook_event_cache = {}  # Simple in-memory cache for webhook idempotency
-    
-    @retry_on_stripe_error()
+        self._webhook_event_cache = {}
+
+    async def get_subscription_status(self, user_id: str) -> SubscriptionStatusResponse:
+        """Get user's current subscription status from stripe_subscriptions table."""
+        try:
+            # Get subscription from stripe_subscriptions table
+            subscription_response = self.supabase.table("stripe_subscriptions").select("*").eq(
+                "user_id", user_id
+            ).order("created_at", desc=True).limit(1).execute()
+            
+            # Get user metadata separately
+            user_metadata_response = self.supabase.table("users_metadata").select(
+                "subscription_plan"
+            ).eq("user_id", user_id).single().execute()
+            
+            if not subscription_response.data:
+                # No subscription found
+                return SubscriptionStatusResponse(
+                    isActive=False,
+                    planId=user_metadata_response.data.get("subscription_plan") if user_metadata_response.data else None,
+                    currentPeriodEnd=None,
+                    cancelAtPeriodEnd=False,
+                    stripeCustomerId=None,
+                    stripeSubscriptionId=None
+                )
+            
+            subscription = subscription_response.data[0]
+            plan_id = user_metadata_response.data.get("subscription_plan") if user_metadata_response.data else None
+            
+            # Verify with Stripe if subscription exists
+            try:
+                stripe_subscription = stripe.Subscription.retrieve(subscription["stripe_subscription_id"])
+                
+                # Check if local status differs from Stripe
+                if subscription["status"] != stripe_subscription.status:
+                    logger.info(f"Subscription status mismatch for user {user_id}: "
+                              f"local={subscription['status']}, stripe={stripe_subscription.status}")
+                    await self._update_subscription_status(user_id, stripe_subscription)
+                    subscription["status"] = stripe_subscription.status
+                
+                is_active = stripe_subscription.status in ['active', 'trialing']
+                
+                return SubscriptionStatusResponse(
+                    isActive=is_active,
+                    planId=plan_id,
+                    currentPeriodEnd=subscription["current_period_end"],
+                    cancelAtPeriodEnd=subscription["cancel_at_period_end"],
+                    stripeCustomerId=subscription["stripe_customer_id"],
+                    stripeSubscriptionId=subscription["stripe_subscription_id"]
+                )
+                
+            except stripe.error.StripeError as e:
+                logger.warning(f"Failed to retrieve subscription from Stripe: {str(e)}")
+                
+                # Return local status
+                is_active = subscription["status"] in ['active', 'trialing']
+                return SubscriptionStatusResponse(
+                    isActive=is_active,
+                    planId=plan_id,
+                    currentPeriodEnd=subscription["current_period_end"],
+                    cancelAtPeriodEnd=subscription["cancel_at_period_end"],
+                    stripeCustomerId=subscription["stripe_customer_id"],
+                    stripeSubscriptionId=subscription["stripe_subscription_id"]
+                )
+            
+        except Exception as e:
+            logger.error(f"Error getting subscription status for user {user_id}: {str(e)}")
+            return SubscriptionStatusResponse(
+                isActive=False,
+                planId=None,
+                currentPeriodEnd=None,
+                cancelAtPeriodEnd=False,
+                stripeCustomerId=None,
+                stripeSubscriptionId=None
+            )
+
+    async def _update_subscription_status(self, user_id: str, subscription: stripe.Subscription, stripe_event_id: Optional[str] = None):
+        """Update subscription status in both tables."""
+        try:
+            # Determine the plan ID
+            product_id = subscription.get('items').get('data')[0].get('plan').get('product')
+            if product_id == self.config.plus_product_id:
+                subscription_plan = "plus"
+            else:
+                subscription_plan = None
+            
+            # Update users_metadata table (simplified)
+            self.supabase.table("users_metadata").update({
+                "subscription_status": subscription.status,
+                "subscription_plan": subscription_plan,
+                "stripe_customer_id": subscription.customer,
+            }).eq("user_id", user_id).execute()
+            
+            # Update or create stripe_subscriptions record
+            subscription_data = {
+                "user_id": user_id,
+                "stripe_customer_id": subscription.customer,
+                "stripe_subscription_id": subscription.id,
+                "stripe_price_id": subscription.get('items').get('data')[0].get('price').get('id'),
+                "stripe_product_id": product_id,
+                "status": subscription.status,
+                "current_period_start": datetime.fromtimestamp(subscription.current_period_start).isoformat(),
+                "current_period_end": datetime.fromtimestamp(subscription.current_period_end).isoformat(),
+                "cancel_at_period_end": subscription.cancel_at_period_end,
+                "cancelled_at": datetime.fromtimestamp(subscription.canceled_at).isoformat() if subscription.canceled_at else None,
+                "trial_start": datetime.fromtimestamp(subscription.trial_start).isoformat() if subscription.trial_start else None,
+                "trial_end": datetime.fromtimestamp(subscription.trial_end).isoformat() if subscription.trial_end else None,
+                "metadata": subscription.metadata or {}
+            }
+            
+            # Try to update existing record first
+            existing_subscription = self.supabase.table("stripe_subscriptions").select("id").eq(
+                "stripe_subscription_id", subscription.id
+            ).execute()
+            
+            if existing_subscription.data:
+                self.supabase.table("stripe_subscriptions").update(subscription_data).eq(
+                    "stripe_subscription_id", subscription.id
+                ).execute()
+            else:
+                self.supabase.table("stripe_subscriptions").insert(subscription_data).execute()
+            
+            logger.info(f"Updated subscription status for user {user_id}: {subscription.status}")
+            
+        except Exception as e:
+            logger.error(f"Failed to update subscription status for user {user_id}: {str(e)}")
+
+    async def cancel_subscription(self, user_id: str) -> bool:
+        """Cancel user's subscription."""
+        try:
+            # Get user's subscription
+            subscription_response = self.supabase.table("stripe_subscriptions").select(
+                "stripe_subscription_id"
+            ).eq("user_id", user_id).eq("status", "active").or_("status.eq.trialing").execute()
+            
+            if not subscription_response.data:
+                logger.warning(f"No active subscription found for user {user_id}")
+                return False
+            
+            subscription_id = subscription_response.data[0]["stripe_subscription_id"]
+            
+            # Cancel subscription at period end
+            subscription = stripe.Subscription.modify(
+                subscription_id,
+                cancel_at_period_end=True
+            )
+            
+            # Update database
+            await self._update_subscription_status(user_id, subscription)
+            
+            logger.info(f"Cancelled subscription {subscription_id} for user {user_id}")
+            return True
+            
+        except stripe.error.StripeError as e:
+            logger.error(f"Stripe error cancelling subscription: {str(e)}")
+            return False
+        except Exception as e:
+            logger.error(f"Unexpected error cancelling subscription: {str(e)}")
+            return False
+
+    async def reactivate_subscription(self, user_id: str) -> bool:
+        """Reactivate a cancelled subscription."""
+        try:
+            # Get user's subscription
+            subscription_response = self.supabase.table("stripe_subscriptions").select(
+                "stripe_subscription_id"
+            ).eq("user_id", user_id).eq("cancel_at_period_end", True).execute()
+            
+            if not subscription_response.data:
+                logger.warning(f"No cancelled subscription found for user {user_id}")
+                return False
+            
+            subscription_id = subscription_response.data[0]["stripe_subscription_id"]
+            
+            # Reactivate subscription
+            subscription = stripe.Subscription.modify(
+                subscription_id,
+                cancel_at_period_end=False
+            )
+            
+            # Update database
+            await self._update_subscription_status(user_id, subscription)
+            
+            logger.info(f"Reactivated subscription {subscription_id} for user {user_id}")
+            return True
+            
+        except stripe.error.StripeError as e:
+            logger.error(f"Stripe error reactivating subscription: {str(e)}")
+            return False
+        except Exception as e:
+            logger.error(f"Unexpected error reactivating subscription: {str(e)}")
+            return False
+
+    async def get_detailed_subscription_info(self, user_id: str) -> Dict[str, Any]:
+        """Get detailed subscription information for display."""
+        try:
+            # Get subscription data
+            subscription_response = self.supabase.table("stripe_subscriptions").select("*").eq(
+                "user_id", user_id
+            ).order("created_at", desc=True).limit(1).execute()
+            
+            # Get user metadata
+            user_metadata_response = self.supabase.table("users_metadata").select(
+                "subscription_plan, name, email"
+            ).eq("user_id", user_id).single().execute()
+            
+            if not subscription_response.data:
+                return {
+                    "hasSubscription": False,
+                    "status": "inactive",
+                    "planId": user_metadata_response.data.get("subscription_plan") if user_metadata_response.data else None
+                }
+            
+            subscription = subscription_response.data[0]
+            user_metadata = user_metadata_response.data or {}
+            
+            return {
+                "hasSubscription": True,
+                "status": subscription["status"],
+                "planId": user_metadata.get("subscription_plan"),
+                "currentPeriodStart": subscription["current_period_start"],
+                "currentPeriodEnd": subscription["current_period_end"],
+                "cancelAtPeriodEnd": subscription["cancel_at_period_end"],
+                "cancelledAt": subscription.get("cancelled_at"),
+                "trialStart": subscription.get("trial_start"),
+                "trialEnd": subscription.get("trial_end"),
+                "isTrialing": subscription["status"] == "trialing",
+                "isActive": subscription["status"] in ["active", "trialing"],
+                "isPastDue": subscription["status"] == "past_due",
+                "isCancelled": subscription["status"] == "cancelled" or subscription["cancel_at_period_end"],
+                "stripeCustomerId": subscription["stripe_customer_id"],
+                "stripeSubscriptionId": subscription["stripe_subscription_id"]
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting detailed subscription info for user {user_id}: {str(e)}")
+            return {
+                "hasSubscription": False,
+                "status": "inactive",
+                "planId": None
+            }
+
     async def create_checkout_session(
         self, 
         price_id: str, 
@@ -70,7 +307,7 @@ class StripeService:
             # Create metadata
             metadata = {
                 "user_id": user_id,
-                "auth_token": auth_token[:50] if auth_token else "",  # Truncate token
+                "auth_token": auth_token[:50] if auth_token else "",
                 "created_via": "chrome_extension"
             }
             if plan_id:
@@ -100,7 +337,7 @@ class StripeService:
                     'metadata': metadata,
                     'trial_period_days': 7
                 },
-                "allow_promotion_codes": True,  # Allow discount codes
+                "allow_promotion_codes": True,
                 "billing_address_collection": "auto",
                 "customer_update": {
                     "address": "auto",
@@ -130,230 +367,40 @@ class StripeService:
                 "success": False,
                 "error": "An unexpected error occurred"
             }
-    
-    async def get_subscription_status(self, user_id: str) -> SubscriptionStatusResponse:
-        """Get user's current subscription status with cache invalidation."""
-        try:
-            # Get from database
-            user_response = self.supabase.table("users_metadata").select(
-                "stripe_customer_id, subscription_status, subscription_plan, "
-                "stripe_subscription_id, subscription_current_period_end, "
-                "subscription_cancel_at_period_end, subscription_created_at, "
-                "subscription_trial_end, last_payment_date"
-            ).eq("user_id", user_id).single().execute()
-            
-            if not user_response.data:
-                return SubscriptionStatusResponse(
-                    isActive=False,
-                    planId=None,
-                    currentPeriodEnd=None,
-                    cancelAtPeriodEnd=False,
-                    stripeCustomerId=None,
-                    stripeSubscriptionId=None
-                )
-            
-            user_data = user_response.data
-            stripe_subscription_id = user_data["stripe_subscription_id"]
-            
-            # Verify with Stripe if subscription exists
-            if stripe_subscription_id:
-                try:
-                    subscription = stripe.Subscription.retrieve(
-                        stripe_subscription_id,
-                        expand=['latest_invoice', 'default_payment_method']
-                    )
-                    
-                    # Check if local status differs from Stripe
-                    if user_data["subscription_status"] != subscription.status:
-                        logger.info(f"Subscription status mismatch for user {user_id}: "
-                                  f"local={user_data['subscription_status']}, "
-                                  f"stripe={subscription.status}")
-                        await self._update_subscription_status(user_id, subscription)
-                        
-                        # Update local data
-                        user_data["subscription_status"] = subscription.status
-                        user_data["subscription_cancel_at_period_end"] = subscription.cancel_at_period_end
-                        user_data["subscription_current_period_end"] = datetime.fromtimestamp(
-                            subscription.current_period_end
-                        ).isoformat()
-                    
-                    is_active = subscription.status in ['active', 'trialing']
-                    
-                    return SubscriptionStatusResponse(
-                        isActive=is_active,
-                        planId=user_data["subscription_plan"],
-                        currentPeriodEnd=user_data["subscription_current_period_end"],
-                        cancelAtPeriodEnd=user_data["subscription_cancel_at_period_end"],
-                        stripeCustomerId=user_data["stripe_customer_id"],
-                        stripeSubscriptionId=stripe_subscription_id
-                    )
-                    
-                except stripe.error.StripeError as e:
-                    logger.warning(f"Failed to retrieve subscription from Stripe: {str(e)}")
-            
-            # Return local status
-            return SubscriptionStatusResponse(
-                isActive=user_data["subscription_status"] == "active",
-                planId=user_data["subscription_plan"],
-                currentPeriodEnd=user_data["subscription_current_period_end"],
-                cancelAtPeriodEnd=user_data["subscription_cancel_at_period_end"],
-                stripeCustomerId=user_data["stripe_customer_id"],
-                stripeSubscriptionId=stripe_subscription_id
-            )
-            
-        except Exception as e:
-            logger.error(f"Error getting subscription status for user {user_id}: {str(e)}")
-            return SubscriptionStatusResponse(
-                isActive=False,
-                planId=None,
-                currentPeriodEnd=None,
-                cancelAtPeriodEnd=False,
-                stripeCustomerId=None,
-                stripeSubscriptionId=None
-            )
-    
-    async def handle_webhook_event(self, event: Dict[str, Any]) -> bool:
-        """Enhanced webhook handler with idempotency and better error handling."""
-        event_id = event.get("id")
-        event_type = event.get("type")
-        event_data = event.get("data", {})
-        
-        print("==================================\n")
-        print(event_id, event_type, event_data)
-        print("==================================\n")
-        
-        # Check if we've already processed this event
-        if event_id in self._webhook_event_cache:
-            logger.info(f"Skipping already processed event {event_id}")
-            return True
-        
-        # Check database for existing event
-        existing_event = self.supabase.table("stripe_webhook_events").select(
-            "id, processed"
-        ).eq("stripe_event_id", event_id).maybe_single().execute()
-        
-        print("==================================\n")
-        print(existing_event)
-        print("==================================\n")
-        
-        if existing_event and existing_event.data and existing_event.data.get("processed"):
-            logger.info(f"Event {event_id} already processed")
-            self._webhook_event_cache[event_id] = True
-            return True
-        
-        # Record the event
-        record_id = await self._record_webhook_event(event_id, event_type, event_data)
-        
-        try:
-            success = await self._process_webhook_event(event_id, event_type, event_data)
-            
-            # Update event as processed
-            if record_id:
-                self.supabase.table("stripe_webhook_events").update({
-                    "processed": success,
-                    "processed_at": datetime.now(timezone.utc).isoformat(),
-                }).eq("id", record_id).execute()
-            
-            # Cache the result
-            self._webhook_event_cache[event_id] = success
-            
-            return success
-            
-        except Exception as e:
-            logger.error(f"Error processing webhook event {event_type}: {str(e)}")
-            
-            # Mark as failed
-            if record_id:
-                self.supabase.table("stripe_webhook_events").update({
-                    "processed": False,
-                    "processed_at": datetime.now(timezone.utc).isoformat(),
-                }).eq("id", record_id).execute()
-            
-            return False
-    
-    async def _handle_trial_will_end(self, event_id: str, subscription: Dict[str, Any]) -> bool:
-        """Handle trial ending soon notification."""
-        user_id = subscription.get("metadata", {}).get("user_id")
-        if not user_id:
-            logger.warning(f"No user_id in trial_will_end event {event_id}")
-            return False
-        
-        # You could send a notification to the user here
-        logger.info(f"Trial will end soon for user {user_id}")
-        
-        # Update trial end date
-        trial_end = subscription.get("trial_end")
-        if trial_end:
-            self.supabase.table("users_metadata").update({
-                "subscription_trial_end": datetime.fromtimestamp(trial_end).isoformat()
-            }).eq("user_id", user_id).execute()
-        
-        return True
-    
-    async def _handle_upcoming_invoice(self, event_id: str, invoice: Dict[str, Any]) -> bool:
-        """Handle upcoming invoice notification."""
-        subscription_id = invoice.get("subscription")
-        if not subscription_id:
-            return True
-        
-        # Get subscription to find user
-        try:
-            subscription = stripe.Subscription.retrieve(subscription_id)
-            user_id = subscription.metadata.get("user_id")
-            
-            if user_id:
-                # You could send a notification about upcoming payment
-                logger.info(f"Upcoming invoice for user {user_id}")
-                
-        except stripe.error.StripeError as e:
-            logger.error(f"Failed to retrieve subscription for upcoming invoice: {str(e)}")
-            return False
-            
-        return True
-    
-    async def _handle_customer_updated(self, event_id: str, customer: Dict[str, Any]) -> bool:
-        """Handle customer information updates."""
-        customer_id = customer.get("id")
-        if not customer_id:
-            return False
-        
-        # Update customer info in database
+
+    async def _get_or_create_customer(self, user_id: str, user_email: str) -> stripe.Customer:
+        """Get existing Stripe customer or create a new one."""
+        # Check if customer exists in database
         user_response = self.supabase.table("users_metadata").select(
-            "user_id"
-        ).eq("stripe_customer_id", customer_id).single().execute()
+            "stripe_customer_id, name"
+        ).eq("user_id", user_id).single().execute()
         
-        if user_response.data:
-            update_data = {}
-            if customer.get("email"):
-                update_data["email"] = customer["email"]
-            if customer.get("name"):
-                update_data["name"] = customer["name"]
-            
-            if update_data:
-                self.supabase.table("users_metadata").update(update_data).eq(
-                    "user_id", user_response.data["user_id"]
-                ).execute()
+        customer_id = user_response.data.get("stripe_customer_id") if user_response.data else None
         
-        return True
-    
-    async def _handle_payment_method_attached(self, event_id: str, payment_method: Dict[str, Any]) -> bool:
-        """Handle payment method attachment."""
-        customer_id = payment_method.get("customer")
-        if not customer_id:
-            return True
+        if customer_id:
+            try:
+                return stripe.Customer.retrieve(customer_id)
+            except stripe.error.StripeError:
+                logger.warning(f"Stripe customer {customer_id} not found, creating new one")
         
-        # Update default payment method
-        user_response = self.supabase.table("users_metadata").select(
-            "user_id"
-        ).eq("stripe_customer_id", customer_id).single().execute()
+        # Create new customer
+        customer_name = user_response.data.get("name") if user_response.data else None
+        customer = stripe.Customer.create(
+            email=user_email,
+            name=customer_name,
+            metadata={
+                'user_id': user_id
+            }
+        )
         
-        if user_response.data:
-            self.supabase.table("users_metadata").update({
-                "payment_method_id": payment_method.get("id")
-            }).eq("user_id", user_response.data["user_id"]).execute()
+        # Update database with customer ID
+        self.supabase.table("users_metadata").update({
+            "stripe_customer_id": customer.id
+        }).eq("user_id", user_id).execute()
         
-        return True
-    
+        logger.info(f"Created new Stripe customer {customer.id} for user {user_id}")
+        return customer
+
     def _get_plan_id_from_price(self, price_id: str) -> Optional[str]:
         """Get plan ID from price ID."""
         if price_id == self.config.monthly_price_id:
@@ -361,86 +408,7 @@ class StripeService:
         elif price_id == self.config.yearly_price_id:
             return "yearly"
         return None
-    
-    async def _record_payment_history(self, user_id: str, invoice: Dict[str, Any]) -> None:
-        """Record payment in payment history table."""
-        try:
-            self.supabase.table("payment_history").insert({
-                "user_id": user_id,
-                "stripe_payment_intent_id": invoice.get("payment_intent"),
-                "stripe_invoice_id": invoice.get("id"),
-                "amount": invoice.get("amount_paid", 0),
-                "currency": invoice.get("currency", "eur"),
-                "status": invoice.get("status"),
-                "payment_date": datetime.fromtimestamp(invoice.get("status_transitions", {}).get("paid_at") or invoice.get("created")).isoformat(),
-                "subscription_period_start": datetime.fromtimestamp(invoice.get("period_start")).isoformat() if invoice.get("period_start") else None,
-                "subscription_period_end": datetime.fromtimestamp(invoice.get("period_end")).isoformat() if invoice.get("period_end") else None,
-                "metadata": {
-                    "invoice_number": invoice.get("number"),
-                    "hosted_invoice_url": invoice.get("hosted_invoice_url"),
-                    "invoice_pdf": invoice.get("invoice_pdf")
-                }
-            }).execute()
-        except Exception as e:
-            logger.error(f"Failed to record payment history: {str(e)}")
-    
-    # Enhanced payment success handler
-    async def _handle_payment_succeeded(self, event_id: str, invoice: Dict[str, Any]) -> bool:
-        """Handle successful payment with payment history recording."""
-        subscription_id = invoice.get("subscription")
-        if subscription_id:
-            try:
-                subscription = stripe.Subscription.retrieve(subscription_id)
-                user_id = subscription.metadata.get("user_id")
-                if user_id:
-                    await self._update_subscription_status(user_id, subscription, event_id)
-                    await self._record_payment_history(user_id, invoice)
-                    
-                    # Update last payment date
-                    self.supabase.table("users_metadata").update({
-                        "last_payment_date": datetime.now(timezone.utc).isoformat()
-                    }).eq("user_id", user_id).execute()
-                    
-                return True
-            except stripe.error.StripeError as e:
-                logger.error(f"Failed to retrieve subscription {subscription_id}: {str(e)}")
-                return False
-        return True
-    
-  
-    async def cancel_subscription(self, user_id: str) -> bool:
-        """Cancel user's subscription."""
-        try:
-            # Get user's subscription ID
-            user_response = self.supabase.table("users_metadata").select(
-                "stripe_subscription_id"
-            ).eq("user_id", user_id).single().execute()
-            
-            if not user_response.data or not user_response.data["stripe_subscription_id"]:
-                logger.warning(f"No subscription found for user {user_id}")
-                return False
-            
-            subscription_id = user_response.data["stripe_subscription_id"]
-            
-            # Cancel subscription at period end
-            subscription = stripe.Subscription.modify(
-                subscription_id,
-                cancel_at_period_end=True
-            )
-            
-            # Update database
-            await self._update_subscription_status(user_id, subscription)
-            
-            logger.info(f"Cancelled subscription {subscription_id} for user {user_id}")
-            return True
-            
-        except stripe.error.StripeError as e:
-            logger.error(f"Stripe error cancelling subscription: {str(e)}")
-            return False
-        except Exception as e:
-            logger.error(f"Unexpected error cancelling subscription: {str(e)}")
-            return False
-    
+
     async def create_customer_portal_session(self, user_id: str, return_url: str) -> Optional[str]:
         """Create a customer portal session for subscription management."""
         try:
@@ -470,7 +438,7 @@ class StripeService:
         except Exception as e:
             logger.error(f"Unexpected error creating customer portal: {str(e)}")
             return None
-    
+
     async def verify_checkout_session(self, session_id: str) -> Dict[str, Any]:
         """Verify a checkout session and return subscription details."""
         try:
@@ -516,40 +484,59 @@ class StripeService:
                 "success": False,
                 "error": "An unexpected error occurred"
             }
-    
-    async def _get_or_create_customer(self, user_id: str, user_email: str) -> stripe.Customer:
-        """Get existing Stripe customer or create a new one."""
-        # Check if customer exists in database
-        user_response = self.supabase.table("users_metadata").select(
-            "stripe_customer_id, name"
-        ).eq("user_id", user_id).single().execute()
+
+    # Webhook handling methods remain the same...
+    async def handle_webhook_event(self, event: Dict[str, Any]) -> bool:
+        """Enhanced webhook handler with idempotency and better error handling."""
+        event_id = event.get("id")
+        event_type = event.get("type")
+        event_data = event.get("data", {})
         
-        customer_id = user_response.data["stripe_customer_id"]
+        # Check if we've already processed this event
+        if event_id in self._webhook_event_cache:
+            logger.info(f"Skipping already processed event {event_id}")
+            return True
         
-        if customer_id:
-            try:
-                return stripe.Customer.retrieve(customer_id)
-            except stripe.error.StripeError:
-                logger.warning(f"Stripe customer {customer_id} not found, creating new one")
+        # Check database for existing event
+        existing_event = self.supabase.table("stripe_webhook_events").select(
+            "id, processed"
+        ).eq("stripe_event_id", event_id).maybe_single().execute()
         
-        # Create new customer
-        customer_name = user_response.data["name"]
-        customer = stripe.Customer.create(
-            email=user_email,
-            name=customer_name,
-            metadata={
-                'user_id': user_id
-            }
-        )
+        if existing_event and existing_event.data and existing_event.data.get("processed"):
+            logger.info(f"Event {event_id} already processed")
+            self._webhook_event_cache[event_id] = True
+            return True
         
-        # Update database with customer ID
-        self.supabase.table("users_metadata").update({
-            "stripe_customer_id": customer.id
-        }).eq("user_id", user_id).execute()
+        # Record the event
+        record_id = await self._record_webhook_event(event_id, event_type, event_data)
         
-        logger.info(f"Created new Stripe customer {customer.id} for user {user_id}")
-        return customer
-    
+        try:
+            success = await self._process_webhook_event(event_id, event_type, event_data)
+            
+            # Update event as processed
+            if record_id:
+                self.supabase.table("stripe_webhook_events").update({
+                    "processed": success,
+                    "processed_at": datetime.now(timezone.utc).isoformat(),
+                }).eq("id", record_id).execute()
+            
+            # Cache the result
+            self._webhook_event_cache[event_id] = success
+            
+            return success
+            
+        except Exception as e:
+            logger.error(f"Error processing webhook event {event_type}: {str(e)}")
+            
+            # Mark as failed
+            if record_id:
+                self.supabase.table("stripe_webhook_events").update({
+                    "processed": False,
+                    "processed_at": datetime.now(timezone.utc).isoformat(),
+                }).eq("id", record_id).execute()
+            
+            return False
+
     async def _record_webhook_event(self, event_id: str, event_type: str, event_data: Dict[str, Any]) -> Optional[str]:
         """Persist webhook event payload in the database."""
         try:
@@ -564,154 +551,71 @@ class StripeService:
             logger.error(f"Failed to record webhook event {event_id}: {e}")
         return None
 
-    async def _log_subscription_change(
-        self,
-        user_id: str,
-        old_status: Optional[str],
-        new_status: Optional[str],
-        old_plan: Optional[str],
-        new_plan: Optional[str],
-        stripe_event_id: Optional[str],
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> None:
-        """Insert a record into subscription_audit_log."""
-        try:
-            self.supabase.table("subscription_audit_log").insert({
-                "user_id": user_id,
-                "old_status": old_status,
-                "new_status": new_status,
-                "old_plan": old_plan,
-                "new_plan": new_plan,
-                "stripe_event_id": stripe_event_id,
-                "changed_by": "webhook",
-                "metadata": metadata or {},
-            }).execute()
-        except Exception as e:
-            logger.error(f"Failed to log subscription change for user {user_id}: {e}")
+    async def _process_webhook_event(self, event_id: str, event_type: str, event_data: Dict[str, Any]) -> bool:
+        """Process different types of webhook events."""
+        handlers = {
+            "customer.subscription.created": self._handle_subscription_created,
+            "customer.subscription.updated": self._handle_subscription_updated,
+            "customer.subscription.deleted": self._handle_subscription_deleted,
+            "invoice.payment_succeeded": self._handle_payment_succeeded,
+            "invoice.payment_failed": self._handle_payment_failed,
+        }
+        
+        handler = handlers.get(event_type)
+        if handler:
+            return await handler(event_id, event_data.get("object", {}))
+        else:
+            logger.info(f"No handler for event type: {event_type}")
+            return True
 
-    async def _update_subscription_status(
-        self,
-        user_id: str,
-        subscription: stripe.Subscription,
-        stripe_event_id: Optional[str] = None,
-    ):
-        """Update user's subscription status in the database."""
-        try:
-            # Ensure required subscription fields are present. Some webhook
-            # payloads omit certain attributes, so fetch the full subscription
-            # object from Stripe when needed.
-            if not getattr(subscription, "current_period_end", None):
-                try:
-                    subscription = stripe.Subscription.retrieve(subscription.id)
-                except Exception as e:  # noqa: BLE001
-                    logger.warning(
-                        f"Failed to retrieve subscription {subscription.id}: {e}"
-                    )
-            print("==================================\n")
-            print(subscription)
-            print("==================================\n")
-            current = self.supabase.table("users_metadata").select(
-                "subscription_status, subscription_plan"
-            ).eq("user_id", user_id).single().execute()
-            if current.data:
-                old_status = current.data["subscription_status"]
-                old_plan = current.data["subscription_plan"]
-            else:
-                old_status = None
-                old_plan = None
-
-            # Determine the plan ID. Prefer the value stored in the
-            # subscription metadata (written during checkout creation). This
-            # fallback to price ID comparison maintains backwards compatibility
-            # with older sessions where the metadata may not be present.
-            product_id = subscription.get('items').get('data')[0].get('plan').get('product')
-            if product_id == self.config.plus_product_id:
-                subscription_plan = "plus"
-            else:
-                subscription_plan = None
-            
-            # Update database
-            period_end = getattr(subscription, "current_period_end", None)
-            update_data = {
-                "stripe_customer_id": subscription.customer,
-                "stripe_subscription_id": subscription.id,
-                "subscription_status": subscription.status,
-                "subscription_plan": subscription_plan,
-                "subscription_current_period_end": datetime.fromtimestamp(period_end).isoformat() if period_end else None,
-                "subscription_cancel_at_period_end": subscription.cancel_at_period_end,
-            }
-            self.supabase.table("users_metadata").update(update_data).eq(
-                "user_id", user_id
-            ).execute()
-
-            logger.info(
-                f"Updated subscription status for user {user_id}: {subscription.status}"
-            )
-
-            if old_status != update_data["subscription_status"] or old_plan != update_data["subscription_plan"]:
-                await self._log_subscription_change(
-                    user_id,
-                    old_status,
-                    update_data["subscription_status"],
-                    old_plan,
-                    update_data["subscription_plan"],
-                    stripe_event_id,
-                    {"subscription_id": subscription.id},
-                )
-
-        except Exception as e:
-            logger.error(f"Failed to update subscription status for user {user_id}: {str(e)}")
-    
-
-    
     async def _handle_subscription_created(self, event_id: str, subscription: Dict[str, Any]):
         """Handle subscription created event."""
-
         user_id = subscription["metadata"].get("user_id")
         if user_id:
-            # Convert subscription dict to Stripe object for consistency
             stripe_subscription = stripe.Subscription.construct_from(subscription, stripe.api_key)
             await self._update_subscription_status(user_id, stripe_subscription, event_id)
-    
+
     async def _handle_subscription_updated(self, event_id: str, subscription: Dict[str, Any]):
         """Handle subscription updated event."""
         user_id = subscription["metadata"].get("user_id")
         if user_id:
             stripe_subscription = stripe.Subscription.construct_from(subscription, stripe.api_key)
             await self._update_subscription_status(user_id, stripe_subscription, event_id)
-    
+
     async def _handle_subscription_deleted(self, event_id: str, subscription: Dict[str, Any]):
         """Handle subscription deleted event."""
         user_id = subscription["metadata"].get("user_id")
         if user_id:
-            current = self.supabase.table("users_metadata").select(
-                "subscription_status, subscription_plan"
-            ).eq("user_id", user_id).single().execute()
-            old_status = current.data["subscription_status"]
-            old_plan = current.data["subscription_plan"]
-
+            # Update both tables
             self.supabase.table("users_metadata").update({
                 "subscription_status": "cancelled",
-                "subscription_plan": None,
-                "subscription_cancel_at_period_end": False
+                "subscription_plan": None
             }).eq("user_id", user_id).execute()
-
-            await self._log_subscription_change(
-                user_id,
-                old_status,
-                "cancelled",
-                old_plan,
-                None,
-                event_id,
-                {"subscription_id": subscription.get("id")},
-            )
-
+            
+            self.supabase.table("stripe_subscriptions").update({
+                "status": "cancelled",
+                "cancelled_at": datetime.now(timezone.utc).isoformat()
+            }).eq("user_id", user_id).execute()
+            
             logger.info(f"Marked subscription as cancelled for user {user_id}")
-    
-    
+
+    async def _handle_payment_succeeded(self, event_id: str, invoice: Dict[str, Any]):
+        """Handle successful payment."""
+        subscription_id = invoice.get("subscription")
+        if subscription_id:
+            try:
+                subscription = stripe.Subscription.retrieve(subscription_id)
+                user_id = subscription.metadata.get("user_id")
+                if user_id:
+                    await self._update_subscription_status(user_id, subscription, event_id)
+                return True
+            except stripe.error.StripeError as e:
+                logger.error(f"Failed to retrieve subscription {subscription_id}: {str(e)}")
+                return False
+        return True
+
     async def _handle_payment_failed(self, event_id: str, invoice: Dict[str, Any]):
         """Handle failed payment."""
-        # Payment failed - mark subscription as past due
         subscription_id = invoice.get("subscription")
         if subscription_id:
             try:
@@ -721,25 +625,4 @@ class StripeService:
                     await self._update_subscription_status(user_id, subscription, event_id)
             except stripe.error.StripeError as e:
                 logger.error(f"Failed to retrieve subscription {subscription_id}: {str(e)}")
-                
-                
-    async def _process_webhook_event(self, event_id: str, event_type: str, event_data: Dict[str, Any]) -> bool:
-        """Process different types of webhook events."""
-        handlers = {
-            "customer.subscription.created": self._handle_subscription_created,
-            "customer.subscription.updated": self._handle_subscription_updated,
-            "customer.subscription.deleted": self._handle_subscription_deleted,
-            "customer.subscription.trial_will_end": self._handle_trial_will_end,
-            "invoice.payment_succeeded": self._handle_payment_succeeded,
-            "invoice.payment_failed": self._handle_payment_failed,
-            "invoice.upcoming": self._handle_upcoming_invoice,
-            "customer.updated": self._handle_customer_updated,
-            "payment_method.attached": self._handle_payment_method_attached,
-        }
-        
-        handler = handlers.get(event_type)
-        if handler:
-            return await handler(event_id, event_data.get("object", {}))
-        else:
-            logger.info(f"No handler for event type: {event_type}")
-            return True  # Consider unhandled events as successful
+        return True

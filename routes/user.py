@@ -10,9 +10,15 @@ from utils.prompts import (
 )
 import dotenv
 import os
-from typing import List
+from typing import List, Dict, Any
+import logging
+from datetime import datetime
 
 dotenv.load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize Supabase client
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
@@ -29,6 +35,154 @@ class UserMetadata(BaseModel):
 
 class DataCollectionRequest(BaseModel):
     data_collection: bool
+
+class SubscriptionStatusResponse(BaseModel):
+    success: bool
+    data: Dict[str, Any]
+
+@router.get("/subscription-status")
+async def get_subscription_status(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    """Get detailed subscription status for the current user with fallback to users_metadata."""
+    try:
+        # First, try to get from the new stripe_subscriptions table
+        try:
+            subscription_response = supabase.table("stripe_subscriptions").select("*").eq(
+                "user_id", user_id
+            ).order("created_at", desc=True).limit(1).execute()
+            
+            subscription_data = subscription_response.data[0] if subscription_response.data else None
+            
+        except Exception as stripe_table_error:
+            # If stripe_subscriptions table doesn't exist or has issues, use fallback
+            logger.warning(f"stripe_subscriptions table not accessible, using fallback: {stripe_table_error}")
+            subscription_data = None
+        
+        # Get user metadata (this should always work as it's the existing table)
+        try:
+            user_metadata_response = supabase.table("users_metadata").select(
+                "subscription_plan, subscription_status, stripe_customer_id, stripe_subscription_id"
+            ).eq("user_id", user_id).single().execute()
+            
+            user_metadata = user_metadata_response.data or {}
+        except Exception as metadata_error:
+            logger.warning(f"users_metadata not accessible: {metadata_error}")
+            user_metadata = {}
+        
+        # If we have subscription data from stripe_subscriptions table, use it
+        if subscription_data:
+            status = subscription_data["status"]
+            response_data = {
+                "hasSubscription": True,
+                "subscription_status": status,
+                "subscription_plan": user_metadata.get("subscription_plan"),
+                "isActive": status in ["active", "trialing"],
+                "isTrialing": status == "trialing",
+                "isPastDue": status == "past_due",
+                "isCancelled": status == "cancelled" or subscription_data["cancel_at_period_end"],
+                "cancelAtPeriodEnd": subscription_data["cancel_at_period_end"],
+                "currentPeriodStart": subscription_data["current_period_start"],
+                "currentPeriodEnd": subscription_data["current_period_end"],
+                "trialStart": subscription_data.get("trial_start"),
+                "trialEnd": subscription_data.get("trial_end"),
+                "cancelledAt": subscription_data.get("cancelled_at"),
+                "stripeCustomerId": subscription_data["stripe_customer_id"],
+                "stripeSubscriptionId": subscription_data["stripe_subscription_id"]
+            }
+        else:
+            # Fallback to users_metadata data
+            metadata_status = user_metadata.get("subscription_status", "inactive")
+            has_subscription = user_metadata.get("stripe_subscription_id") is not None
+            
+            response_data = {
+                "hasSubscription": has_subscription,
+                "subscription_status": metadata_status,
+                "subscription_plan": user_metadata.get("subscription_plan"),
+                "isActive": metadata_status in ["active", "trialing"],
+                "isTrialing": metadata_status == "trialing",
+                "isPastDue": metadata_status == "past_due",
+                "isCancelled": metadata_status == "cancelled",
+                "cancelAtPeriodEnd": False,  # We don't have this info in users_metadata
+                "currentPeriodEnd": None,     # We don't have this info in users_metadata
+                "trialEnd": None,             # We don't have this info in users_metadata
+                "stripeCustomerId": user_metadata.get("stripe_customer_id"),
+                "stripeSubscriptionId": user_metadata.get("stripe_subscription_id")
+            }
+            
+            # If we have a stripe subscription ID, try to get more details from Stripe directly
+            if user_metadata.get("stripe_subscription_id"):
+                try:
+                    import stripe
+                    subscription = stripe.Subscription.retrieve(user_metadata["stripe_subscription_id"])
+                    
+                    # Update response with Stripe data
+                    response_data.update({
+                        "subscription_status": subscription.status,
+                        "isActive": subscription.status in ["active", "trialing"],
+                        "isTrialing": subscription.status == "trialing",
+                        "isPastDue": subscription.status == "past_due",
+                        "isCancelled": subscription.status == "cancelled" or subscription.cancel_at_period_end,
+                        "cancelAtPeriodEnd": subscription.cancel_at_period_end,
+                        "currentPeriodStart": datetime.fromtimestamp(subscription.current_period_start).isoformat(),
+                        "currentPeriodEnd": datetime.fromtimestamp(subscription.current_period_end).isoformat(),
+                        "trialStart": datetime.fromtimestamp(subscription.trial_start).isoformat() if subscription.trial_start else None,
+                        "trialEnd": datetime.fromtimestamp(subscription.trial_end).isoformat() if subscription.trial_end else None,
+                        "cancelledAt": datetime.fromtimestamp(subscription.canceled_at).isoformat() if subscription.canceled_at else None,
+                    })
+                    
+                except Exception as stripe_error:
+                    logger.warning(f"Failed to retrieve subscription from Stripe: {stripe_error}")
+        
+        return {
+            "success": True,
+            "data": response_data
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting subscription status for user {user_id}: {str(e)}")
+        # Return a safe fallback
+        return {
+            "success": True,
+            "data": {
+                "hasSubscription": False,
+                "subscription_status": "inactive",
+                "subscription_plan": None,
+                "isActive": False,
+                "isTrialing": False,
+                "isPastDue": False,
+                "isCancelled": False,
+                "cancelAtPeriodEnd": False,
+                "currentPeriodEnd": None,
+                "trialEnd": None
+            }
+        }
+        
+        
+@router.post("/subscription/reactivate")
+async def reactivate_subscription(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    """Reactivate a cancelled subscription."""
+    try:
+        # Import here to avoid circular dependency
+        from utils.stripe_service import StripeService
+        stripe_service = StripeService(supabase)
+        
+        success = await stripe_service.reactivate_subscription(user_id)
+        
+        if not success:
+            raise HTTPException(
+                status_code=400,
+                detail="Failed to reactivate subscription. Please ensure you have a cancelled subscription that hasn't expired."
+            )
+        
+        return {
+            "success": True,
+            "message": "Subscription reactivated successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error reactivating subscription for user {user_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error reactivating subscription: {str(e)}")
 
 @router.get("/metadata")
 async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
@@ -51,7 +205,7 @@ async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_fro
                     "company_id": None,
                     "pinned_folder_ids": [],
                     "pinned_template_ids": [],
-                    "data_collection": True  # Default to True
+                    "data_collection": True
                 }
             }
             
@@ -93,13 +247,13 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
             # If organization has changed or is being set for the first time
             current_org_id = existing_metadata.data.get("company_id") if existing_metadata.data else None
             if metadata.company_id != current_org_id:
-                update_data["company_id"] = metadata.organization_id
+                update_data["company_id"] = metadata.company_id
                 
                 # Auto-pin all folders for this organization using utility
                 organization_folder_ids = await get_all_folder_ids_by_type(
                     supabase, 
                     "organization", 
-                    str(metadata.organization_id)
+                    str(metadata.company_id)
                 )
                 update_data["pinned_organization_folder_ids"] = organization_folder_ids
         
@@ -188,8 +342,6 @@ async def get_folders_with_prompts(
         pinned_folder_ids = metadata.data.get('pinned_folder_ids', []) if metadata.data else []
         user_company_id = metadata.data.get('company_id') if metadata.data else None
         
-        print(f"Debug: Found pinned folder IDs for user {user_id}: {pinned_folder_ids}")
-
         # Get all prompts
         prompts = supabase.table("prompt_templates") \
             .select("*") \
@@ -308,7 +460,6 @@ async def get_folders_with_prompts(
             
             # Add virtual root folder at the beginning
             organized_folders["user"].insert(0, virtual_root_folder)
-            print(f"Debug: Added virtual root folder with {len(root_prompts)} templates")
 
         return {
             "success": True,
@@ -320,15 +471,12 @@ async def get_folders_with_prompts(
 @router.get("/onboarding/status")
 async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     try:
-        # Get user metadata for pinned folders
+        # Get user metadata for onboarding status
         metadata = supabase.table("users_metadata") \
             .select("job_type, job_industry, job_seniority, interests, signup_source") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
-
-        # Debug logging
-        print(f"Metadata response: {metadata.data}")
 
         # Check if metadata exists and has any of the required fields
         has_completed = False
@@ -340,38 +488,11 @@ async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user
             signup_source = metadata.data.get("signup_source")
             
             has_completed = bool(job_type or job_industry or job_seniority or interests or signup_source)
-            
-            # Debug logging
-            print(f"Fields found: job_type={job_type}, job_industry={job_industry}, "
-                  f"job_seniority={job_seniority}, interests={interests}, "
-                  f"signup_source={signup_source}")
-            
-            print(has_completed)
 
         return {
             "success": True,
             "data": {"has_completed_onboarding": has_completed}
         }
     except Exception as e:
-        print(f"Error in onboarding status: {str(e)}")  # Debug logging
+        logger.error(f"Error in onboarding status: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error checking onboarding status: {str(e)}")
-    
-@router.get("/subscription-status")
-async def get_subscription_status(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
-    try:
-        # Get user metadata for subscription status
-        response = supabase.table("users_metadata") \
-            .select("subscription_status, subscription_plan") \
-            .eq("user_id", user_id) \
-            .single() \
-            .execute()
-
-        if not response.data:
-            raise HTTPException(status_code=404, detail="Subscription status not found for user")
-
-        return {
-            "success": True,
-            "data": response.data
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error checking subscription status: {str(e)}")
