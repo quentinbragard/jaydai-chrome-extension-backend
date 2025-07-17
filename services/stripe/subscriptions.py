@@ -22,6 +22,7 @@ async def get_subscription_status(supabase: Client, user_id: str) -> Subscriptio
                 stripeSubscriptionId=None,
             )
         subscription = sub_resp.data[0]
+
         plan_id = user_meta.data.get("subscription_plan") if user_meta.data else None
         try:
             stripe_subscription = stripe.Subscription.retrieve(subscription["stripe_subscription_id"])
@@ -35,10 +36,10 @@ async def get_subscription_status(supabase: Client, user_id: str) -> Subscriptio
         return SubscriptionStatusResponse(
             isActive=is_active,
             planId=plan_id,
-            currentPeriodEnd=subscription.get("current_period_end"),
-            cancelAtPeriodEnd=subscription.get("cancel_at_period_end"),
-            stripeCustomerId=subscription.get("stripe_customer_id"),
-            stripeSubscriptionId=subscription.get("stripe_subscription_id"),
+            currentPeriodEnd=datetime.fromtimestamp(subscription.get("current_period_end")).isoformat() if subscription.get("current_period_end") else None,
+            cancelAtPeriodEnd=subscription.get("cancel_at_period_end") or False,
+            stripeCustomerId=subscription.get("stripe_customer_id") or None,
+            stripeSubscriptionId=subscription.get("stripe_subscription_id") or None,
         )
     except Exception as e:
         logger.error("Error getting subscription status for user %s: %s", user_id, e)
