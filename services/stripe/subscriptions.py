@@ -47,12 +47,6 @@ async def get_subscription_status(supabase: Client, user_id: str) -> Subscriptio
 async def _update_subscription_status(supabase: Client, user_id: str, subscription: stripe.Subscription, stripe_event_id: Optional[str] = None):
     try:
         product_id = subscription.get('items').get('data')[0].get('plan').get('product')
-        subscription_plan = "plus" if product_id == stripe_config.plus_product_id else None
-        supabase.table("users_metadata").update({
-            "subscription_status": subscription.get("status"),
-            "subscription_plan": subscription_plan,
-            "stripe_customer_id": subscription.get("customer"),
-        }).eq("user_id", user_id).execute()
         data = {
             "user_id": user_id,
             "stripe_customer_id": subscription.get("customer"),
