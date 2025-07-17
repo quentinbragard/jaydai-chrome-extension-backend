@@ -4,7 +4,7 @@ import dotenv
 from fastapi import APIRouter
 from supabase import create_client, Client
 from unittest.mock import MagicMock
-from utils.stripe_service import StripeService
+from services.stripe.stripe_service import StripeService
 
 dotenv.load_dotenv()
 

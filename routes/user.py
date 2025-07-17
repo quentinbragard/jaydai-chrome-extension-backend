@@ -162,7 +162,7 @@ async def reactivate_subscription(user_id: str = Depends(supabase_helpers.get_us
     """Reactivate a cancelled subscription."""
     try:
         # Import here to avoid circular dependency
-        from utils.stripe_service import StripeService
+        from services.stripe.stripe_service import StripeService
         stripe_service = StripeService(supabase)
         
         success = await stripe_service.reactivate_subscription(user_id)

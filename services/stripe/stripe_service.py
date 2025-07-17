@@ -3,7 +3,7 @@ import logging
 from typing import Optional, Dict, Any
 from datetime import datetime, timezone
 from supabase import Client
-from utils.stripe_config import stripe_config
+from .stripe_config import stripe_config
 from models.stripe import SubscriptionStatusResponse
 import os
 import asyncio

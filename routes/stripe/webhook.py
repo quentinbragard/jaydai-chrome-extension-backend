@@ -4,7 +4,7 @@ from . import router, stripe_service
 import stripe
 import json
 import logging
-from utils.stripe_config import stripe_config
+from services.stripe.stripe_config import stripe_config
 
 logger = logging.getLogger(__name__)
 

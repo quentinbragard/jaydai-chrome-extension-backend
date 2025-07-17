@@ -1,4 +1,4 @@
-# utils/stripe_config.py
+# services/stripe/stripe_config.py
 import os
 import stripe
 from typing import Dict, Any

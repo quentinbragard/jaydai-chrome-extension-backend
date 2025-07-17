@@ -2,7 +2,7 @@
 from fastapi import HTTPException
 from . import router
 from models.stripe import PricingResponse, PricingPlan
-from utils.stripe_config import stripe_config
+from services.stripe.stripe_config import stripe_config
 import logging
 
 logger = logging.getLogger(__name__)
