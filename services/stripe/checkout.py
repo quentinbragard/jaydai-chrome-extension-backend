@@ -5,7 +5,7 @@ import stripe
 from supabase import Client
 
 from services.stripe.customer import _get_or_create_customer
-from services.stripe.utils import _get_plan_id_from_price
+from services.stripe.utils import _get_product_id_from_price, _get_plan_name_from_product_id
 from . import subscriptions
 
 logger = logging.getLogger(__name__)
@@ -27,15 +27,15 @@ async def create_checkout_session(
         return {"success": False, "error": "User already has an active subscription"}
 
     customer = await _get_or_create_customer(supabase, user_id, user_email)
-    plan_id = _get_plan_id_from_price(price_id)
+    product_id = _get_product_id_from_price(price_id)
 
     metadata = {
         "user_id": user_id,
         "auth_token": auth_token[:50] if auth_token else "",
         "created_via": "chrome_extension",
     }
-    if plan_id:
-        metadata["plan_id"] = plan_id
+    if product_id:
+        metadata["product_id"] = product_id
 
     is_prod = os.getenv("ENVIRONMENT") == "prod"
     suffix = f"?session_id={{CHECKOUT_SESSION_ID}}"
@@ -49,10 +49,8 @@ async def create_checkout_session(
     session_params = {
         "customer": customer.id,
         "locale": "auto",
-        "customer_email": user_email,
         "client_reference_id": user_id,
         "automatic_tax": {"enabled": True},
-        "invoice_creation": {"enabled": True},
         "payment_method_types": ["card"],
         "line_items": [{"price": price_id, "quantity": 1}],
         "mode": "subscription",
@@ -61,7 +59,7 @@ async def create_checkout_session(
         "metadata": metadata,
         "subscription_data": {
             "metadata": metadata,
-            "trial_period_days": 7,
+            "trial_period_days": 3,
         },
         "allow_promotion_codes": True,
         "billing_address_collection": "auto",

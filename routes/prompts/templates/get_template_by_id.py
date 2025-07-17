@@ -30,7 +30,7 @@ async def get_template_by_id(
             sub_status = await stripe_service.get_subscription_status(user_id)
             if not (
                 sub_status.isActive and
-                sub_status.planId == stripe_config.plus_product_id
+                sub_status.planName == stripe_config.plus_product_id
             ):
                 raise HTTPException(status_code=402, detail="Subscription required")
 

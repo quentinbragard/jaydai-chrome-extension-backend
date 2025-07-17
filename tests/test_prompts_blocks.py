@@ -57,7 +57,7 @@ def test_create_block_limit_paywall(test_client, mock_supabase, valid_auth_heade
     count_response.data = [{}] * 5
     mock_supabase["blocks"].table().select().eq().execute.return_value = count_response
 
-    sub_status = MagicMock(isActive=False, planId=None)
+    sub_status = MagicMock(isActive=False, planName=None)
     with patch('routes.prompts.blocks.create_block.stripe_service.get_subscription_status', AsyncMock(return_value=sub_status)):
         response = test_client.post(
             "/prompts/blocks/",

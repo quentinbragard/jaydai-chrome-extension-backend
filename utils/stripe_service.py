@@ -17,9 +17,6 @@ class StripeService:
     async def get_subscription_status(self, user_id: str) -> SubscriptionStatusResponse:
         return await subscriptions.get_subscription_status(self.supabase, user_id)
 
-    async def get_detailed_subscription_info(self, user_id: str) -> Dict[str, Any]:
-        return await subscriptions.get_detailed_subscription_info(self.supabase, user_id)
-
     async def cancel_subscription(self, user_id: str) -> bool:
         return await subscriptions.cancel_subscription(self.supabase, user_id)
 

@@ -197,7 +197,7 @@ def test_create_template_limit_paywall(test_client, mock_supabase, valid_auth_he
     count_response.data = [{}] * 5
     mock_supabase["templates"].table().select().eq().execute.return_value = count_response
 
-    sub_status = MagicMock(isActive=False, planId=None)
+    sub_status = MagicMock(isActive=False, planName=None)
 
     with patch('routes.prompts.templates.create_template.stripe_service.get_subscription_status', AsyncMock(return_value=sub_status)):
         response = test_client.post(
@@ -436,7 +436,7 @@ def test_get_template_by_id_paywall(test_client, mock_supabase, valid_auth_heade
     response_mock.data = template
     mock_supabase["templates"].table().select().eq().single().execute.return_value = response_mock
 
-    sub_status = MagicMock(isActive=False, planId=None)
+    sub_status = MagicMock(isActive=False, planName=None)
 
     with patch('routes.prompts.templates.get_template_by_id.apply_access_conditions', side_effect=lambda q, *_: q), \
          patch('routes.prompts.templates.get_template_by_id.stripe_service.get_subscription_status', AsyncMock(return_value=sub_status)):

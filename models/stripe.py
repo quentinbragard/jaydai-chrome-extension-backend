@@ -28,8 +28,12 @@ class CreateCheckoutSessionResponse(BaseModel):
     error: Optional[str] = None
 
 class SubscriptionStatusResponse(BaseModel):
-    isActive: bool
-    planId: Optional[str] = None
+    status: SubscriptionStatus
+    planName: Optional[str] = None
+    createdAt: Optional[str] = None
+    trialStart: Optional[str] = None
+    trialEnd: Optional[str] = None
+    currentPeriodStart: Optional[str] = None
     currentPeriodEnd: Optional[str] = None
     cancelAtPeriodEnd: bool = False
     stripeCustomerId: Optional[str] = None

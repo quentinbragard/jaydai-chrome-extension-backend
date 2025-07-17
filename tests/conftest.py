@@ -170,7 +170,7 @@ def mock_supabase():
                 mock.get_user_templates = MagicMock()
                 mock.get_organization_templates = MagicMock()
 
-        default_status = MagicMock(isActive=True, planId="plus")
+        default_status = MagicMock(isActive=True, planName="plus")
         mock_get_sub_status1.return_value = default_status
         mock_get_sub_status2.return_value = default_status
         mock_get_sub_status3.return_value = default_status

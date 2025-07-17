@@ -29,6 +29,7 @@ class StripeConfig:
             "STRIPE_WEBHOOK_SECRET": self.webhook_secret,
             "STRIPE_PLUS_MONTHLY_PRICE_ID": self.monthly_price_id,
             "STRIPE_PLUS_YEARLY_PRICE_ID": self.yearly_price_id,
+            "STRIPE_PLUS_PRODUCT_ID": self.plus_product_id,
         }
         
         missing_vars = [var for var, value in required_vars.items() if not value]
