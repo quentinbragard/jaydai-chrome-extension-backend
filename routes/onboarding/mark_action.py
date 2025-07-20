@@ -1,3 +1,4 @@
+# routes/onboarding/mark_action.py
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from supabase import create_client, Client
@@ -34,7 +35,7 @@ async def mark_onboarding_action(
         
         # Check if user metadata exists
         existing_metadata = supabase.table("users_metadata") \
-            .select("user_id") \
+            .select("*") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
@@ -50,16 +51,62 @@ async def mark_onboarding_action(
         else:
             # Create new record
             update_data["user_id"] = user_id
+            # Set default values for other fields
+            update_data.update({
+                "first_template_created": False,
+                "first_template_used": False,
+                "first_block_created": False,
+                "keyboard_shortcut_used": False,
+                "onboarding_dismissed": False
+            })
+            # Override the specific action we're marking
+            update_data[request.action] = True
+            
             response = supabase.table("users_metadata") \
                 .insert(update_data) \
                 .execute()
         
-        return {
-            "success": True,
-            "message": f"Action {request.action} marked as completed"
-        }
+        # Get updated metadata to return current status
+        updated_metadata = supabase.table("users_metadata") \
+            .select("first_template_created, first_template_used, first_block_created, keyboard_shortcut_used, onboarding_dismissed") \
+            .eq("user_id", user_id) \
+            .single() \
+            .execute()
+        
+        if updated_metadata.data:
+            metadata = updated_metadata.data
+            
+            # Calculate progress
+            completed_actions = [
+                metadata.get("first_template_created", False),
+                metadata.get("first_template_used", False),
+                metadata.get("first_block_created", False),
+                metadata.get("keyboard_shortcut_used", False)
+            ]
+            
+            completed_count = sum(completed_actions)
+            total_count = 4
+            is_complete = completed_count == total_count
+            
+            return {
+                "success": True,
+                "data": {
+                    "first_template_created": metadata.get("first_template_created", False),
+                    "first_template_used": metadata.get("first_template_used", False),
+                    "first_block_created": metadata.get("first_block_created", False),
+                    "keyboard_shortcut_used": metadata.get("keyboard_shortcut_used", False),
+                    "progress": f"{completed_count}/{total_count}",
+                    "completed_count": completed_count,
+                    "total_count": total_count,
+                    "is_complete": is_complete,
+                    "is_dismissed": metadata.get("onboarding_dismissed", False)
+                },
+                "message": f"Action {request.action} marked as completed"
+            }
+        else:
+            raise Exception("Failed to retrieve updated metadata")
         
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
-        raise HTTPException(status_code=500, detail=f"Error marking onboarding action: {str(e)}") 
+        raise HTTPException(status_code=500, detail=f"Error marking onboarding action: {str(e)}")

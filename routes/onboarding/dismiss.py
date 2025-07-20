@@ -1,3 +1,4 @@
+# routes/onboarding/dismiss.py
 from fastapi import APIRouter, Depends, HTTPException
 from supabase import create_client, Client
 from utils import supabase_helpers
@@ -33,8 +34,15 @@ async def dismiss_onboarding(
                 .eq("user_id", user_id) \
                 .execute()
         else:
-            # Create new record
-            update_data["user_id"] = user_id
+            # Create new record with default values
+            update_data.update({
+                "user_id": user_id,
+                "first_template_created": False,
+                "first_template_used": False,
+                "first_block_created": False,
+                "keyboard_shortcut_used": False,
+                "onboarding_dismissed": True
+            })
             response = supabase.table("users_metadata") \
                 .insert(update_data) \
                 .execute()
@@ -45,4 +53,4 @@ async def dismiss_onboarding(
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error dismissing onboarding: {str(e)}") 
+        raise HTTPException(status_code=500, detail=f"Error dismissing onboarding: {str(e)}")

@@ -1,3 +1,4 @@
+# routes/onboarding/checklist.py
 from fastapi import APIRouter, Depends, HTTPException
 from supabase import create_client, Client
 from utils import supabase_helpers
@@ -25,7 +26,24 @@ async def get_onboarding_checklist(
             .execute()
         
         # Default values if no metadata exists
-        metadata = metadata_response.data if metadata_response.data else {}
+        if metadata_response.data:
+            metadata = metadata_response.data
+        else:
+            # Create initial metadata record if it doesn't exist
+            initial_metadata = {
+                "user_id": user_id,
+                "first_template_created": False,
+                "first_template_used": False,
+                "first_block_created": False,
+                "keyboard_shortcut_used": False,
+                "onboarding_dismissed": False
+            }
+            
+            insert_response = supabase.table("users_metadata") \
+                .insert(initial_metadata) \
+                .execute()
+            
+            metadata = initial_metadata
         
         first_template_created = metadata.get("first_template_created", False)
         first_template_used = metadata.get("first_template_used", False)
@@ -61,4 +79,4 @@ async def get_onboarding_checklist(
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching onboarding checklist: {str(e)}") 
+        raise HTTPException(status_code=500, detail=f"Error fetching onboarding checklist: {str(e)}")
