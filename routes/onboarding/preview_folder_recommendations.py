@@ -1,18 +1,30 @@
 # routes/onboarding/preview_recommendations.py
 
-from fastapi import Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
+from typing import Optional, List
 from utils import supabase_helpers
 from utils.onboarding.folder_assignment_service import FolderAssignmentService
 import dotenv
 import logging
-from models.onboarding import FolderRecommendationRequest
-from .helpers import router, supabase
 from utils.middleware.localization import extract_locale_from_request
+from supabase import create_client, Client
+import os
 
 logger = logging.getLogger(__name__)
 
 dotenv.load_dotenv()
 
+# Initialize Supabase client
+supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
+
+router = APIRouter()
+
+class FolderRecommendationRequest(BaseModel):
+    job_type: Optional[str] = None
+    job_industry: Optional[str] = None
+    job_seniority: Optional[str] = None
+    interests: Optional[List[str]] = None
 
 @router.post("/preview-folder-recommendations")
 async def preview_folder_recommendations(

@@ -10,9 +10,22 @@ from utils.prompts import (
 )
 import dotenv
 import os
-from typing import List, Dict, Any
 import logging
 from datetime import datetime
+from typing import List, Dict, Any, Optional
+from pydantic import BaseModel
+
+class OnboardingChecklistStatus(BaseModel):
+    first_template_created: bool = False
+    first_template_used: bool = False
+    first_block_created: bool = False
+    keyboard_shortcut_used: bool = False
+
+class OnboardingChecklistUpdate(BaseModel):
+    first_template_created: Optional[bool] = None
+    first_template_used: Optional[bool] = None
+    first_block_created: Optional[bool] = None
+    keyboard_shortcut_used: Optional[bool] = None
 
 dotenv.load_dotenv()
 
@@ -349,3 +362,128 @@ async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user
     except Exception as e:
         logger.error(f"Error in onboarding status: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error checking onboarding status: {str(e)}")
+    
+
+@router.get("/onboarding-checklist")
+async def get_onboarding_checklist(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    """Get the current onboarding checklist status for a user."""
+    try:
+        # Get user metadata for onboarding checklist
+        metadata = supabase.table("users_metadata") \
+            .select("first_template_created, first_template_used, first_block_created, keyboard_shortcut_used") \
+            .eq("user_id", user_id) \
+            .single() \
+            .execute()
+
+        # Default values if no metadata exists
+        default_status = {
+            "first_template_created": False,
+            "first_template_used": False, 
+            "first_block_created": False,
+            "keyboard_shortcut_used": False
+        }
+
+        if metadata.data:
+            # Update defaults with actual values, keeping defaults for missing fields
+            for key in default_status:
+                if key in metadata.data and metadata.data[key] is not None:
+                    default_status[key] = metadata.data[key]
+
+        # Calculate progress
+        completed_count = sum(1 for status in default_status.values() if status)
+        total_count = len(default_status)
+
+        return {
+            "success": True,
+            "data": {
+                **default_status,
+                "progress": f"{completed_count}/{total_count}",
+                "completed_count": completed_count,
+                "total_count": total_count,
+                "is_complete": completed_count == total_count
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error fetching onboarding checklist: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching onboarding checklist: {str(e)}")
+
+@router.post("/onboarding-checklist")
+async def update_onboarding_checklist(
+    checklist_update: OnboardingChecklistUpdate,
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Update specific items in the onboarding checklist."""
+    try:
+        # Check if user metadata exists
+        existing_metadata = supabase.table("users_metadata") \
+            .select("user_id") \
+            .eq("user_id", user_id) \
+            .single() \
+            .execute()
+
+        # Build update data with only the fields that were provided
+        update_data = {}
+        if checklist_update.first_template_created is not None:
+            update_data["first_template_created"] = checklist_update.first_template_created
+        if checklist_update.first_template_used is not None:
+            update_data["first_template_used"] = checklist_update.first_template_used
+        if checklist_update.first_block_created is not None:
+            update_data["first_block_created"] = checklist_update.first_block_created
+        if checklist_update.keyboard_shortcut_used is not None:
+            update_data["keyboard_shortcut_used"] = checklist_update.keyboard_shortcut_used
+
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No valid fields to update")
+
+        if existing_metadata.data:
+            # Update existing record
+            response = supabase.table("users_metadata") \
+                .update(update_data) \
+                .eq("user_id", user_id) \
+                .execute()
+        else:
+            # Create new record
+            update_data["user_id"] = user_id
+            response = supabase.table("users_metadata") \
+                .insert(update_data) \
+                .execute()
+
+        # Return updated status
+        updated_checklist = await get_onboarding_checklist(user_id)
+        
+        return {
+            "success": True,
+            "data": updated_checklist["data"],
+            "message": "Onboarding checklist updated successfully"
+        }
+
+    except Exception as e:
+        logger.error(f"Error updating onboarding checklist: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail=f"Error updating onboarding checklist: {str(e)}")
+
+@router.post("/onboarding-checklist/mark-complete/{action}")
+async def mark_onboarding_action_complete(
+    action: str,
+    user_id: str = Depends(supabase_helpers.get_user_from_session_token)
+):
+    """Mark a specific onboarding action as complete. Convenience endpoint for individual actions."""
+    try:
+        valid_actions = ["first_template_created", "first_template_used", "first_block_created", "keyboard_shortcut_used"]
+        
+        if action not in valid_actions:
+            raise HTTPException(status_code=400, detail=f"Invalid action. Must be one of: {valid_actions}")
+
+        # Create update object with just this action
+        update_data = OnboardingChecklistUpdate(**{action: True})
+        
+        # Use the existing update endpoint
+        return await update_onboarding_checklist(update_data, user_id)
+
+    except Exception as e:
+        logger.error(f"Error marking onboarding action complete: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail=f"Error marking onboarding action complete: {str(e)}")
+    
