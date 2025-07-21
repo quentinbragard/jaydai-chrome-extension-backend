@@ -31,6 +31,7 @@ class StripeService:
         user_email: str,
         success_url: str,
         cancel_url: str,
+        redirect_url: Optional[str] = None,
     ) -> Dict[str, Any]:
         return await checkout.create_checkout_session(
             self.supabase,
@@ -40,6 +41,7 @@ class StripeService:
             user_email,
             success_url,
             cancel_url,
+            redirect_url,
         )
 
     async def verify_checkout_session(self, session_id: str) -> Dict[str, Any]:

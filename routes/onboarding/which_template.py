@@ -35,6 +35,8 @@ async def get_onboarding_template(
         )
 
         pinned_ids = meta_resp.data.get("pinned_folder_ids", []) if meta_resp.data else []
+        print(pinned_ids)
+        print("+++++++++++++++++++++++++++++\n")
 
         if not pinned_ids:
             raise HTTPException(status_code=404, detail="No pinned folders")

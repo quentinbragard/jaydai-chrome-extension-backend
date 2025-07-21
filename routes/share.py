@@ -1,4 +1,4 @@
-# routes/share.py
+# routes/share.py - UPDATED VERSION
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, EmailStr
 from typing import Optional
@@ -19,6 +19,34 @@ dotenv.load_dotenv()
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
 
 router = APIRouter(prefix="/share", tags=["Share"])
+
+async def get_user_info(user_id: str):
+    """Get user information from auth.users table"""
+    try:
+        # Get user info from auth.users table
+        user_response = supabase.auth.admin.get_user_by_id(user_id)
+        if not user_response or not user_response.user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        user = user_response.user
+        user_email = user.email
+        
+        # Try to get display name from user metadata or use email
+        user_name = None
+        if user.user_metadata:
+            user_name = user.user_metadata.get('name') or user.user_metadata.get('full_name')
+        
+        if not user_name:
+            # Fallback to part before @ in email
+            user_name = user_email.split('@')[0] if user_email else 'Someone'
+        
+        return {
+            "email": user_email,
+            "name": user_name
+        }
+    except Exception as e:
+        logger.error(f"Error getting user info for {user_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Could not retrieve user information")
 
 async def call_edge_function_directly(function_name: str, payload: dict):
     """Directly call edge function - works better for local development"""
@@ -45,19 +73,15 @@ async def call_edge_function_directly(function_name: str, payload: dict):
         logger.error(f"Error calling edge function {function_name}: {e}")
         return False
 
-# Pydantic models
+# Updated Pydantic models
 class InviteFriendRequest(BaseModel):
-    inviterEmail: EmailStr
-    inviterName: str
     friendEmail: EmailStr
 
 class InviteTeamRequest(BaseModel):
-    userEmail: EmailStr
-    userName: str
+    pass  # Empty - all info comes from user_id
 
 class JoinReferralRequest(BaseModel):
-    userEmail: EmailStr
-    userName: str
+    pass  # Empty - all info comes from user_id
 
 @router.post("/invite-friend")
 async def invite_friend(
@@ -66,13 +90,17 @@ async def invite_friend(
 ):
     """
     Send friend invitation - creates record that triggers edge function
+    Backend now gets user info from user_id instead of request
     """
     try:
-        # Insert friend invitation record
+        # Get user information from auth.users table
+        user_info = await get_user_info(user_id)
+        
+        # Insert friend invitation record with user info from backend
         invitation_data = {
             "user_id": user_id,
-            "inviter_email": request.inviterEmail,
-            "inviter_name": request.inviterName,
+            "inviter_email": user_info["email"],
+            "inviter_name": user_info["name"],
             "friend_email": request.friendEmail,
             "invitation_type": "friend",
             "status": "pending",
@@ -111,7 +139,8 @@ async def invite_friend(
             "message": "Friend invitation sent successfully!",
             "data": {
                 "invitation_id": result.data[0]["id"],
-                "friend_email": request.friendEmail
+                "friend_email": request.friendEmail,
+                "inviter_name": user_info["name"]
             }
         }
         
@@ -126,13 +155,17 @@ async def invite_team(
 ):
     """
     Request team members invitation - creates record that triggers internal notification
+    Backend now gets user info from user_id instead of request
     """
     try:
-        # Insert team invitation request
+        # Get user information from auth.users table
+        user_info = await get_user_info(user_id)
+        
+        # Insert team invitation request with user info from backend
         invitation_data = {
             "user_id": user_id,
-            "inviter_email": request.userEmail,
-            "inviter_name": request.userName,
+            "inviter_email": user_info["email"],
+            "inviter_name": user_info["name"],
             "invitation_type": "team",
             "status": "pending",
             "created_at": datetime.utcnow().isoformat(),
@@ -172,7 +205,8 @@ async def invite_team(
             "success": True,
             "message": "Team invitation request sent! We'll contact you soon.",
             "data": {
-                "invitation_id": result.data[0]["id"]
+                "invitation_id": result.data[0]["id"],
+                "user_name": user_info["name"]
             }
         }
         
@@ -187,13 +221,17 @@ async def join_referral(
 ):
     """
     Join referral program - creates record that triggers internal notification
+    Backend now gets user info from user_id instead of request
     """
     try:
-        # Insert referral program request
+        # Get user information from auth.users table
+        user_info = await get_user_info(user_id)
+        
+        # Insert referral program request with user info from backend
         invitation_data = {
             "user_id": user_id,
-            "inviter_email": request.userEmail,
-            "inviter_name": request.userName,
+            "inviter_email": user_info["email"],
+            "inviter_name": user_info["name"],
             "invitation_type": "referral",
             "status": "pending",
             "created_at": datetime.utcnow().isoformat(),
@@ -229,7 +267,8 @@ async def join_referral(
             "success": True,
             "message": "Referral program request sent! We'll get back to you soon.",
             "data": {
-                "invitation_id": result.data[0]["id"]
+                "invitation_id": result.data[0]["id"],
+                "user_name": user_info["name"]
             }
         }
         
