@@ -9,6 +9,7 @@ from .dismiss import router as dismiss_router
 from .complete_onboarding import router as complete_onboarding_router
 from .preview_folder_recommendations import router as preview_folder_recommendations_router
 from .recommend_folders import router as recommend_folders_router
+from .which_template import router as which_template_router
 
 # Include all the routers
 router.include_router(checklist_router)
@@ -17,6 +18,7 @@ router.include_router(dismiss_router)
 router.include_router(complete_onboarding_router)
 router.include_router(preview_folder_recommendations_router)
 router.include_router(recommend_folders_router)
+router.include_router(which_template_router)
 
 __all__ = [
     "router",

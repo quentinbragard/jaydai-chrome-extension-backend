@@ -1,5 +1,6 @@
 from typing import Optional
 from fastapi import Depends, HTTPException
+from models.stripe import SubscriptionStatus
 from models.prompts.templates import TemplateResponse
 from models.common import APIResponse
 from utils import supabase_helpers
@@ -25,12 +26,19 @@ async def get_template_by_id(
             raise HTTPException(status_code=404, detail="Template not found")
 
         template_data = response.data
+        
+        print("👇👇👇👇 template_data 👇👇👇👇\n")
+        print(template_data)
+        print("==================================\n")
 
-        if template_data.get("is_free"):
+        if template_data.get("is_free") is False:
             sub_status = await stripe_service.get_subscription_status(user_id)
+            print("👇👇👇👇 sub_status 👇👇👇👇\n")
+            print(sub_status.status)
+            print("==================================\n")
             if not (
-                sub_status.isActive and
-                sub_status.planName == stripe_config.plus_product_id
+                sub_status.status in [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING] and
+                sub_status.planName == "plus"
             ):
                 raise HTTPException(status_code=402, detail="Subscription required")
 

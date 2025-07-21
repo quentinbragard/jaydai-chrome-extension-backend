@@ -9,6 +9,7 @@ from utils.access_control import get_user_metadata
 from utils.stripe_config import stripe_config
 from routes.stripe import stripe_service
 from .helpers import router, supabase, process_block_for_response
+from models.stripe import SubscriptionStatus
 
 @router.post("", response_model=APIResponse[BlockResponse])
 async def create_block(
@@ -36,8 +37,8 @@ async def create_block(
         if existing_count >= 5:
             sub_status = await stripe_service.get_subscription_status(user_id)
             if not (
-                sub_status.isActive and
-                sub_status.planName == stripe_config.plus_product_id
+                sub_status.status in [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING] and
+                sub_status.planName == "plus"
             ):
                 raise HTTPException(status_code=402, detail="Subscription required")
         

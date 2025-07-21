@@ -8,6 +8,9 @@ from utils.access_control import get_user_metadata, user_has_access_to_folder
 from utils.middleware.localization import extract_locale_from_request
 from utils.stripe_config import stripe_config
 from routes.stripe import stripe_service
+from models.stripe import SubscriptionStatus
+
+
 from . import router, supabase
 
 @router.post("", response_model=APIResponse[TemplateResponse])
@@ -40,8 +43,8 @@ async def create_template(
         if existing_count >= 5:
             sub_status = await stripe_service.get_subscription_status(user_id)
             if not (
-                sub_status.isActive and
-                sub_status.planName == stripe_config.plus_product_id
+                sub_status.status in [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING] and
+                sub_status.planName == "plus"
             ):
                 raise HTTPException(status_code=402, detail="Subscription required")
         

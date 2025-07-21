@@ -26,7 +26,8 @@ async def create_checkout_session(
             auth_token=auth_token,
             user_email=request.userEmail,
             success_url=request.successUrl,
-            cancel_url=request.cancelUrl
+            cancel_url=request.cancelUrl,
+            redirect_url=request.redirectUrl
         )
         
         if not result["success"]:
