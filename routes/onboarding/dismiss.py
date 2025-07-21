@@ -35,14 +35,14 @@ async def dismiss_onboarding(
                 .execute()
         else:
             # Create new record with default values
-            update_data.update({
-                "user_id": user_id,
-                "first_template_created": False,
-                "first_template_used": False,
-                "first_block_created": False,
-                "keyboard_shortcut_used": False,
-                "onboarding_dismissed": True
-            })
+            update_data.update(
+                {
+                    "user_id": user_id,
+                    "first_template_used": False,
+                    "keyboard_shortcut_used": False,
+                    "onboarding_dismissed": True,
+                }
+            )
             response = supabase.table("users_metadata") \
                 .insert(update_data) \
                 .execute()
