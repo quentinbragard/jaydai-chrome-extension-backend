@@ -19,12 +19,16 @@ async def get_onboarding_checklist(
     """Get user's onboarding checklist status."""
     try:
         # Get user metadata for onboarding tracking
-        metadata_response = supabase.table("users_metadata") \
-            .select("first_template_created, first_template_used, first_block_created, keyboard_shortcut_used, onboarding_dismissed") \
-            .eq("user_id", user_id) \
-            .single() \
+        metadata_response = (
+            supabase.table("users_metadata")
+            .select(
+                "first_template_used, keyboard_shortcut_used, onboarding_dismissed"
+            )
+            .eq("user_id", user_id)
+            .single()
             .execute()
-        
+        )
+
         # Default values if no metadata exists
         if metadata_response.data:
             metadata = metadata_response.data
@@ -32,11 +36,9 @@ async def get_onboarding_checklist(
             # Create initial metadata record if it doesn't exist
             initial_metadata = {
                 "user_id": user_id,
-                "first_template_created": False,
                 "first_template_used": False,
-                "first_block_created": False,
                 "keyboard_shortcut_used": False,
-                "onboarding_dismissed": False
+                "onboarding_dismissed": False,
             }
             
             insert_response = supabase.table("users_metadata") \
@@ -45,9 +47,30 @@ async def get_onboarding_checklist(
             
             metadata = initial_metadata
         
-        first_template_created = metadata.get("first_template_created", False)
+        # Determine if the user has created templates or blocks
+        templates_resp = (
+            supabase.table("prompt_templates")
+            .select("id", count="exact")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        template_count = getattr(templates_resp, "count", None)
+        if template_count is None:
+            template_count = len(templates_resp.data or [])
+        first_template_created = template_count > 0
+
+        blocks_resp = (
+            supabase.table("prompt_blocks")
+            .select("id", count="exact")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        block_count = getattr(blocks_resp, "count", None)
+        if block_count is None:
+            block_count = len(blocks_resp.data or [])
+        first_block_created = block_count > 0
+
         first_template_used = metadata.get("first_template_used", False)
-        first_block_created = metadata.get("first_block_created", False)
         keyboard_shortcut_used = metadata.get("keyboard_shortcut_used", False)
         is_dismissed = metadata.get("onboarding_dismissed", False)
         
