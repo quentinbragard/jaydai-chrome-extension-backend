@@ -25,14 +25,37 @@ async def get_onboarding_template(
 ):
     """Get the onboarding template."""
     try:
-        query = supabase.table("prompt_templates").select("*").eq("id", "1")
+        # Get user's pinned folders
+        meta_resp = (
+            supabase.table("users_metadata")
+            .select("pinned_folder_ids")
+            .eq("user_id", user_id)
+            .single()
+            .execute()
+        )
+
+        pinned_ids = meta_resp.data.get("pinned_folder_ids", []) if meta_resp.data else []
+
+        if not pinned_ids:
+            raise HTTPException(status_code=404, detail="No pinned folders")
+
+        first_folder_id = pinned_ids[0]
+
+        # Fetch the first template in the first pinned folder
+        query = (
+            supabase.table("prompt_templates")
+            .select("*")
+            .eq("folder_id", first_folder_id)
+            .order("created_at")
+            .limit(1)
+        )
         query = apply_access_conditions(query, supabase, user_id)
-        response = query.single().execute()
+        response = query.execute()
 
         if not response.data:
             raise HTTPException(status_code=404, detail="Template not found")
 
-        template_data = response.data
+        template_data = response.data[0]
         processed_template = process_template_for_response(template_data, locale)
 
         return APIResponse(success=True, data=processed_template)
