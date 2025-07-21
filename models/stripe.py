@@ -20,6 +20,7 @@ class CreateCheckoutSessionRequest(BaseModel):
     cancelUrl: str
     userId: str
     userEmail: str
+    redirectUrl: Optional[str] = None
 
 class CreateCheckoutSessionResponse(BaseModel):
     success: bool
