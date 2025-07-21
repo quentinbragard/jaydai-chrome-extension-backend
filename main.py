@@ -1,8 +1,8 @@
-# main.py - MODIFICATIONS (Add the highlighted lines)
+# main.py - UPDATED with Share functionality
 
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, save, stats, notifications, prompts, user, organizations, onboarding, stripe
+from routes import auth, save, stats, notifications, prompts, user, organizations, onboarding, stripe, share
 import time
 import json
 from supabase import create_client, Client
@@ -27,7 +27,7 @@ app.add_middleware(
 # ADD THIS MIDDLEWARE REGISTRATION
 app.add_middleware(AccessControlMiddleware)
 
-# Include all routers (existing code - no changes)
+# Include all routers
 app.include_router(auth.router)
 app.include_router(save.router)
 app.include_router(stats.router)
@@ -36,10 +36,9 @@ app.include_router(user.router)
 app.include_router(prompts.router)
 app.include_router(organizations.router, prefix="/organizations")
 app.include_router(onboarding.router, prefix="/onboarding")
-# ADD THIS LINE - Include Stripe router
 app.include_router(stripe.router)
-
-# Rest of your existing main.py code remains unchanged...
+# ADD THIS LINE - Include Share router
+app.include_router(share.router)
 
 @app.get("/")
 async def root():
