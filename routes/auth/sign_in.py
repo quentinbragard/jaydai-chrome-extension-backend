@@ -1,9 +1,10 @@
 from fastapi import HTTPException
-from . import router, supabase
+from . import router
 from .schemas import SignInData
 
 @router.post("/sign_in")
 async def sign_in(sign_in_data: SignInData):
+    from . import supabase  # ensure patched supabase is used during tests
     """Authenticate user via email & password."""
     try:
         response = supabase.auth.sign_in_with_password({

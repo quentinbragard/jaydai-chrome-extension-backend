@@ -1,6 +1,6 @@
 # routes/auth/sign_in_with_google.py - Updated
 from fastapi import HTTPException
-from . import router, supabase
+from . import router
 from .schemas import GoogleAuthRequest
 from utils.notification_service import NotificationService
 import logging
@@ -12,6 +12,7 @@ JAYDAI_ORG_ID = "19864b30-936d-4a8d-996a-27d17f11f00f"
 
 @router.post("/sign_in_with_google")
 async def sign_in_with_google(google_sign_in_data: GoogleAuthRequest):
+    from . import supabase  # ensure patched supabase is used during tests
     """Authenticate user via Google OAuth with automatic starter pack for new users."""
     try:
         response = supabase.auth.sign_in_with_id_token({
