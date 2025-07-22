@@ -1,4 +1,5 @@
 # routes/auth/sign_up.py - Standard email sign up
+
 from fastapi import HTTPException
 from . import router
 from .schemas import SignUpData
@@ -23,20 +24,14 @@ async def sign_up(sign_up_data: SignUpData):
             "email_confirm": True,
         })
         
-        if not user_response.user:
-            raise HTTPException(status_code=400, detail="Failed to create user account")
-        
-        logger.info(f"User created and confirmed: {user_response.user.id}")
-        
-        # Step 2: Create user metadata
         user_with_metadata = None
-        try:
-            metadata_insert_data = {
-                "user_id": user_response.user.id,
+        if response.user:
+            # Create user metadata record
+            metadata_response = supabase.table("users_metadata").insert({
+                "user_id": response.user.id,
                 "pinned_folder_ids": [FolderRecommendationEngine.STARTER_PACK_FOLDER_ID],
                 "name": sign_up_data.name,
                 "organization_ids": [JAYDAI_ORG_ID],
-                "email": sign_up_data.email,
                 "additional_email": None,
                 "phone_number": None,
                 "additional_organization": None
@@ -92,12 +87,14 @@ async def sign_up(sign_up_data: SignUpData):
         
         return {
             "success": True,
-            "message": "Sign up successful. Account automatically confirmed.",
+            "message": "Sign up successful. Please check your email to verify your account.",
             "user": user_with_metadata,
-            "session": session_data,
-            "is_new_user": True
+            "session": {
+                "access_token": response.session.access_token,
+                "refresh_token": response.session.refresh_token,
+                "expires_at": response.session.expires_at,
+            }
         }
-        
     except Exception as e:
         logger.error(f"Error during sign up: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error during sign up: {str(e)}")
