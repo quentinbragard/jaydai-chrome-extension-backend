@@ -1,6 +1,6 @@
-# routes/auth/sign_up.py - FIXED VERSION WITH SESSION
+# routes/auth/sign_up.py - Standard email sign up
 from fastapi import HTTPException
-from . import router, supabase
+from . import router
 from .schemas import SignUpData
 from utils.notification_service import NotificationService
 import logging
@@ -12,14 +12,15 @@ JAYDAI_ORG_ID = "19864b30-936d-4a8d-996a-27d17f11f00f"
 
 @router.post("/sign_up")
 async def sign_up(sign_up_data: SignUpData):
+    from . import supabase  # ensure patched supabase is used during tests
     """Sign up a new user with automatic confirmation and session creation."""
     try:
-        # Step 1: Create user with auto-confirmation using admin API
-        user_response = supabase.auth.admin.create_user({
+        # Step 1: Sign the user up via Supabase Auth
+        user_response = supabase.auth.sign_up({
             "email": sign_up_data.email,
             "password": sign_up_data.password,
-            "email_confirm": True,  # Auto-confirm the email
-            "user_metadata": {"name": sign_up_data.name}
+            "options": {"data": {"name": sign_up_data.name}},
+            "email_confirm": True,
         })
         
         if not user_response.user:
@@ -65,22 +66,25 @@ async def sign_up(sign_up_data: SignUpData):
         except Exception as notification_error:
             logger.error(f"Error creating welcome notification: {str(notification_error)}")
         
-        # Step 4: Sign the user in to create a session
+        # Step 4: Use the session returned by sign_up or fall back to a sign in
         try:
-            session_response = supabase.auth.sign_in_with_password({
-                "email": sign_up_data.email,
-                "password": sign_up_data.password,
-            })
-            
-            # Use the session from sign-in
+            if user_response.session:
+                session = user_response.session
+            else:
+                session_response = supabase.auth.sign_in_with_password({
+                    "email": sign_up_data.email,
+                    "password": sign_up_data.password,
+                })
+                session = session_response.session
+
             session_data = {
-                "access_token": session_response.session.access_token,
-                "refresh_token": session_response.session.refresh_token,
-                "expires_at": session_response.session.expires_at,
-            } if session_response.session else None
-            
+                "access_token": session.access_token,
+                "refresh_token": session.refresh_token,
+                "expires_at": session.expires_at,
+            } if session else None
+
             logger.info(f"Session created for user: {user_response.user.id}")
-            
+
         except Exception as session_error:
             logger.error(f"Error creating session: {str(session_error)}")
             # Return without session if sign-in fails
