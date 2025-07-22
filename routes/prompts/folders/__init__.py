@@ -41,6 +41,7 @@ from . import pin_folder
 from . import unpin_folder
 from . import update_pinned_folders_endpoint
 from . import get_template_folders
+from . import get_pinned_folders
 
 __all__ = [
     "router",
@@ -64,4 +65,5 @@ __all__ = [
     "add_pinned_status_to_folders",
     "create_localized_field",
     "determine_folder_type",
-]
+    "get_pinned_folders",
+    ]
