@@ -3,9 +3,7 @@ from fastapi import APIRouter
 
 router = APIRouter(tags=["Folders"])
 
-# Import all route modules to register them with the router
-# Existing routes
-
+# Import helper functions and utilities first
 from .helpers import (
     router,
     supabase,
@@ -23,31 +21,31 @@ from .helpers import (
     determine_folder_type,
 )
 
+# CRITICAL: Import specific routes BEFORE generic routes with path parameters
+# This prevents FastAPI from matching /pinned as /{folder_id}
+
+# Import specific named routes first
+from . import get_pinned_folders  # Must be BEFORE get_folder_by_id
+from . import pin_folder
+from . import unpin_folder
+from . import update_pinned_folders_endpoint
+from . import get_template_folders
+
+# Import generic routes with path parameters last
 from . import get_folders
-from . import get_folder_by_id
+from . import get_folder_by_id  # This has /{folder_id} - must be AFTER /pinned
+from . import create_folder
+from . import update_folder
+from . import delete_folder
+
+# Assign helper functions for backwards compatibility
 get_template_folders_by_type = fetch_folders_by_type
-from . import create_folder
-from . import update_folder
-from . import delete_folder
-from . import pin_folder
-from . import unpin_folder
-from . import update_pinned_folders_endpoint
-from . import get_template_folders
-from . import get_folders
-from . import create_folder
-from . import update_folder
-from . import delete_folder
-from . import pin_folder
-from . import unpin_folder
-from . import update_pinned_folders_endpoint
-from . import get_template_folders
-from . import get_pinned_folders
 
 __all__ = [
     "router",
     "supabase",
     "create_folder",
-    "update_folder",
+    "update_folder", 
     "delete_folder",
     "pin_folder",
     "unpin_folder",
@@ -66,4 +64,4 @@ __all__ = [
     "create_localized_field",
     "determine_folder_type",
     "get_pinned_folders",
-    ]
+]

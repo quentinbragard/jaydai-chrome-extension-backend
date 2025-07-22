@@ -40,46 +40,49 @@ async def fetch_templates_for_folders(
             templates_by_folder[folder_id].append(processed_template)
     return templates_by_folder
 
+# IMPORTANT: This route must be registered BEFORE the /{folder_id} route
+# in the __init__.py file to avoid path parameter conflicts
 @router.get("/pinned", response_model=APIResponse[Dict])
 async def get_pinned_folders(
     request: Request,
-    withTemplates: bool = Query(False),
-    withSubfolders: bool = Query(False),
-    locale: str = Query(None),
+    withTemplates: bool = Query(False, description="Include templates for each folder"),
+    withSubfolders: bool = Query(False, description="Include nested subfolders"),
+    locale: str = Query("en", description="Locale for response"),
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ) -> APIResponse[Dict]:
     """
     Get only the user's pinned folders, optionally with templates.
     """
-    #try:
-    print("+++++++++++++++++++++++++++++\n")
-    print("PARAMS : ", request)
-    # locale = extract_locale_from_request(request) # This line is now handled by the Query parameter
-    pinned_folder_ids = await get_user_pinned_folder_ids(supabase, user_id)
-    if not pinned_folder_ids:
-        return APIResponse(success=True, data={"folders": []})
+    try:
+        print("+++++++++++++++++++++++++++++")
+        print(f"PARAMS - withTemplates: {withTemplates}, withSubfolders: {withSubfolders}, locale: {locale}")
+        
+        # Get user's pinned folder IDs
+        pinned_folder_ids = await get_user_pinned_folder_ids(supabase, user_id)
+        if not pinned_folder_ids:
+            return APIResponse(success=True, data={"folders": []})
 
-    # Fetch only folders that are pinned
-    query = supabase.table("prompt_folders").select("*").in_("id", pinned_folder_ids)
-    query = apply_access_conditions(query, supabase, user_id)
-    response = query.execute()
-    folders = response.data or []
+        # Fetch only folders that are pinned
+        query = supabase.table("prompt_folders").select("*").in_("id", pinned_folder_ids)
+        query = apply_access_conditions(query, supabase, user_id)
+        response = query.execute()
+        folders = response.data or []
 
-    # Process folders for response
-    processed_folders = [process_folder_for_response(folder, locale) for folder in folders]
+        # Process folders for response
+        processed_folders = [process_folder_for_response(folder, locale) for folder in folders]
 
-    # Optionally fetch templates for these folders
-    if withTemplates and processed_folders:
-        folder_ids = [f["id"] for f in processed_folders]
-        templates_by_folder = await fetch_templates_for_folders(supabase, folder_ids, locale)
-        for folder in processed_folders:
-            folder_templates = templates_by_folder.get(folder["id"], [])
-            if folder_templates:
-                folder["templates"] = folder_templates
+        # Optionally fetch templates for these folders
+        if withTemplates and processed_folders:
+            folder_ids = [f["id"] for f in processed_folders]
+            templates_by_folder = await fetch_templates_for_folders(supabase, folder_ids, locale)
+            for folder in processed_folders:
+                folder_templates = templates_by_folder.get(folder["id"], [])
+                if folder_templates:
+                    folder["templates"] = folder_templates
 
-    return APIResponse(success=True, data={"folders": processed_folders})
+        return APIResponse(success=True, data={"folders": processed_folders})
 
-    #except Exception as e:
-    #    if isinstance(e, HTTPException):
-    #        raise e
-    #    raise HTTPException(status_code=500, detail=f"Error retrieving pinned folders: {str(e)}")
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail=f"Error retrieving pinned folders: {str(e)}")
