@@ -90,7 +90,7 @@ class ImprovedFolderRecommendationEngine:
             'summarizing': [27, 31],  # Research, Data Analysis
             'critical_thinking': [11],  # Strategy, Decision Making, Research, Data Analysis
             'customer_support': [32],  # Client Support, Customer Service
-            'decision_making': [11, 60],  # Strategy, Decision Making, Executive Decision Maker, Strategic Decision Maker
+            'decision_making': [11],  # Strategy, Decision Making, Executive Decision Maker, Strategic Decision Maker
             'language_learning': [33],  # Language Learning
             'other': [2, 3]  # Starter, Daily, Self Development, Personal Development
         }

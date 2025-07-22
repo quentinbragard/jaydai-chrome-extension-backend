@@ -17,7 +17,8 @@ async def sign_up(sign_up_data: SignUpData):
         response = supabase.auth.sign_up({
             "email": sign_up_data.email,
             "password": sign_up_data.password,
-            "options": {"data": {"name": sign_up_data.name}}
+            "options": {"data": {"name": sign_up_data.name}},
+            "email_confirm": True,
         })
         
         user_with_metadata = None
