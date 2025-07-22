@@ -120,7 +120,7 @@ Deno.serve(async (req) => {
     const content = i18n[lang]
 
     const SENDGRID_API_KEY = Deno.env.get("SENDGRID_API_KEY")!
-    const FROM_EMAIL = friendEmail
+    const FROM_EMAIL = "system@jayd.ai"
     
     // Only process friend invitations
     if (record.invitation_type === 'friend') {
@@ -131,7 +131,8 @@ Deno.serve(async (req) => {
         to: friend_email,
         from: FROM_EMAIL,
         subject: content.subject(inviter_name),
-        content: createFriendInvitationEmailTemplate(inviter_name, friend_email, content)
+        content: createFriendInvitationEmailTemplate(inviter_name, friend_email, content),
+        replyTo: inviter_email
       }, SENDGRID_API_KEY)
 
       if (emailResponse.ok) {
@@ -173,19 +174,25 @@ Deno.serve(async (req) => {
 })
 
 // Helper function to send email via SendGrid
-async function sendEmail({ to, from, subject, content }, apiKey) {
+async function sendEmail({ to, from, subject, content, replyTo }, apiKey) {
+  const emailData: Record<string, any> = {
+    personalizations: [{ to: [{ email: to }] }],
+    from: { email: from, name: "Jaydai Team" },
+    subject,
+    content: [{ type: "text/html", value: content }],
+  }
+
+  if (replyTo) {
+    emailData.reply_to = { email: replyTo }
+  }
+
   return await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: to }] }],
-      from: { email: from, name: "Jaydai Team" },
-      subject: subject,
-      content: [{ type: "text/html", value: content }],
-    }),
+    body: JSON.stringify(emailData),
   })
 }
 
