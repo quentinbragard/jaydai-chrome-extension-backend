@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 # routes/auth/sign_up.py - Standard email sign up
 
+=======
+# routes/auth/sign_up.py - FIXED VERSION WITH SESSION
+>>>>>>> e44107e (go diner)
 from fastapi import HTTPException
 from . import router
 from .schemas import SignUpData
@@ -13,25 +17,38 @@ JAYDAI_ORG_ID = "19864b30-936d-4a8d-996a-27d17f11f00f"
 
 @router.post("/sign_up")
 async def sign_up(sign_up_data: SignUpData):
+<<<<<<< HEAD
     from . import supabase  # ensure patched supabase is used during tests
     """Sign up a new user with automatic confirmation and session creation."""
     try:
         # Step 1: Sign the user up via Supabase Auth
         user_response = supabase.auth.sign_up({
+=======
+    """Sign up a new user with automatic confirmation and session creation."""
+    try:
+        # Step 1: Create user with auto-confirmation using admin API
+        user_response = supabase.auth.admin.create_user({
+>>>>>>> e44107e (go diner)
             "email": sign_up_data.email,
             "password": sign_up_data.password,
-            "options": {"data": {"name": sign_up_data.name}},
-            "email_confirm": True,
+            "email_confirm": True,  # Auto-confirm the email
+            "user_metadata": {"name": sign_up_data.name}
         })
         
+        if not user_response.user:
+            raise HTTPException(status_code=400, detail="Failed to create user account")
+        
+        logger.info(f"User created and confirmed: {user_response.user.id}")
+        
+        # Step 2: Create user metadata
         user_with_metadata = None
-        if response.user:
-            # Create user metadata record
-            metadata_response = supabase.table("users_metadata").insert({
-                "user_id": response.user.id,
+        try:
+            metadata_insert_data = {
+                "user_id": user_response.user.id,
                 "pinned_folder_ids": [FolderRecommendationEngine.STARTER_PACK_FOLDER_ID],
                 "name": sign_up_data.name,
                 "organization_ids": [JAYDAI_ORG_ID],
+                "email": sign_up_data.email,
                 "additional_email": None,
                 "phone_number": None,
                 "additional_organization": None
@@ -61,6 +78,7 @@ async def sign_up(sign_up_data: SignUpData):
         except Exception as notification_error:
             logger.error(f"Error creating welcome notification: {str(notification_error)}")
         
+<<<<<<< HEAD
         # Step 4: Use the session returned by sign_up or fall back to a sign in
         try:
             if user_response.session:
@@ -80,6 +98,24 @@ async def sign_up(sign_up_data: SignUpData):
 
             logger.info(f"Session created for user: {user_response.user.id}")
 
+=======
+        # Step 4: Sign the user in to create a session
+        try:
+            session_response = supabase.auth.sign_in_with_password({
+                "email": sign_up_data.email,
+                "password": sign_up_data.password,
+            })
+            
+            # Use the session from sign-in
+            session_data = {
+                "access_token": session_response.session.access_token,
+                "refresh_token": session_response.session.refresh_token,
+                "expires_at": session_response.session.expires_at,
+            } if session_response.session else None
+            
+            logger.info(f"Session created for user: {user_response.user.id}")
+            
+>>>>>>> e44107e (go diner)
         except Exception as session_error:
             logger.error(f"Error creating session: {str(session_error)}")
             # Return without session if sign-in fails
@@ -87,14 +123,12 @@ async def sign_up(sign_up_data: SignUpData):
         
         return {
             "success": True,
-            "message": "Sign up successful. Please check your email to verify your account.",
+            "message": "Sign up successful. Account automatically confirmed.",
             "user": user_with_metadata,
-            "session": {
-                "access_token": response.session.access_token,
-                "refresh_token": response.session.refresh_token,
-                "expires_at": response.session.expires_at,
-            }
+            "session": session_data,
+            "is_new_user": True
         }
+        
     except Exception as e:
         logger.error(f"Error during sign up: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error during sign up: {str(e)}")
