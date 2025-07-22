@@ -1,5 +1,5 @@
-# routes/share.py - UPDATED VERSION
-from fastapi import APIRouter, Depends, HTTPException
+# routes/share.py - UPDATED VERSION WITH LOCALE SUPPORT
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from supabase import create_client, Client
@@ -48,9 +48,12 @@ async def get_user_info(user_id: str):
         logger.error(f"Error getting user info for {user_id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Could not retrieve user information")
 
-async def call_edge_function_directly(function_name: str, payload: dict):
-    """Directly call edge function - works better for local development"""
+async def call_edge_function_directly(function_name: str, payload: dict, locale: str = "en"):
+    """Directly call edge function with locale support - works better for local development"""
     try:
+        # Add locale to payload
+        payload_with_locale = {**payload, "locale": locale}
+        
         # Use local URL for development, production URL for production
         base_url = os.getenv("SUPABASE_URL", "http://localhost:54321")
         if "localhost" in base_url:
@@ -66,8 +69,8 @@ async def call_edge_function_directly(function_name: str, payload: dict):
         }
         
         async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(function_url, json=payload, headers=headers)
-            logger.info(f"Edge function {function_name} called with status: {response.status_code}")
+            response = await client.post(function_url, json=payload_with_locale, headers=headers)
+            logger.info(f"Edge function {function_name} called with status: {response.status_code}, locale: {locale}")
             return response.status_code == 200
     except Exception as e:
         logger.error(f"Error calling edge function {function_name}: {e}")
@@ -85,7 +88,8 @@ class JoinReferralRequest(BaseModel):
 
 @router.post("/invite-friend")
 async def invite_friend(
-    request: InviteFriendRequest,
+    request_data: InviteFriendRequest,
+    request: Request,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ):
     """
@@ -93,6 +97,10 @@ async def invite_friend(
     Backend now gets user info from user_id instead of request
     """
     try:
+        # Extract locale from request
+        locale = extract_locale_from_request(request)
+        logger.info(f"Detected locale: {locale} for user {user_id}")
+        
         # Get user information from auth.users table
         user_info = await get_user_info(user_id)
         
@@ -101,25 +109,12 @@ async def invite_friend(
             "user_id": user_id,
             "inviter_email": user_info["email"],
             "inviter_name": user_info["name"],
-            "friend_email": request.friendEmail,
+            "friend_email": request_data.friendEmail,
             "invitation_type": "friend",
             "status": "pending",
             "created_at": datetime.utcnow().isoformat(),
+            "locale": locale  # Store locale in database
         }
-        
-        # Check if invitation already exists for this friend
-        existing_invite = supabase.table("share_invitations") \
-            .select("id") \
-            .eq("user_id", user_id) \
-            .eq("friend_email", request.friendEmail) \
-            .eq("invitation_type", "friend") \
-            .execute()
-        
-        if existing_invite.data and len(existing_invite.data) > 0:
-            return {
-                "success": False,
-                "message": "You've already sent an invitation to this email address"
-            }
         
         # Insert new invitation
         result = supabase.table("share_invitations") \
@@ -129,18 +124,23 @@ async def invite_friend(
         if not result.data:
             raise HTTPException(status_code=500, detail="Failed to create invitation record")
         
-        # Directly call edge function for local development
-        await call_edge_function_directly("send-friend-invitation", {"record": result.data[0]})
+        # Directly call edge function for local development with locale
+        await call_edge_function_directly(
+            "send-friend-invitation", 
+            {"record": result.data[0]}, 
+            locale
+        )
         
-        logger.info(f"Friend invitation created for user {user_id} to {request.friendEmail}")
+        logger.info(f"Friend invitation created for user {user_id} to {request_data.friendEmail} in {locale}")
         
         return {
             "success": True,
-            "message": "Friend invitation sent successfully!",
+            "message": "Friend invitation sent successfully!" if locale == "en" else "Invitation d'ami envoyée avec succès !",
             "data": {
                 "invitation_id": result.data[0]["id"],
-                "friend_email": request.friendEmail,
-                "inviter_name": user_info["name"]
+                "friend_email": request_data.friendEmail,
+                "inviter_name": user_info["name"],
+                "locale": locale
             }
         }
         
@@ -150,7 +150,8 @@ async def invite_friend(
 
 @router.post("/invite-team")
 async def invite_team(
-    request: InviteTeamRequest,
+    request_data: InviteTeamRequest,
+    request: Request,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ):
     """
@@ -158,6 +159,9 @@ async def invite_team(
     Backend now gets user info from user_id instead of request
     """
     try:
+        # Extract locale from request
+        locale = extract_locale_from_request(request)
+        
         # Get user information from auth.users table
         user_info = await get_user_info(user_id)
         
@@ -169,6 +173,7 @@ async def invite_team(
             "invitation_type": "team",
             "status": "pending",
             "created_at": datetime.utcnow().isoformat(),
+            "locale": locale
         }
         
         # Check if recent team request exists (within last 24 hours)
@@ -183,9 +188,12 @@ async def invite_team(
             .execute()
         
         if existing_request.data and len(existing_request.data) > 0:
+            message = ("You've already requested team invitations recently. We'll be in touch soon!" 
+                      if locale == "en" 
+                      else "Vous avez déjà demandé des invitations d'équipe récemment. Nous vous contacterons bientôt !")
             return {
                 "success": False,
-                "message": "You've already requested team invitations recently. We'll be in touch soon!"
+                "message": message
             }
         
         # Insert new team request
@@ -197,16 +205,25 @@ async def invite_team(
             raise HTTPException(status_code=500, detail="Failed to create team invitation request")
         
         # Directly call edge function for local development
-        await call_edge_function_directly("send-internal-notifications", {"record": result.data[0]})
+        await call_edge_function_directly(
+            "send-internal-notifications", 
+            {"record": result.data[0]}, 
+            locale
+        )
         
-        logger.info(f"Team invitation request created for user {user_id}")
+        logger.info(f"Team invitation request created for user {user_id} in {locale}")
+        
+        message = ("Team invitation request sent! We'll contact you soon." 
+                  if locale == "en" 
+                  else "Demande d'invitation d'équipe envoyée ! Nous vous contacterons bientôt.")
         
         return {
             "success": True,
-            "message": "Team invitation request sent! We'll contact you soon.",
+            "message": message,
             "data": {
                 "invitation_id": result.data[0]["id"],
-                "user_name": user_info["name"]
+                "user_name": user_info["name"],
+                "locale": locale
             }
         }
         
@@ -216,7 +233,8 @@ async def invite_team(
 
 @router.post("/join-referral")
 async def join_referral(
-    request: JoinReferralRequest,
+    request_data: JoinReferralRequest,
+    request: Request,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ):
     """
@@ -224,6 +242,9 @@ async def join_referral(
     Backend now gets user info from user_id instead of request
     """
     try:
+        # Extract locale from request
+        locale = extract_locale_from_request(request)
+        
         # Get user information from auth.users table
         user_info = await get_user_info(user_id)
         
@@ -235,6 +256,7 @@ async def join_referral(
             "invitation_type": "referral",
             "status": "pending",
             "created_at": datetime.utcnow().isoformat(),
+            "locale": locale
         }
         
         # Check if referral request already exists
@@ -245,9 +267,12 @@ async def join_referral(
             .execute()
         
         if existing_request.data and len(existing_request.data) > 0:
+            message = ("You've already joined the referral program! We'll be in touch." 
+                      if locale == "en" 
+                      else "Vous avez déjà rejoint le programme de parrainage ! Nous vous contacterons.")
             return {
                 "success": False,
-                "message": "You've already joined the referral program! We'll be in touch."
+                "message": message
             }
         
         # Insert new referral request
@@ -259,16 +284,25 @@ async def join_referral(
             raise HTTPException(status_code=500, detail="Failed to create referral program request")
         
         # Directly call edge function for local development
-        await call_edge_function_directly("send-internal-notifications", {"record": result.data[0]})
+        await call_edge_function_directly(
+            "send-internal-notifications", 
+            {"record": result.data[0]}, 
+            locale
+        )
         
-        logger.info(f"Referral program request created for user {user_id}")
+        logger.info(f"Referral program request created for user {user_id} in {locale}")
+        
+        message = ("Referral program request sent! We'll get back to you soon." 
+                  if locale == "en" 
+                  else "Demande de programme de parrainage envoyée ! Nous vous recontacterons bientôt.")
         
         return {
             "success": True,
-            "message": "Referral program request sent! We'll get back to you soon.",
+            "message": message,
             "data": {
                 "invitation_id": result.data[0]["id"],
-                "user_name": user_info["name"]
+                "user_name": user_info["name"],
+                "locale": locale
             }
         }
         
@@ -286,7 +320,7 @@ async def get_share_stats(
     try:
         # Get user's sharing statistics
         invitations = supabase.table("share_invitations") \
-            .select("invitation_type, status, created_at") \
+            .select("invitation_type, status, created_at, locale") \
             .eq("user_id", user_id) \
             .execute()
         
@@ -297,13 +331,16 @@ async def get_share_stats(
             "referral_requests": 0,
             "pending_invitations": 0,
             "accepted_invitations": 0,
+            "locales_used": {}  # Track which locales were used
         }
         
         if invitations.data:
             for invitation in invitations.data:
                 invitation_type = invitation.get("invitation_type")
                 status = invitation.get("status", "pending")
+                locale = invitation.get("locale", "en")
                 
+                # Count by type
                 if invitation_type == "friend":
                     stats["friend_invitations"] += 1
                 elif invitation_type == "team":
@@ -311,10 +348,17 @@ async def get_share_stats(
                 elif invitation_type == "referral":
                     stats["referral_requests"] += 1
                 
+                # Count by status
                 if status == "pending":
                     stats["pending_invitations"] += 1
                 elif status == "accepted":
                     stats["accepted_invitations"] += 1
+                
+                # Track locales
+                if locale in stats["locales_used"]:
+                    stats["locales_used"][locale] += 1
+                else:
+                    stats["locales_used"][locale] = 1
         
         return {
             "success": True,
