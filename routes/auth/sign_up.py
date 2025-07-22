@@ -1,4 +1,4 @@
-# routes/auth/sign_up.py - FIXED VERSION WITH SESSION
+# routes/auth/sign_up.py - Updated
 from fastapi import HTTPException
 from . import router, supabase
 from .schemas import SignUpData
@@ -12,88 +12,43 @@ JAYDAI_ORG_ID = "19864b30-936d-4a8d-996a-27d17f11f00f"
 
 @router.post("/sign_up")
 async def sign_up(sign_up_data: SignUpData):
-    """Sign up a new user with automatic confirmation and session creation."""
+    """Sign up a new user with automatic starter pack assignment."""
     try:
-        # Step 1: Create user with auto-confirmation using admin API
-        user_response = supabase.auth.admin.create_user({
+        response = supabase.auth.sign_up({
             "email": sign_up_data.email,
             "password": sign_up_data.password,
-            "email_confirm": True,  # Auto-confirm the email
-            "user_metadata": {"name": sign_up_data.name}
+            "options": {"data": {"name": sign_up_data.name}}
         })
         
-        if not user_response.user:
-            raise HTTPException(status_code=400, detail="Failed to create user account")
-        
-        logger.info(f"User created and confirmed: {user_response.user.id}")
-        
-        # Step 2: Create user metadata
         user_with_metadata = None
-        try:
-            metadata_insert_data = {
-                "user_id": user_response.user.id,
+        if response.user:
+            # Create user metadata record
+            metadata_response = supabase.table("users_metadata").insert({
+                "user_id": response.user.id,
                 "pinned_folder_ids": [FolderRecommendationEngine.STARTER_PACK_FOLDER_ID],
                 "name": sign_up_data.name,
                 "organization_ids": [JAYDAI_ORG_ID],
-                "email": sign_up_data.email,
                 "additional_email": None,
                 "phone_number": None,
                 "additional_organization": None
-            }
+            }).execute()
             
-            metadata_response = supabase.table("users_metadata").insert(metadata_insert_data).execute()
+            metadata = metadata_response.data[0] if metadata_response.data else None
+            user_with_metadata = {**response.user.__dict__, "metadata": metadata}
             
-            metadata = metadata_response.data[0] if metadata_response.data else metadata_insert_data
-            user_with_metadata = {**user_response.user.__dict__, "metadata": metadata}
-            
-            logger.info(f"User metadata created for: {user_response.user.id}")
-            
-        except Exception as metadata_error:
-            logger.error(f"Error creating user metadata: {str(metadata_error)}")
-            # Provide default metadata if creation fails
-            default_metadata = {
-                "user_id": user_response.user.id,
-                "name": sign_up_data.name,
-                "pinned_folder_ids": [FolderRecommendationEngine.STARTER_PACK_FOLDER_ID],
-                "organization_ids": [JAYDAI_ORG_ID],
-            }
-            user_with_metadata = {**user_response.user.__dict__, "metadata": default_metadata}
-        
-        # Step 3: Create welcome notification
-        try:
-            await NotificationService.create_welcome_notification(user_response.user.id, sign_up_data.name)
-        except Exception as notification_error:
-            logger.error(f"Error creating welcome notification: {str(notification_error)}")
-        
-        # Step 4: Sign the user in to create a session
-        try:
-            session_response = supabase.auth.sign_in_with_password({
-                "email": sign_up_data.email,
-                "password": sign_up_data.password,
-            })
-            
-            # Use the session from sign-in
-            session_data = {
-                "access_token": session_response.session.access_token,
-                "refresh_token": session_response.session.refresh_token,
-                "expires_at": session_response.session.expires_at,
-            } if session_response.session else None
-            
-            logger.info(f"Session created for user: {user_response.user.id}")
-            
-        except Exception as session_error:
-            logger.error(f"Error creating session: {str(session_error)}")
-            # Return without session if sign-in fails
-            session_data = None
+            # Create welcome notification
+            await NotificationService.create_welcome_notification(response.user.id, sign_up_data.name)
         
         return {
             "success": True,
-            "message": "Sign up successful. Account automatically confirmed.",
+            "message": "Sign up successful. Please check your email to verify your account.",
             "user": user_with_metadata,
-            "session": session_data,
-            "is_new_user": True
+            "session": {
+                "access_token": response.session.access_token,
+                "refresh_token": response.session.refresh_token,
+                "expires_at": response.session.expires_at,
+            }
         }
-        
     except Exception as e:
         logger.error(f"Error during sign up: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error during sign up: {str(e)}")
