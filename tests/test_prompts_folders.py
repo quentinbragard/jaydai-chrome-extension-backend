@@ -282,3 +282,108 @@ def test_get_folders_filters_inaccessible(test_client, mock_supabase, valid_auth
     assert [f["id"] for f in data.get("user", [])] == [1]
     assert [f["id"] for f in data.get("company", [])] == [3]
     assert [f["id"] for f in data.get("organization", [])] == [5]
+
+
+def test_get_folder_by_id_without_nested(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Folder should be returned without subfolders or templates when withNested is False."""
+
+    folder = {
+        "id": 1,
+        "title": {"en": "Root"},
+        "type": "user",
+    }
+
+    response_mock = MagicMock()
+    response_mock.data = folder
+    mock_supabase["folders"].table().select().eq().single().execute.return_value = response_mock
+
+    with patch('routes.prompts.folders.get_folder_by_id.apply_access_conditions', side_effect=lambda q, *_: q), \
+         patch('routes.prompts.folders.get_folder_by_id.user_has_access_to_folder', return_value=True), \
+         patch('routes.prompts.folders.get_folder_by_id.supabase', mock_supabase["folders"]):
+        response = test_client.get("/prompts/folders/1", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+    assert response.json()["data"]["id"] == 1
+
+
+def test_get_folder_by_id_with_nested(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Folder with subfolders and templates when withNested is True."""
+
+    folders = [
+        {"id": 1, "title": {"en": "Root"}, "type": "user", "parent_folder_id": None},
+        {"id": 2, "title": {"en": "Child"}, "type": "user", "parent_folder_id": 1},
+    ]
+
+    templates = [
+        {"id": 10, "folder_id": 1, "title": {"en": "T1"}, "content": {"en": "body"}, "type": "user"},
+        {"id": 11, "folder_id": 2, "title": {"en": "T2"}, "content": {"en": "body"}, "type": "user"},
+    ]
+
+    class QueryMock:
+        def __init__(self, data):
+            self.data = data
+            self.filters = []
+            self.single_flag = False
+
+        def select(self, *args, **kwargs):
+            return self
+
+        def eq(self, field, value):
+            self.filters.append((field, value))
+            return self
+
+        def in_(self, field, values):
+            self.filters.append((field, values))
+            return self
+
+        def single(self):
+            self.single_flag = True
+            return self
+
+        def execute(self):
+            result = self.data
+            for field, value in self.filters:
+                if isinstance(value, list):
+                    result = [r for r in result if r.get(field) in value]
+                else:
+                    result = [r for r in result if r.get(field) == value]
+            if self.single_flag:
+                result = result[0] if result else None
+            return MagicMock(data=result)
+
+    def table_side_effect(name):
+        if name == "prompt_folders":
+            return QueryMock(folders)
+        if name == "prompt_templates":
+            return QueryMock(templates)
+        return QueryMock([])
+
+    mock_supabase["folders"].table.side_effect = table_side_effect
+
+    with patch('routes.prompts.folders.get_folder_by_id.apply_access_conditions', side_effect=lambda q, *_: q), \
+         patch('routes.prompts.folders.get_folder_by_id.user_has_access_to_folder', return_value=True), \
+         patch('routes.prompts.folders.get_folder_by_id.supabase', mock_supabase["folders"]):
+        response = test_client.get("/prompts/folders/1?withNested=true", headers=valid_auth_header)
+
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert data["id"] == 1
+    assert len(data.get("templates", [])) == 1
+    assert data.get("subfolders")[0]["id"] == 2
+    assert len(data.get("subfolders")[0].get("templates", [])) == 1
+
+
+def test_get_folder_by_id_not_found(test_client, mock_supabase, valid_auth_header, mock_authenticate_user):
+    """Return 404 when folder does not exist."""
+
+    response_mock = MagicMock()
+    response_mock.data = None
+    mock_supabase["folders"].table().select().eq().single().execute.return_value = response_mock
+
+    with patch('routes.prompts.folders.get_folder_by_id.apply_access_conditions', side_effect=lambda q, *_: q), \
+         patch('routes.prompts.folders.get_folder_by_id.user_has_access_to_folder', return_value=None), \
+         patch('routes.prompts.folders.get_folder_by_id.supabase', mock_supabase["folders"]):
+        response = test_client.get("/prompts/folders/99", headers=valid_auth_header)
+
+    assert response.status_code == 404

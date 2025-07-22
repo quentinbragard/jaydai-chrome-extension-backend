@@ -32,8 +32,11 @@ def mock_supabase():
          patch("routes.notifications.supabase") as mock_notifications_supabase, \
          patch("routes.prompts.supabase") as mock_prompts_supabase, \
          patch("routes.prompts.folders.supabase") as mock_folders_supabase, \
+         patch("routes.prompts.folders.helpers.supabase") as mock_folders_helpers_supabase, \
          patch("routes.prompts.templates.supabase") as mock_templates_supabase, \
+         patch("routes.prompts.templates.helpers.supabase") as mock_templates_helpers_supabase, \
          patch("routes.prompts.templates.get_templates.supabase") as mock_get_templates_supabase, \
+         patch("routes.prompts.blocks.helpers.supabase") as mock_blocks_helpers_supabase, \
          patch("routes.user.supabase") as mock_user_supabase, \
          patch("utils.supabase_helpers.supabase") as mock_helpers_supabase, \
          patch("utils.notification_service.supabase") as mock_notification_service_supabase, \
@@ -49,8 +52,11 @@ def mock_supabase():
             "notifications": mock_notifications_supabase,
             "prompts": mock_prompts_supabase,
             "folders": mock_folders_supabase,
+            "folders_helpers": mock_folders_helpers_supabase,
             "templates": mock_templates_supabase,
+            "templates_helpers": mock_templates_helpers_supabase,
             "get_templates": mock_get_templates_supabase,
+            "blocks_helpers": mock_blocks_helpers_supabase,
             "user": mock_user_supabase,
             "helpers": mock_helpers_supabase,
             "notification_service": mock_notification_service_supabase
