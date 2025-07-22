@@ -5,103 +5,73 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 // Internationalization content
 const i18n = {
   en: {
-    subject: (inviterName: string) => `${inviterName} invited you to the AI productivity platform that 1000+ users love! ⭐`,
-    emailTitle: "Join the AI productivity revolution!",
+    subject: (inviterName: string) => `${inviterName} invited you to join 1000+ professionals on Jaydai! ⭐`,
+    emailTitle: "Join Jaydai - AI Productivity Platform",
     headerTitle: "You're invited to Jaydai!",
-    headerSubtitle: (inviterName: string) => `${inviterName} wants you to experience the AI productivity revolution`,
-    ratingBadge: "5-star rated",
-    mainTitle: "Join 1000+ professionals saving hours daily",
-    mainHighlight: (inviterName: string) => `${inviterName} thinks you'll love Jaydai's AI-powered productivity tools!`,
-    mainDescription: "From complex prompts to instant templates, Jaydai transforms how you work with AI.",
-    stats: {
-      templates: "Ready Templates",
-      users: "Active Users", 
-      rating: "Store Rating"
-    },
-    features: {
-      templates: {
-        title: "1000+ AI Templates",
-        description: "Access a massive library of professional AI prompts for every use case imaginable"
-      },
-      tracking: {
-        title: "Track AI Usage", 
-        description: "Monitor your AI interactions and optimize your productivity workflows"
-      },
-      prompts: {
-        title: "Complex Prompts in Seconds",
-        description: "Build sophisticated AI prompts instantly with our intuitive tools"
-      },
-      shortcuts: {
-        title: "Keyboard Shortcuts",
-        description: "Lightning-fast productivity with powerful keyboard shortcuts and tools"
-      }
-    },
+    headerSubtitle: (inviterName: string) => `${inviterName} wants to share the AI productivity revolution with you`,
+    mainHighlight: (inviterName: string) => `<strong>${inviterName}</strong> thinks you'll love Jaydai's AI-powered tools!`,
+    mainDescription: "Join 1000+ professionals using AI templates, tracking usage, and building complex prompts in seconds.",
     ctaTitle: "Ready to 10x your productivity?",
-    ctaDescription: "Join the AI revolution that's transforming how professionals work",
-    ctaButton: "Start Free Today 🚀",
+    ctaButton: "Join Free Now! 🚀",
     benefits: {
       free: "Free forever",
-      noCard: "No credit card required", 
-      quick: "Setup in 30 seconds"
+      noCard: "No credit card", 
+      quick: "30-second setup"
     },
+    stats: "⭐⭐⭐⭐⭐ 5-star rated • 1000+ templates • 1000+ users",
+    featuresTitle: "What you'll get access to:",
+    features: [
+      { icon: "📄", text: "Access to 1000+ premium prompt templates" },
+      { icon: "✨", text: "Unlimited personal prompt templates" },
+      { icon: "🗂️", text: "Unlimited personal prompt blocks" },
+      { icon: "📊", text: "Advanced Data Analytics" }
+    ],
+    promptsTitle: "Popular prompt templates you'll discover:",
+    prompts: [
+      "Deck challenge",
+      "Customer FAQ", 
+      "KPI Business",
+      "Find a restaurant",
+      "Audience Analysis"
+    ],
     footer: {
-      invitation: (inviterName: string, friendEmail: string) => `This invitation was sent by <strong>${inviterName}</strong> to ${friendEmail}`,
-      description: "Jaydai - The AI productivity platform trusted by 1000+ professionals<br>Rated ⭐⭐⭐⭐⭐ on app stores",
-      links: {
-        website: "Visit Website",
-        templates: "Browse Templates", 
-        features: "See Features"
-      }
+      invitation: (inviterName: string, friendEmail: string) => `Invitation from <strong>${inviterName}</strong> to ${friendEmail}`,
+      description: "Jaydai - AI productivity platform trusted by professionals worldwide"
     }
   },
   fr: {
-    subject: (inviterName: string) => `${inviterName} vous invite sur la plateforme IA que 1000+ utilisateurs adorent ! ⭐`,
-    emailTitle: "Rejoignez la révolution de la productivité IA !",
+    subject: (inviterName: string) => `${inviterName} vous invite à rejoindre 1000+ professionnels sur Jaydai ! ⭐`,
+    emailTitle: "Rejoignez Jaydai - Plateforme de Productivité IA",
     headerTitle: "Vous êtes invité(e) sur Jaydai !",
-    headerSubtitle: (inviterName: string) => `${inviterName} souhaite vous faire découvrir la révolution de la productivité IA`,
-    ratingBadge: "Noté 5 étoiles",
-    mainTitle: "Rejoignez 1000+ professionnels qui économisent des heures chaque jour",
-    mainHighlight: (inviterName: string) => `${inviterName} pense que vous allez adorer les outils de productivité IA de Jaydai !`,
-    mainDescription: "Des prompts complexes aux modèles instantanés, Jaydai transforme votre façon de travailler avec l'IA.",
-    stats: {
-      templates: "Modèles Prêts",
-      users: "Utilisateurs Actifs",
-      rating: "Note Store"
-    },
-    features: {
-      templates: {
-        title: "1000+ Modèles IA",
-        description: "Accédez à une bibliothèque massive de prompts IA professionnels pour tous les cas d'usage"
-      },
-      tracking: {
-        title: "Suivi Usage IA",
-        description: "Surveillez vos interactions IA et optimisez vos workflows de productivité"
-      },
-      prompts: {
-        title: "Prompts Complexes en Secondes",
-        description: "Créez des prompts IA sophistiqués instantanément avec nos outils intuitifs"
-      },
-      shortcuts: {
-        title: "Raccourcis Clavier",
-        description: "Productivité ultra-rapide avec des raccourcis clavier et outils puissants"
-      }
-    },
+    headerSubtitle: (inviterName: string) => `${inviterName} souhaite partager la révolution IA avec vous`,
+    mainHighlight: (inviterName: string) => `<strong>${inviterName}</strong> pense que vous allez adorer les outils IA de Jaydai !`,
+    mainDescription: "Rejoignez 1000+ professionnels qui utilisent les modèles IA, suivent leur usage et créent des prompts complexes en secondes.",
     ctaTitle: "Prêt(e) à multiplier votre productivité par 10 ?",
-    ctaDescription: "Rejoignez la révolution IA qui transforme le travail des professionnels",
-    ctaButton: "Commencer Gratuitement 🚀",
+    ctaButton: "Rejoindre Gratuitement ! 🚀",
     benefits: {
       free: "Gratuit à vie",
-      noCard: "Aucune carte requise",
-      quick: "Configuration en 30 secondes"
+      noCard: "Aucune carte", 
+      quick: "Configuration 30s"
     },
+    stats: "⭐⭐⭐⭐⭐ Noté 5 étoiles • 1000+ modèles • 1000+ utilisateurs",
+    featuresTitle: "Ce à quoi vous aurez accès :",
+    features: [
+      { icon: "📄", text: "Accès à 1000+ modèles de prompts premium" },
+      { icon: "✨", text: "Modèles de prompts personnels illimités" },
+      { icon: "🗂️", text: "Blocs de prompts personnels illimités" },
+      { icon: "📊", text: "Analyses de données avancées" }
+    ],
+    promptsTitle: "Modèles de prompts populaires que vous découvrirez :",
+    prompts: [
+      "Challenger son deck",
+      "FAQ Client",
+      "KPI Business", 
+      "Trouver un restaurant",
+      "Analyse d'audience"
+    ],
     footer: {
-      invitation: (inviterName: string, friendEmail: string) => `Cette invitation a été envoyée par <strong>${inviterName}</strong> à ${friendEmail}`,
-      description: "Jaydai - La plateforme de productivité IA approuvée par 1000+ professionnels<br>Notée ⭐⭐⭐⭐⭐ sur les stores",
-      links: {
-        website: "Visiter le Site",
-        templates: "Parcourir les Modèles",
-        features: "Voir les Fonctionnalités"
-      }
+      invitation: (inviterName: string, friendEmail: string) => `Invitation de <strong>${inviterName}</strong> à ${friendEmail}`,
+      description: "Jaydai - Plateforme de productivité IA approuvée par des professionnels du monde entier"
     }
   }
 }
@@ -196,7 +166,7 @@ async function sendEmail({ to, from, subject, content, replyTo }, apiKey) {
   })
 }
 
-// Beautiful HTML email template for friend invitations with i18n support
+// Shorter, more engaging email template with proper image handling
 function createFriendInvitationEmailTemplate(inviterName: string, friendEmail: string, content: any) {
   return `
 <!DOCTYPE html>
@@ -204,15 +174,8 @@ function createFriendInvitationEmailTemplate(inviterName: string, friendEmail: s
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark">
-    <meta name="supported-color-schemes" content="light dark">
     <title>${content.emailTitle}</title>
     <style>
-        :root {
-            color-scheme: light dark;
-            supported-color-schemes: light dark;
-        }
-        
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -221,271 +184,110 @@ function createFriendInvitationEmailTemplate(inviterName: string, friendEmail: s
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #1f2937;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: #f8fafc;
             padding: 20px;
         }
         
         .container {
-            max-width: 650px;
+            max-width: 600px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
         
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 50px 40px 40px;
+            padding: 40px 30px;
             text-align: center;
             color: white;
             position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
-            opacity: 0.1;
-            animation: float 20s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
         }
         
         .logo {
             background: rgba(255, 255, 255, 0.15);
-            width: 90px;
-            height: 90px;
-            border-radius: 22px;
+            width: 120px;
+            height: 60px;
+            border-radius: 12px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 24px;
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            z-index: 1;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
             overflow: hidden;
         }
         
         .logo img {
-            width: 60px;
-            height: 60px;
+            width: 100px;
+            height: auto;
+            max-height: 50px;
             object-fit: contain;
         }
         
         .header h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 8px;
         }
         
         .header .subtitle {
-            font-size: 18px;
-            opacity: 0.95;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .rating-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
-            margin-top: 12px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .rating-badge .stars {
-            color: #fbbf24;
-            margin-right: 8px;
             font-size: 16px;
+            opacity: 0.9;
+            font-weight: 400;
         }
         
         .content {
-            padding: 50px 40px;
-        }
-        
-        .invitation-message {
+            padding: 40px 30px;
             text-align: center;
-            margin-bottom: 40px;
         }
         
-        .invitation-message h2 {
-            color: #1f2937;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .message {
+            margin-bottom: 30px;
         }
         
-        .invitation-message .highlight {
+        .message .highlight {
             font-size: 18px;
             color: #4b5563;
             margin-bottom: 12px;
             font-weight: 500;
         }
         
-        .invitation-message p {
+        .message p {
             font-size: 16px;
             color: #6b7280;
-            margin-bottom: 8px;
+            line-height: 1.6;
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin: 40px 0;
-            padding: 30px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 20px;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 28px;
-            font-weight: 700;
+        .stats {
+            font-size: 14px;
             color: #667eea;
-            margin-bottom: 8px;
-            display: block;
-        }
-        
-        .stat-label {
-            font-size: 14px;
             font-weight: 500;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-            margin: 40px 0;
-        }
-        
-        .feature {
-            padding: 24px;
-            background: white;
-            border-radius: 16px;
-            border: 2px solid #f3f4f6;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.15);
-        }
-        
-        .feature::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-        
-        .feature-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            font-size: 22px;
-            box-shadow: 0 8px 16px -4px rgba(102, 126, 234, 0.3);
-        }
-        
-        .feature h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
-        
-        .feature p {
-            font-size: 14px;
-            color: #6b7280;
-            line-height: 1.5;
+            margin: 25px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
         }
         
         .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            margin: 25px 0;
+            padding: 30px;
             text-align: center;
-            margin: 40px 0;
-            padding: 0;
-            background: url('https://vetoswvwgsebhxetqppa.supabase.co/storage/v1/object/public/images/organizations/jaydai_banner.png') center/cover;
-            border-radius: 20px;
             color: white;
-            position: relative;
-            overflow: hidden;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%);
-            z-index: 1;
         }
         
         .cta-content {
-            position: relative;
-            z-index: 2;
-            padding: 40px;
+            color: white;
+            text-align: center;
         }
         
-        .cta-section h3 {
-            font-size: 24px;
+        .cta-title {
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .cta-section p {
-            font-size: 16px;
-            opacity: 0.95;
-            margin-bottom: 24px;
-            position: relative;
-            z-index: 2;
+            margin-bottom: 20px;
         }
         
         .cta-button {
@@ -493,103 +295,142 @@ function createFriendInvitationEmailTemplate(inviterName: string, friendEmail: s
             background: white;
             color: #667eea;
             text-decoration: none;
-            padding: 18px 40px;
-            border-radius: 14px;
+            padding: 16px 32px;
+            border-radius: 10px;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 18px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
-            position: relative;
-            z-index: 2;
+            margin-bottom: 15px;
         }
         
         .cta-button:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .features-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #4b5563;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .feature-item:hover {
+            color: #667eea;
+        }
+        
+        .feature-icon {
+            font-size: 16px;
+        }
+        
+        .prompts-section {
+            margin: 30px 0;
+        }
+        
+        .prompts-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .prompts-grid {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .prompt-item {
+            padding: 12px 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+            font-size: 14px;
+            color: #4b5563;
+            font-weight: 500;
         }
         
         .benefits {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
+            gap: 20px;
             flex-wrap: wrap;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .benefit {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.9;
         }
         
         .benefit::before {
             content: '✓';
-            margin-right: 8px;
-            font-weight: bold;
+            margin-right: 5px;
             color: #10b981;
+            font-weight: bold;
         }
         
         .footer {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             background: #f8fafc;
-            border-top: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #9ca3af;
         }
         
         .footer p {
-            font-size: 14px;
-            color: #9ca3af;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
         
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .footer-link {
+        .footer a {
             color: #667eea;
             text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
-        
-        .footer-link:hover {
-            opacity: 0.7;
         }
         
         @media (max-width: 600px) {
             body { padding: 10px; }
-            .container { border-radius: 16px; }
-            .header, .content, .footer { padding: 30px 24px; }
-            .cta-content { padding: 30px 24px; }
-            .stats-grid { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
-            .features { grid-template-columns: 1fr; gap: 16px; }
-            .benefits { flex-direction: column; gap: 12px; }
-            .header h1 { font-size: 26px; }
-            .invitation-message h2 { font-size: 22px; }
+            .container { border-radius: 12px; }
+            .header, .content, .footer { padding: 25px 20px; }
+            .cta-section { padding: 25px 20px; }
+            .features-section { padding: 20px 15px; }
+            .features-grid { grid-template-columns: 1fr; gap: 10px; }
+            .benefits { flex-direction: column; gap: 8px; }
+            .header h1 { font-size: 24px; }
+            .cta-title { font-size: 20px; }
+            .cta-button { font-size: 16px; padding: 14px 28px; }
+            .logo { width: 100px; height: 50px; }
+            .logo img { width: 80px; max-height: 40px; }
         }
 
         @media (prefers-color-scheme: dark) {
-            body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-            .container { background: #1e293b; border-color: rgba(255, 255, 255, 0.1); }
-            .content { color: #f1f5f9; }
-            .invitation-message h2 { color: #f1f5f9; }
-            .invitation-message .highlight { color: #cbd5e1; }
-            .invitation-message p { color: #94a3b8; }
-            .stats-grid { background: linear-gradient(135deg, #334155 0%, #475569 100%); border-color: #475569; }
-            .stat-label { color: #94a3b8; }
-            .feature { background: #334155; border-color: #475569; }
-            .feature h3 { color: #f1f5f9; }
-            .feature p { color: #94a3b8; }
-            .footer { background: #0f172a; border-color: #334155; }
-            .footer p { color: #64748b; }
+            body { background: #1f2937; }
+            .container { background: #111827; }
+            .content { color: #f9fafb; }
+            .message .highlight { color: #d1d5db; }
+            .message p { color: #9ca3af; }
+            .stats { background: #374151; color: #93c5fd; border-color: #3b82f6; }
+            .features-section { background: #374151; border-color: #3b82f6; }
+            .feature-item { color: #d1d5db; }
+            .feature-item:hover { color: #93c5fd; }
+            .prompts-title { color: #f9fafb; }
+            .prompt-item { background: #374151; color: #d1d5db; border-color: #3b82f6; }
+            .footer { background: #1f2937; color: #6b7280; }
         }
     </style>
 </head>
@@ -601,61 +442,19 @@ function createFriendInvitationEmailTemplate(inviterName: string, friendEmail: s
             </div>
             <h1>${content.headerTitle}</h1>
             <p class="subtitle">${content.headerSubtitle(inviterName)}</p>
-            <div class="rating-badge">
-                <span class="stars">⭐⭐⭐⭐⭐</span>
-                <span>${content.ratingBadge}</span>
-            </div>
         </div>
         
         <div class="content">
-            <div class="invitation-message">
-                <h2>${content.mainTitle}</h2>
+            <div class="message">
                 <p class="highlight">${content.mainHighlight(inviterName)}</p>
                 <p>${content.mainDescription}</p>
             </div>
             
-            <div class="stats-grid">
-                <div class="stat">
-                    <span class="stat-number">1000+</span>
-                    <span class="stat-label">${content.stats.templates}</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">1000+</span>
-                    <span class="stat-label">${content.stats.users}</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">5⭐</span>
-                    <span class="stat-label">${content.stats.rating}</span>
-                </div>
-            </div>
-            
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">⚡</div>
-                    <h3>${content.features.templates.title}</h3>
-                    <p>${content.features.templates.description}</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">📊</div>
-                    <h3>${content.features.tracking.title}</h3>
-                    <p>${content.features.tracking.description}</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🛠️</div>
-                    <h3>${content.features.prompts.title}</h3>
-                    <p>${content.features.prompts.description}</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">⌨️</div>
-                    <h3>${content.features.shortcuts.title}</h3>
-                    <p>${content.features.shortcuts.description}</p>
-                </div>
-            </div>
+            <div class="stats">${content.stats}</div>
             
             <div class="cta-section">
                 <div class="cta-content">
-                    <h3>${content.ctaTitle}</h3>
-                    <p>${content.ctaDescription}</p>
+                    <h2 class="cta-title">${content.ctaTitle}</h2>
                     <a href="https://jayd.ai?ref=${encodeURIComponent(inviterName)}&invited_by=${encodeURIComponent(friendEmail)}" class="cta-button">
                         ${content.ctaButton}
                     </a>
@@ -666,19 +465,37 @@ function createFriendInvitationEmailTemplate(inviterName: string, friendEmail: s
                     </div>
                 </div>
             </div>
+
+            <!-- Features Section -->
+            <div class="features-section">
+                <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 15px; text-align: center;">
+                    ${content.featuresTitle}
+                </h3>
+                <div class="features-grid">
+                    ${content.features.map(feature => `
+                        <a href="https://www.jayd.ai/${content === i18n.fr ? 'fr' : 'en'}#features" class="feature-item">
+                            <span class="feature-icon">${feature.icon}</span>
+                            <span>${feature.text}</span>
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- Prompts Examples Section -->
+            <div class="prompts-section">
+                <h3 class="prompts-title">${content.promptsTitle}</h3>
+                <div class="prompts-grid">
+                    ${content.prompts.map(prompt => `
+                        <div class="prompt-item">${prompt}</div>
+                    `).join('')}
+                </div>
+            </div>
         </div>
         
         <div class="footer">
             <p>${content.footer.invitation(inviterName, friendEmail)}</p>
-            <p style="font-size: 12px; margin-top: 24px;">
-                ${content.footer.description}
-            </p>
-            
-            <div class="footer-links">
-                <a href="https://jayd.ai" class="footer-link">${content.footer.links.website}</a>
-                <a href="https://jayd.ai/templates" class="footer-link">${content.footer.links.templates}</a>
-                <a href="https://jayd.ai/features" class="footer-link">${content.footer.links.features}</a>
-            </div>
+            <p>${content.footer.description}</p>
+            <p><a href="https://jayd.ai">jayd.ai</a></p>
         </div>
     </div>
 </body>
