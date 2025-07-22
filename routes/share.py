@@ -10,7 +10,7 @@ import dotenv
 import logging
 import httpx
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 dotenv.load_dotenv()
@@ -177,7 +177,6 @@ async def invite_team(
         }
         
         # Check if recent team request exists (within last 24 hours)
-        from datetime import datetime, timedelta
         yesterday = (datetime.utcnow() - timedelta(days=1)).isoformat()
         
         existing_request = supabase.table("share_invitations") \
