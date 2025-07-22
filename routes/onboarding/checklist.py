@@ -18,32 +18,28 @@ async def get_onboarding_checklist(
 ):
     """Get user's onboarding checklist status."""
     try:
-        # Get user metadata for onboarding tracking
-        metadata_response = supabase.table("users_metadata") \
-            .select("first_template_created, first_template_used, first_block_created, keyboard_shortcut_used, onboarding_dismissed") \
-            .eq("user_id", user_id) \
-            .single() \
+        # Fetch user metadata. `maybe_single` avoids errors when the record doesn't exist.
+        metadata_response = (
+            supabase.table("users_metadata")
+            .select(
+                "first_template_created, first_template_used, first_block_created, keyboard_shortcut_used, onboarding_dismissed"
+            )
+            .eq("user_id", user_id)
+            .maybe_single()
             .execute()
-        
-        # Default values if no metadata exists
+        )
+
         if metadata_response.data:
             metadata = metadata_response.data
         else:
-            # Create initial metadata record if it doesn't exist
-            initial_metadata = {
-                "user_id": user_id,
+            # No record yet; return defaults without creating a row
+            metadata = {
                 "first_template_created": False,
                 "first_template_used": False,
                 "first_block_created": False,
                 "keyboard_shortcut_used": False,
-                "onboarding_dismissed": False
+                "onboarding_dismissed": False,
             }
-            
-            insert_response = supabase.table("users_metadata") \
-                .insert(initial_metadata) \
-                .execute()
-            
-            metadata = initial_metadata
         
         first_template_created = metadata.get("first_template_created", False)
         first_template_used = metadata.get("first_template_used", False)
