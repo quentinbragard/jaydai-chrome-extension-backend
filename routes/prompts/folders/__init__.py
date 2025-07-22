@@ -24,6 +24,7 @@ from .helpers import (
 )
 
 from . import get_folders
+from . import get_folder_by_id
 get_template_folders_by_type = fetch_folders_by_type
 from . import create_folder
 from . import update_folder
@@ -52,6 +53,7 @@ __all__ = [
     "update_pinned_folders_endpoint",
     "get_template_folders",
     "get_folders",
+    "get_folder_by_id",
     "get_template_folders_by_type",
     "fetch_folders_by_type",
     "fetch_templates_for_folders",
