@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-# routes/auth/sign_up.py - Standard email sign up
-
-=======
 # routes/auth/sign_up.py - FIXED VERSION WITH SESSION
->>>>>>> e44107e (go diner)
 from fastapi import HTTPException
-from . import router
+from . import router, supabase
 from .schemas import SignUpData
 from utils.notification_service import NotificationService
 import logging
@@ -17,18 +12,10 @@ JAYDAI_ORG_ID = "19864b30-936d-4a8d-996a-27d17f11f00f"
 
 @router.post("/sign_up")
 async def sign_up(sign_up_data: SignUpData):
-<<<<<<< HEAD
-    from . import supabase  # ensure patched supabase is used during tests
-    """Sign up a new user with automatic confirmation and session creation."""
-    try:
-        # Step 1: Sign the user up via Supabase Auth
-        user_response = supabase.auth.sign_up({
-=======
     """Sign up a new user with automatic confirmation and session creation."""
     try:
         # Step 1: Create user with auto-confirmation using admin API
         user_response = supabase.auth.admin.create_user({
->>>>>>> e44107e (go diner)
             "email": sign_up_data.email,
             "password": sign_up_data.password,
             "email_confirm": True,  # Auto-confirm the email
@@ -78,27 +65,6 @@ async def sign_up(sign_up_data: SignUpData):
         except Exception as notification_error:
             logger.error(f"Error creating welcome notification: {str(notification_error)}")
         
-<<<<<<< HEAD
-        # Step 4: Use the session returned by sign_up or fall back to a sign in
-        try:
-            if user_response.session:
-                session = user_response.session
-            else:
-                session_response = supabase.auth.sign_in_with_password({
-                    "email": sign_up_data.email,
-                    "password": sign_up_data.password,
-                })
-                session = session_response.session
-
-            session_data = {
-                "access_token": session.access_token,
-                "refresh_token": session.refresh_token,
-                "expires_at": session.expires_at,
-            } if session else None
-
-            logger.info(f"Session created for user: {user_response.user.id}")
-
-=======
         # Step 4: Sign the user in to create a session
         try:
             session_response = supabase.auth.sign_in_with_password({
@@ -115,7 +81,6 @@ async def sign_up(sign_up_data: SignUpData):
             
             logger.info(f"Session created for user: {user_response.user.id}")
             
->>>>>>> e44107e (go diner)
         except Exception as session_error:
             logger.error(f"Error creating session: {str(session_error)}")
             # Return without session if sign-in fails
