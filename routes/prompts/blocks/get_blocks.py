@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException, Request, Query
 from .helpers import router, supabase, get_access_conditions, process_block_for_response
 from models.prompts.blocks import BlockResponse, BlockType
 from models.common import APIResponse
@@ -10,6 +10,9 @@ from utils.middleware.localization import extract_locale_from_request
 async def get_blocks(
     request: Request,
     type: Optional[BlockType] = None,
+    published: Optional[bool] = None,
+    ids: Optional[str] = Query(None, description="Comma-separated list of block IDs"),
+    q: Optional[str] = None,
     user_id: str = Depends(supabase_helpers.get_user_from_session_token),
 ):
     """Get blocks accessible to the user"""
@@ -21,9 +24,16 @@ async def get_blocks(
     print("query", query)
     if type:
         query = query.eq("type", type)
-    access_conditions = get_access_conditions(supabase, user_id)
-    print("access_conditions", access_conditions)
-    query = query.or_(",".join(access_conditions))
+    if published is not None:
+        query = query.eq("published", published)
+    if ids:
+        list_of_ids = ids.split(",")
+        query = query.in_("id", list_of_ids)
+    if q:
+        query = query.or_(f"title.ilike.%{q}%,content.ilike.%{q}%")
+    #access_conditions = get_access_conditions(supabase, user_id)
+    #print("access_conditions", access_conditions)
+    #query = query.or_(",".join(access_conditions))
     query = query.order("created_at", desc=True)
     response = query.execute()
 

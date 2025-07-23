@@ -1,6 +1,21 @@
+import os
 import pytest
 from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
+
+
+# Ensure required environment variables for Supabase client
+os.environ.setdefault("SUPABASE_URL", "http://localhost")
+os.environ.setdefault("SUPABASE_SERVICE_ROLE_KEY", "eyJhbGciOiJIUzI1NiJ9.fake.fake")
+
+# Provide dummy Stripe configuration so Stripe service can initialize during tests
+os.environ.setdefault("STRIPE_SECRET_KEY", "sk_test_123")
+os.environ.setdefault("STRIPE_WEBHOOK_SECRET", "whsec_test")
+os.environ.setdefault("STRIPE_PLUS_MONTHLY_PRICE_ID", "price_monthly")
+os.environ.setdefault("STRIPE_PLUS_YEARLY_PRICE_ID", "price_yearly")
+os.environ.setdefault("STRIPE_PLUS_PRODUCT_ID", "plus")
+
+
 from main import app
 
 @pytest.fixture
@@ -17,10 +32,17 @@ def mock_supabase():
          patch("routes.notifications.supabase") as mock_notifications_supabase, \
          patch("routes.prompts.supabase") as mock_prompts_supabase, \
          patch("routes.prompts.folders.supabase") as mock_folders_supabase, \
+         patch("routes.prompts.folders.helpers.supabase") as mock_folders_helpers_supabase, \
          patch("routes.prompts.templates.supabase") as mock_templates_supabase, \
+         patch("routes.prompts.templates.helpers.supabase") as mock_templates_helpers_supabase, \
+         patch("routes.prompts.templates.get_templates.supabase") as mock_get_templates_supabase, \
+         patch("routes.prompts.blocks.helpers.supabase") as mock_blocks_helpers_supabase, \
          patch("routes.user.supabase") as mock_user_supabase, \
          patch("utils.supabase_helpers.supabase") as mock_helpers_supabase, \
-         patch("utils.notification_service.supabase") as mock_notification_service_supabase:
+         patch("utils.notification_service.supabase") as mock_notification_service_supabase, \
+         patch("routes.prompts.templates.get_template_by_id.stripe_service.get_subscription_status") as mock_get_sub_status1, \
+         patch("routes.prompts.templates.create_template.stripe_service.get_subscription_status") as mock_get_sub_status2, \
+         patch("routes.prompts.blocks.create_block.stripe_service.get_subscription_status") as mock_get_sub_status3:
         
         # Configure all mocks to have the same behavior
         mocks = {
@@ -30,7 +52,11 @@ def mock_supabase():
             "notifications": mock_notifications_supabase,
             "prompts": mock_prompts_supabase,
             "folders": mock_folders_supabase,
+            "folders_helpers": mock_folders_helpers_supabase,
             "templates": mock_templates_supabase,
+            "templates_helpers": mock_templates_helpers_supabase,
+            "get_templates": mock_get_templates_supabase,
+            "blocks_helpers": mock_blocks_helpers_supabase,
             "user": mock_user_supabase,
             "helpers": mock_helpers_supabase,
             "notification_service": mock_notification_service_supabase
@@ -75,10 +101,16 @@ def mock_supabase():
             # Setup mock for in_() method
             select_mock.in_.return_value = eq_mock
             eq_mock.in_.return_value = eq_mock
-            
+
             # Setup mock for is_() method
             select_mock.is_.return_value = eq_mock
             eq_mock.is_.return_value = eq_mock
+
+            # Setup or_ and ilike methods used in access control and search
+            select_mock.or_.return_value = eq_mock
+            eq_mock.or_.return_value = eq_mock
+            select_mock.ilike.return_value = eq_mock
+            eq_mock.ilike.return_value = eq_mock
             
             # Setup order method
             select_mock.order.return_value = eq_mock
@@ -143,7 +175,12 @@ def mock_supabase():
                 
                 mock.get_user_templates = MagicMock()
                 mock.get_organization_templates = MagicMock()
-        
+
+        default_status = MagicMock(isActive=True, planName="plus")
+        mock_get_sub_status1.return_value = default_status
+        mock_get_sub_status2.return_value = default_status
+        mock_get_sub_status3.return_value = default_status
+
         yield mocks
 
 @pytest.fixture

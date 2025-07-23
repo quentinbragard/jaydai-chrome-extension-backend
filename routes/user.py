@@ -1,3 +1,4 @@
+# routes/user.py
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from supabase import create_client, Client
@@ -9,9 +10,15 @@ from utils.prompts import (
 )
 import dotenv
 import os
-from typing import List
+import logging
+from datetime import datetime
+from typing import List, Dict, Any, Optional
 
 dotenv.load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize Supabase client
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
@@ -26,18 +33,21 @@ class UserMetadata(BaseModel):
     company_id: str | None = None
     pinned_folder_ids: list[int] | None = None
 
+class DataCollectionRequest(BaseModel):
+    data_collection: bool
+
 @router.get("/metadata")
 async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
     """Get metadata for a specific user."""
     try:
         response = supabase.table("users_metadata") \
-            .select("name, additional_email, phone_number, additional_organization, company_id, pinned_folder_ids, pinned_template_ids, organization_ids") \
+            .select("name, additional_email, phone_number, additional_organization, company_id, pinned_folder_ids, pinned_template_ids, organization_ids, data_collection") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
             
         if not response.data:
-            return {
+            return {     
                 "success": True,
                 "data": {
                     "name": None,
@@ -46,7 +56,8 @@ async def get_user_metadata(user_id: str = Depends(supabase_helpers.get_user_fro
                     "additional_organization": None,
                     "company_id": None,
                     "pinned_folder_ids": [],
-                    "pinned_template_ids": []
+                    "pinned_template_ids": [],
+                    "data_collection": True
                 }
             }
             
@@ -88,13 +99,13 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
             # If organization has changed or is being set for the first time
             current_org_id = existing_metadata.data.get("company_id") if existing_metadata.data else None
             if metadata.company_id != current_org_id:
-                update_data["company_id"] = metadata.organization_id
+                update_data["company_id"] = metadata.company_id
                 
                 # Auto-pin all folders for this organization using utility
                 organization_folder_ids = await get_all_folder_ids_by_type(
                     supabase, 
                     "organization", 
-                    str(metadata.organization_id)
+                    str(metadata.company_id)
                 )
                 update_data["pinned_organization_folder_ids"] = organization_folder_ids
         
@@ -130,6 +141,41 @@ async def update_user_metadata(metadata: UserMetadata, user_id: str = Depends(su
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error updating user metadata: {str(e)}")
 
+@router.put("/data-collection")
+async def update_data_collection(request: DataCollectionRequest, user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    """Update user's data collection preference."""
+    try:
+        # Check if user metadata exists
+        existing_metadata = supabase.table("users_metadata") \
+            .select("user_id") \
+            .eq("user_id", user_id) \
+            .single() \
+            .execute()
+        
+        update_data = {"data_collection": request.data_collection}
+        
+        if existing_metadata.data:
+            # Update existing record
+            response = supabase.table("users_metadata") \
+                .update(update_data) \
+                .eq("user_id", user_id) \
+                .execute()
+        else:
+            # Create new record
+            update_data["user_id"] = user_id
+            response = supabase.table("users_metadata") \
+                .insert(update_data) \
+                .execute()
+        
+        return {
+            "success": True,
+            "data": response.data[0] if response.data else None,
+            "message": f"Data collection {'enabled' if request.data_collection else 'disabled'}"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating data collection preference: {str(e)}")
+
 @router.get("/folders-with-prompts")
 async def get_folders_with_prompts(
     locale: str = "en",
@@ -148,8 +194,6 @@ async def get_folders_with_prompts(
         pinned_folder_ids = metadata.data.get('pinned_folder_ids', []) if metadata.data else []
         user_company_id = metadata.data.get('company_id') if metadata.data else None
         
-        print(f"Debug: Found pinned folder IDs for user {user_id}: {pinned_folder_ids}")
-
         # Get all prompts
         prompts = supabase.table("prompt_templates") \
             .select("*") \
@@ -268,7 +312,6 @@ async def get_folders_with_prompts(
             
             # Add virtual root folder at the beginning
             organized_folders["user"].insert(0, virtual_root_folder)
-            print(f"Debug: Added virtual root folder with {len(root_prompts)} templates")
 
         return {
             "success": True,
@@ -279,16 +322,14 @@ async def get_folders_with_prompts(
     
 @router.get("/onboarding/status")
 async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user_from_session_token)):
+    """Get user's onboarding completion status."""
     try:
-        # Get user metadata for pinned folders
+        # Get user metadata for onboarding status
         metadata = supabase.table("users_metadata") \
             .select("job_type, job_industry, job_seniority, interests, signup_source") \
             .eq("user_id", user_id) \
             .single() \
             .execute()
-
-        # Debug logging
-        print(f"Metadata response: {metadata.data}")
 
         # Check if metadata exists and has any of the required fields
         has_completed = False
@@ -300,21 +341,11 @@ async def get_onboarding_status(user_id: str = Depends(supabase_helpers.get_user
             signup_source = metadata.data.get("signup_source")
             
             has_completed = bool(job_type or job_industry or job_seniority or interests or signup_source)
-            
-            # Debug logging
-            print(f"Fields found: job_type={job_type}, job_industry={job_industry}, "
-                  f"job_seniority={job_seniority}, interests={interests}, "
-                  f"signup_source={signup_source}")
-            
-            print(has_completed)
 
         return {
             "success": True,
             "data": {"has_completed_onboarding": has_completed}
         }
     except Exception as e:
-        print(f"Error in onboarding status: {str(e)}")  # Debug logging
+        logger.error(f"Error in onboarding status: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error checking onboarding status: {str(e)}")
-
-    
-    

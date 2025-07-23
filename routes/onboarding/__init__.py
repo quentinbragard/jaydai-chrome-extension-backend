@@ -3,15 +3,23 @@ from fastapi import APIRouter
 router = APIRouter(tags=["Onboarding"])
 
 # Import all route modules to register them with the router
-from .complete_onboarding import complete_onboarding
-from .preview_folder_recommendations import preview_folder_recommendations
+from .checklist import router as checklist_router
+from .mark_action import router as mark_action_router
+from .dismiss import router as dismiss_router
+from .complete_onboarding import router as complete_onboarding_router
+from .preview_folder_recommendations import router as preview_folder_recommendations_router
+from .recommend_folders import router as recommend_folders_router
+from .which_template import router as which_template_router
 
-router.add_api_route("/complete", complete_onboarding, methods=["POST"])
-router.add_api_route("/preview-folder-recommendations", preview_folder_recommendations, methods=["POST"])
+# Include all the routers
+router.include_router(checklist_router)
+router.include_router(mark_action_router)
+router.include_router(dismiss_router)
+router.include_router(complete_onboarding_router)
+router.include_router(preview_folder_recommendations_router)
+router.include_router(recommend_folders_router)
+router.include_router(which_template_router)
 
 __all__ = [
     "router",
-    "supabase",
-    "complete_onboarding",
-    "preview_folder_recommendations",
 ]

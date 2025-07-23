@@ -1,9 +1,10 @@
 from fastapi import HTTPException
-from . import router, supabase
+from . import router
 from .schemas import RefreshTokenData
 
 @router.post("/refresh_token")
 async def refresh_token(refresh_data: RefreshTokenData):
+    from . import supabase  # ensure patched supabase is used during tests
     """Refresh an expired access token using the refresh token."""
     try:
         response = supabase.auth.refresh_session(refresh_data.refresh_token)
