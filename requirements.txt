@@ -1,67 +1,53 @@
-aiohappyeyeballs==2.4.6
-aiohttp==3.11.12
-aiosignal==1.3.2
-annotated-types==0.7.0
-anyio==4.8.0
-async-timeout==5.0.1
-attrs==25.1.0
-cachetools==5.5.2
-certifi==2025.1.31
-cffi==1.17.1
-charset-normalizer==3.4.1
-click==8.1.8
-cryptography==44.0.1
-deprecation==2.1.0
-distro==1.9.0
-dotenv==0.9.9
-email_validator==2.2.0
-environs==14.1.1
-exceptiongroup==1.2.2
-fastapi==0.115.8
-fastapi_cors==0.0.6
-frozenlist==1.5.0
-gotrue==2.11.4
-h11==0.14.0
-h2==4.2.0
-hpack==4.1.0
-httpcore==1.0.7
-httpx==0.28.1
-hyperframe==6.1.0
-idna==3.10
-jiter==0.8.2
-jwt==1.3.1
-marshmallow==3.26.1
-multidict==6.1.0
-numpy==2.2.3
-openai==1.63.2
-packaging==24.2
-pandas==2.2.3
-postgrest==0.19.3
-propcache==0.3.0
-pyasn1==0.6.1
-pyasn1_modules==0.4.1
-pycparser==2.22
-pydantic==2.10.6
-pydantic_core==2.27.2
-python-dateutil==2.9.0.post0
-python-dotenv==1.0.1
-pytz==2025.1
-realtime==2.4.0
-requests==2.32.3
-rsa==4.9
-six==1.17.0
-sniffio==1.3.1
-starlette==0.45.3
-storage3==0.11.3
-StrEnum==0.4.15
-supabase==2.13.0
-supafunc==0.9.3
-tqdm==4.67.1
-typing_extensions==4.12.2
-tzdata==2025.1
-urllib3==2.3.0
-uvicorn==0.34.0
-websockets==14.2
-yarl==1.18.3
-stripe>=5.5.0
-PyJWT>=2.6.0
+# requirements.txt - Optimized with performance packages
+
+# Core FastAPI with performance optimizations
+fastapi[all]==0.104.1
+uvicorn[standard]==0.24.0
+gunicorn==21.2.0
+
+# Database and ORM optimizations
+supabase==2.0.2
+asyncpg==0.29.0  # Faster PostgreSQL driver
+psycopg2-binary==2.9.9  # Backup PostgreSQL driver
+
+# Caching and performance
+redis==5.0.1
+hiredis==2.2.3  # Faster Redis client
+aioredis==2.0.1  # Async Redis client
+
+# HTTP and networking optimizations
+httpx[http2]==0.25.2  # HTTP/2 support
+urllib3==2.1.0
+
+# Data processing optimizations
+orjson==3.9.10  # Faster JSON serialization
+pydantic[email]==2.5.0
+numpy==1.25.2  # For stats calculations
+
+# Monitoring and observability
+psutil==5.9.6  # System metrics
+structlog==23.2.0  # Structured logging
+
+# Security and validation
+python-jwt==4.0.0
+cryptography==41.0.8
+python-multipart==0.0.6
+
+# Development and testing (keep minimal for production)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-xdist==3.5.0  # Parallel test execution
+
+# Utilities
+python-dotenv==1.0.0
+stripe==7.8.0
+Pillow==10.1.0
+
+# Performance monitoring
+py-spy==0.3.14  # Profiling tool
+memory-profiler==0.61.0
+
+# Optional: Database connection pooling
+sqlalchemy[asyncio]==2.0.23  # If you want to add SQLAlchemy later
+asyncpg-stubs==0.29.0  # Type hints for asyncpg

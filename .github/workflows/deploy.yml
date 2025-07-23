@@ -1,10 +1,11 @@
-name: Build and Deploy to Cloud Run
+# .github/workflows/deploy-optimized.yml
+name: Optimized Build and Deploy to Cloud Run
 
 on:
   push:
     branches:
-      - main  # Production branch
-      - develop  # Development branch
+      - main
+      - develop
   pull_request:
     branches:
       - main
@@ -14,7 +15,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REPOSITORY: jaydai-backend
   IMAGE_NAME: archimind-backend
-  REGION: europe-west1  # Using your preferred region
+  REGION: europe-west1
 
 jobs:
   test:
@@ -23,93 +24,45 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'  # Upgrade to Python 3.11 for better performance
+          
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
           
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov
+          pip install pytest pytest-cov pytest-xdist  # Add parallel test execution
       
-      - name: Create test helper
+      - name: Run tests in parallel
         run: |
-          # Create a Python script to run tests with patched environment
-          cat > run_tests.py << 'EOF'
-          import os
-          import sys
-          import pytest
-
-          # Set fake Supabase credentials before any imports
-          os.environ['SUPABASE_URL'] = 'https://xyzcompany.supabase.co'
-          os.environ['SUPABASE_SERVICE_ROLE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2MjAyNDU5NTIsImV4cCI6MTkzNTgyMTk1Mn0.t7m7lesQOJVJYRLwR5437piRcI8mqIp6BnwQPWTnnu4'
-
-          # Run pytest with the given arguments
-          sys.exit(pytest.main(sys.argv[1:]))
-          EOF
-          
-      - name: Run tests
-        id: run_tests
-        continue-on-error: true  # Allow pipeline to continue even if some tests fail
-        run: |
-          # Use PYTHONPATH to ensure modules can be found
-          PYTHONPATH=$PWD python run_tests.py tests/ --cov=./ --cov-report=xml
+          pytest tests/ -n auto --cov=./ --cov-report=xml
       
-      - name: Check test results
-        run: |
-          echo "::warning::Some tests failed. Check the test output for details."
-          echo "You should fix these issues to ensure the application works correctly."
-          
       - name: Upload coverage report
         uses: codecov/codecov-action@v3
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
 
-  migrate-database:
-    name: Run Database Migrations
-    runs-on: ubuntu-latest
-    needs: test
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        
-      - name: Set environment variables for migrations
-        id: set-migration-env
-        run: |
-          if [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
-            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
-          elif [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            echo "ENVIRONMENT=prod" >> $GITHUB_ENV
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
-          else
-            # Default to dev for other branches
-            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
-          fi
-        
-      - name: Run migrations
-        run: |
-          chmod +x scripts/run-migrations.sh
-          ./scripts/run-migrations.sh
-
   build-and-deploy:
     name: Build and Deploy
-    needs: [test, migrate-database]
+    needs: [test]
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: Set environment based on branch
         id: set-env
@@ -118,35 +71,20 @@ jobs:
             echo "ENVIRONMENT=prod" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-prod" >> $GITHUB_ENV
             echo "CUSTOM_DOMAIN=api.prod.jayd.ai" >> $GITHUB_ENV
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
-            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_PROD }}" >> $GITHUB_ENV
-            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_PROD }}" >> $GITHUB_ENV
+            echo "MIN_INSTANCES=1" >> $GITHUB_ENV  # Keep warm in production
+            echo "MAX_INSTANCES=20" >> $GITHUB_ENV
+            echo "CPU_LIMIT=2" >> $GITHUB_ENV
+            echo "MEMORY_LIMIT=2Gi" >> $GITHUB_ENV
+            echo "CONCURRENCY=100" >> $GITHUB_ENV
           elif [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
             echo "CUSTOM_DOMAIN=api.dev.jayd.ai" >> $GITHUB_ENV
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_DEV }}" >> $GITHUB_ENV
-          else
-            # Default to dev for other branches (like PRs)
-            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
-            echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
-            echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_DEV }}" >> $GITHUB_ENV
+            echo "MIN_INSTANCES=0" >> $GITHUB_ENV
+            echo "MAX_INSTANCES=10" >> $GITHUB_ENV
+            echo "CPU_LIMIT=1" >> $GITHUB_ENV
+            echo "MEMORY_LIMIT=1Gi" >> $GITHUB_ENV
+            echo "CONCURRENCY=50" >> $GITHUB_ENV
           fi
           
       - name: Google Auth
@@ -158,174 +96,47 @@ jobs:
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
         
-      - name: Install gcloud beta components
-        run: |
-          gcloud components install beta --quiet
-        
       - name: Configure Docker for Artifact Registry
         run: |
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
           
-      - name: Build and push Docker image
+      - name: Build optimized Docker image
         run: |
           IMAGE_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{ github.sha }}"
-          echo "Building image: $IMAGE_TAG"
+          echo "Building optimized image: $IMAGE_TAG"
           
-          docker build -t $IMAGE_TAG -f Dockerfile.prod .
+          # Build with optimizations
+          docker build \
+            --target production \
+            --build-arg ENVIRONMENT=${{ env.ENVIRONMENT }} \
+            -t $IMAGE_TAG \
+            -f Dockerfile.optimized .
+          
           docker push $IMAGE_TAG
-          
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           
-      - name: Deploy to Cloud Run
+      - name: Deploy to Cloud Run with optimized settings
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ env.REGION }}
           image: ${{ env.IMAGE_TAG }}
-          flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --min-instances=0 --max-instances=10'
+          flags: |
+            --allow-unauthenticated 
+            --cpu=${{ env.CPU_LIMIT }} 
+            --memory=${{ env.MEMORY_LIMIT }}
+            --min-instances=${{ env.MIN_INSTANCES }}
+            --max-instances=${{ env.MAX_INSTANCES }}
+            --concurrency=${{ env.CONCURRENCY }}
+            --timeout=300
+            --execution-environment=gen2
           env_vars: |
+            ENVIRONMENT=${{ env.ENVIRONMENT }}
+            PYTHONUNBUFFERED=1
+            PYTHONDONTWRITEBYTECODE=1
+            WEB_CONCURRENCY=4
             SUPABASE_URL=${{ env.SUPABASE_URL }}
             SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
-            STRIPE_SECRET_KEY=${{ env.STRIPE_SECRET_KEY }}
-            STRIPE_WEBHOOK_SECRET=${{ env.STRIPE_WEBHOOK_SECRET }}
-            STRIPE_PLUS_MONTHLY_PRICE_ID=${{ env.STRIPE_PLUS_MONTHLY_PRICE_ID }}
-            STRIPE_PLUS_YEARLY_PRICE_ID=${{ env.STRIPE_PLUS_YEARLY_PRICE_ID }}
-            STRIPE_PLUS_PRODUCT_ID=${{ env.STRIPE_PLUS_PRODUCT_ID }}
+            REDIS_URL=${{ secrets.REDIS_URL }}
 
-      - name: Check Domain Verification
-        if: env.CUSTOM_DOMAIN != ''
-        id: check-domain
-        run: |
-          echo "Checking if domain ${{ env.CUSTOM_DOMAIN }} is verified..."
-          
-          # Check if domain is verified by attempting to list verified domains
-          VERIFIED_DOMAINS=$(gcloud domains list-user-verified --format="value(domain)" 2>/dev/null || echo "")
-          
-          if echo "$VERIFIED_DOMAINS" | grep -q "^${{ env.CUSTOM_DOMAIN }}$" || echo "$VERIFIED_DOMAINS" | grep -q "^jayd.ai$"; then
-            echo "DOMAIN_VERIFIED=true" >> $GITHUB_ENV
-            echo "Domain is verified!"
-          else
-            echo "DOMAIN_VERIFIED=false" >> $GITHUB_ENV
-            echo "Domain is not verified."
-          fi
-
-      - name: Configure Custom Domain Mapping
-        if: env.CUSTOM_DOMAIN != '' && env.DOMAIN_VERIFIED == 'true'
-        run: |
-          echo "Configuring custom domain mapping for ${{ env.CUSTOM_DOMAIN }}"
-          
-          # Check if domain mapping already exists
-          if gcloud beta run domain-mappings describe ${{ env.CUSTOM_DOMAIN }} --region=${{ env.REGION }} --quiet 2>/dev/null; then
-            echo "Domain mapping already exists, updating..."
-            gcloud beta run domain-mappings update ${{ env.CUSTOM_DOMAIN }} \
-              --service=${{ env.SERVICE_NAME }} \
-              --region=${{ env.REGION }} \
-              --quiet
-          else
-            echo "Creating new domain mapping..."
-            gcloud beta run domain-mappings create \
-              --service=${{ env.SERVICE_NAME }} \
-              --domain=${{ env.CUSTOM_DOMAIN }} \
-              --region=${{ env.REGION }} \
-              --quiet
-          fi
-          
-          # Get the DNS record information
-          echo "Getting DNS configuration..."
-          gcloud beta run domain-mappings describe ${{ env.CUSTOM_DOMAIN }} \
-            --region=${{ env.REGION }} \
-            --format="value(status.resourceRecords[].name,status.resourceRecords[].rrdata)" > dns_records.txt
-          
-          echo "DNS Records to configure:"
-          cat dns_records.txt
-
-      - name: Domain Verification Instructions
-        if: env.CUSTOM_DOMAIN != '' && env.DOMAIN_VERIFIED == 'false'
-        run: |
-          echo "⚠️  Domain ${{ env.CUSTOM_DOMAIN }} is not verified!"
-          echo ""
-          echo "To verify your domain, please:"
-          echo "1. Go to Google Cloud Console → Cloud Run → Manage Custom Domains"
-          echo "2. Click 'Add Mapping' and enter: ${{ env.CUSTOM_DOMAIN }}"
-          echo "3. Follow the verification steps provided by Google"
-          echo "4. Add the required DNS records to your domain registrar"
-          echo ""
-          echo "Your service is deployed and accessible at: ${{ steps.deploy.outputs.url }}"
-          echo "Once domain is verified, re-run the deployment to configure custom domain mapping."
-            
-      - name: Show Output
-        run: |
-          echo "Cloud Run URL: ${{ steps.deploy.outputs.url }}"
-          if [[ "${{ env.DOMAIN_VERIFIED }}" == "true" && -n "${{ env.CUSTOM_DOMAIN }}" ]]; then
-            echo "Custom Domain URL: https://${{ env.CUSTOM_DOMAIN }}"
-          elif [[ -n "${{ env.CUSTOM_DOMAIN }}" ]]; then
-            echo "Custom Domain: ${{ env.CUSTOM_DOMAIN }} (verification required)"
-          fi
-
-  deploy-version:
-    name: Deploy Version to Cloud Run
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/heads/v.')
-    needs: [test, migrate-database]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set environment for version branch
-        id: set-env
-        run: |
-          VERSION="${GITHUB_REF#refs/heads/}"
-          echo "ENVIRONMENT=version" >> $GITHUB_ENV
-          echo "SERVICE_NAME=api-$VERSION" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          # Version branches use production credentials
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
-          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
-          echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_PROD }}" >> $GITHUB_ENV
-          echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}" >> $GITHUB_ENV
-          echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
-          echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
-          echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_PROD }}" >> $GITHUB_ENV
-
-      - name: Google Auth
-        id: auth
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'
-
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@v1
-
-      - name: Configure Docker for Artifact Registry
-        run: |
-          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
-
-      - name: Build and push Docker image
-        run: |
-          IMAGE_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ env.ENVIRONMENT }}:${{ github.sha }}"
-          echo "Building image: $IMAGE_TAG"
-          docker build -t $IMAGE_TAG -f Dockerfile.prod .
-          docker push $IMAGE_TAG
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          service: ${{ env.SERVICE_NAME }}
-          region: ${{ env.REGION }}
-          image: ${{ env.IMAGE_TAG }}
-          flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --min-instances=0 --max-instances=10'
-          env_vars: |
-            SUPABASE_URL=${{ env.SUPABASE_URL }}
-            SUPABASE_SERVICE_ROLE_KEY=${{ env.SUPABASE_SERVICE_ROLE_KEY }}
-            STRIPE_SECRET_KEY=${{ env.STRIPE_SECRET_KEY }}
-            STRIPE_WEBHOOK_SECRET=${{ env.STRIPE_WEBHOOK_SECRET }}
-            STRIPE_PLUS_MONTHLY_PRICE_ID=${{ env.STRIPE_PLUS_MONTHLY_PRICE_ID }}
-            STRIPE_PLUS_YEARLY_PRICE_ID=${{ env.STRIPE_PLUS_YEARLY_PRICE_ID }}
-            STRIPE_PLUS_PRODUCT_ID=${{ env.STRIPE_PLUS_PRODUCT_ID }}
-            VERSION=${{ env.VERSION }}
-
-      - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
