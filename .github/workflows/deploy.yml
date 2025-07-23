@@ -120,6 +120,11 @@ jobs:
             echo "CUSTOM_DOMAIN=api.prod.jayd.ai" >> $GITHUB_ENV
             echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_PROD }}" >> $GITHUB_ENV
             echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_PROD }}" >> $GITHUB_ENV
+            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_PROD }}" >> $GITHUB_ENV
+            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_PROD }}" >> $GITHUB_ENV
           elif [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
             echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
@@ -137,6 +142,11 @@ jobs:
             echo "SERVICE_NAME=api-dev" >> $GITHUB_ENV
             echo "SUPABASE_URL=${{ secrets.SUPABASE_URL_DEV }}" >> $GITHUB_ENV
             echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
+            echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_DEV }}" >> $GITHUB_ENV
           fi
           
       - name: Google Auth
