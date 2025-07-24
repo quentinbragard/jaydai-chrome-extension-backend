@@ -4,6 +4,7 @@ from typing import Dict, Any
 from supabase import Client
 import stripe
 from services.stripe.subscriptions import update_subscription_status
+from utils.amplitude import track_event
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +54,12 @@ async def _handle_payment_succeeded(supabase: Client, event_id: str, invoice: Di
             user_id = subscription.metadata.get("user_id")
             if user_id:
                 await update_subscription_status(supabase, user_id, subscription)
+                track_event(user_id, "payment_succeeded", {"invoice_id": invoice.get("id"), "subscription_id": subscription_id})
             return True
         except stripe.error.StripeError as e:
             logger.error("Failed to retrieve subscription %s: %s", subscription_id, e)
+            if user_id := invoice.get("metadata", {}).get("user_id"):
+                track_event(user_id, "payment_failed", {"invoice_id": invoice.get("id"), "error": str(e)})
             return False
     return True
 
@@ -68,6 +72,9 @@ async def _handle_payment_failed(supabase: Client, event_id: str, invoice: Dict[
             user_id = subscription.metadata.get("user_id")
             if user_id:
                 await update_subscription_status(supabase, user_id, subscription)
+                track_event(user_id, "payment_failed", {"invoice_id": invoice.get("id"), "subscription_id": subscription_id})
         except stripe.error.StripeError as e:
             logger.error("Failed to retrieve subscription %s: %s", subscription_id, e)
+            if user_id := invoice.get("metadata", {}).get("user_id"):
+                track_event(user_id, "payment_failed", {"invoice_id": invoice.get("id"), "error": str(e)})
     return True
