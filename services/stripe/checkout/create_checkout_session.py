@@ -39,7 +39,7 @@ async def create_checkout_session(
         metadata["product_id"] = product_id
         
         
-    print("ENVIRONMENT===========================================👇👇👇\n\n", os.getenv("ENVIRONMENT"))
+    logger.warning("ENVIRONMENT===========================================👇👇👇\n\n", os.getenv("ENVIRONMENT"))
     is_prod = os.getenv("ENVIRONMENT") == "prod"
     suffix = f"?session_id={{CHECKOUT_SESSION_ID}}"
     if auth_token:
