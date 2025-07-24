@@ -14,6 +14,8 @@ async def handle_webhook_event(supabase: Client, event: Dict[str, Any]) -> bool:
     event_type = event.get("type")
     event_data = event.get("data", {})
 
+    user_id = event_data.get("object", {}).get("metadata", {}).get("user_id")
+
     existing = supabase.table("stripe_webhook_events").select("id, processed").eq("stripe_event_id", event_id).maybe_single().execute()
     if existing and existing.data and existing.data.get("processed"):
         logger.info("Event %s already processed", event_id)
