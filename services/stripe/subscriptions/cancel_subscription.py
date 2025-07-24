@@ -1,7 +1,9 @@
+# services/stripe/subscriptions/cancel_subscription.py - FIXED IMPORT VERSION
 import logging
 import stripe
 from supabase import Client
-from services.stripe.subscriptions import update_subscription_status
+# FIX: Import the function directly from the module
+from services.stripe.subscriptions.update_subscription_status import update_subscription_status
 
 logger = logging.getLogger(__name__)
 
@@ -52,9 +54,12 @@ async def cancel_subscription(supabase: Client, user_id: str) -> bool:
         subscription = stripe.Subscription.modify(
             subscription_id, cancel_at_period_end=True
         )
+        
+        # This should now work correctly with the fixed import
         await update_subscription_status(supabase, user_id, subscription)
         logger.info("Cancelled subscription %s for user %s", subscription_id, user_id)
         return True
+        
     except stripe.error.StripeError as e:
         logger.error("Stripe error cancelling subscription: %s", e)
         return False
