@@ -91,7 +91,7 @@ def user_has_access_to_template(supabase: Client, user_id: str, template_id: int
 
     return True
 
-def filter_accessible_items(supabase: Client, user_id: str, items: List[Dict[str, Any]], 
+def filter_accessible_items(supabase: Client, user_id: str, items: List[Dict[str, Any]],
                           item_type: str = "template") -> List[Dict[str, Any]]:
     """Filter a list of items to only include those the user has access to."""
     if not items:
@@ -125,34 +125,6 @@ def filter_accessible_items(supabase: Client, user_id: str, items: List[Dict[str
     return accessible_items
 
 
-def user_has_access_to_template(supabase: Client, user_id: str, template_id: int) -> Optional[bool]:
-    """Return True if user has access to the template, False if not, None if template doesn't exist."""
-    resp = (
-        supabase.table("prompt_templates")
-        .select("user_id, company_id, organization_id")
-        .eq("id", template_id)
-        .single()
-        .execute()
-    )
-
-    template = resp.data
-    if not template:
-        return None
-
-    metadata = get_user_metadata(supabase, user_id)
-
-    if template.get("user_id"):
-        return template.get("user_id") == user_id
-
-    if template.get("company_id"):
-        return template.get("company_id") == metadata.get("company_id")
-
-    if template.get("organization_id"):
-        return template.get("organization_id") in (metadata.get("organization_ids") or [])
-
-    return True
-
-
 def user_has_access_to_block(supabase: Client, user_id: str, block_id: int) -> Optional[bool]:
     """Return True if user has access to the block, False if not, None if block doesn't exist."""
     resp = (
@@ -183,7 +155,3 @@ def user_has_access_to_block(supabase: Client, user_id: str, block_id: int) -> O
         return True
 
     return False
-
-
-# ADD these imports at the top of the file if not already present:
-from typing import Optional, List, Dict, Any
