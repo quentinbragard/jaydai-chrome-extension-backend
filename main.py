@@ -16,6 +16,8 @@ import dotenv
 from utils.middleware.performance_monitoring import PerformanceMonitoringMiddleware, get_performance_metrics
 from utils.cache.redis_cache import cache, CacheWarmer
 from utils.database.query_optimizer import BatchOperations
+from utils.monitoring.prometheus_metrics import PrometheusMiddleware, add_metrics_endpoint
+
 
 dotenv.load_dotenv()
 
@@ -77,9 +79,16 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+
 # Add optimization middleware (order matters!)
 app.add_middleware(GZipMiddleware, minimum_size=1000)  # Compress responses > 1KB
 app.add_middleware(PerformanceMonitoringMiddleware, threshold_ms=1000)
+
+# Add Prometheus middleware
+app.add_middleware(PrometheusMiddleware, app_name="jaydai_api")
+
+# Add metrics endpoint
+add_metrics_endpoint(app)
 
 app.add_middleware(
     CORSMiddleware, 

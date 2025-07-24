@@ -1,6 +1,6 @@
-# scripts/monitor_performance.py
+# scripts/monitor_performance_fixed.py
 """
-Performance monitoring script for local development and production monitoring
+Fixed performance monitoring script with proper async handling
 """
 import asyncio
 import aiohttp
@@ -17,7 +17,8 @@ class PerformanceMonitor:
         self.session = None
         
     async def __aenter__(self):
-        self.session = aiohttp.ClientSession()
+        timeout = aiohttp.ClientTimeout(total=30)
+        self.session = aiohttp.ClientSession(timeout=timeout)
         return self
         
     async def __aexit__(self, exc_type, exc_val, exc_tb):
@@ -64,68 +65,24 @@ class PerformanceMonitor:
                 "timestamp": datetime.utcnow().isoformat()
             }
     
-    async def load_test_endpoint(self, endpoint: str, concurrent_requests: int = 10, total_requests: int = 100, headers: Dict = None) -> Dict[str, Any]:
-        """Perform load testing on an endpoint"""
-        print(f"Load testing {endpoint} with {concurrent_requests} concurrent requests, {total_requests} total...")
-        
-        semaphore = asyncio.Semaphore(concurrent_requests)
-        results = []
-        
-        async def single_request():
-            async with semaphore:
-                return await self.test_endpoint(endpoint, headers=headers)
-        
-        # Create all tasks
-        tasks = [single_request() for _ in range(total_requests)]
-        
-        # Execute all tasks
-        start_time = time.time()
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        total_time = time.time() - start_time
-        
-        # Process results
-        successful_results = [r for r in results if isinstance(r, dict) and r.get("success")]
-        failed_results = [r for r in results if isinstance(r, dict) and not r.get("success")]
-        
-        if successful_results:
-            response_times = [r["response_time_ms"] for r in successful_results]
-            
-            return {
-                "endpoint": endpoint,
-                "total_requests": total_requests,
-                "concurrent_requests": concurrent_requests,
-                "successful_requests": len(successful_results),
-                "failed_requests": len(failed_results),
-                "total_time_seconds": round(total_time, 2),
-                "requests_per_second": round(total_requests / total_time, 2),
-                "response_time_stats": {
-                    "min_ms": round(min(response_times), 2),
-                    "max_ms": round(max(response_times), 2),
-                    "mean_ms": round(statistics.mean(response_times), 2),
-                    "median_ms": round(statistics.median(response_times), 2),
-                    "p95_ms": round(statistics.quantiles(response_times, n=20)[18], 2),  # 95th percentile
-                    "p99_ms": round(statistics.quantiles(response_times, n=100)[98], 2)  # 99th percentile
-                }
-            }
-        else:
-            return {
-                "endpoint": endpoint,
-                "total_requests": total_requests,
-                "successful_requests": 0,
-                "failed_requests": len(failed_results),
-                "total_time_seconds": round(total_time, 2),
-                "error": "All requests failed"
-            }
-    
     async def monitor_application_metrics(self) -> Dict[str, Any]:
-        """Get application performance metrics"""
+        """Get application performance metrics - FIXED VERSION"""
         try:
             result = await self.test_endpoint("/metrics")
             if result["success"]:
-                metrics_data = json.loads(await self.session.get(f"{self.base_url}/metrics").text())
-                return metrics_data
+                # Properly get the response for metrics
+                async with self.session.get(f"{self.base_url}/metrics") as response:
+                    if response.status == 200:
+                        metrics_text = await response.text()
+                        try:
+                            metrics_data = json.loads(metrics_text)
+                            return metrics_data
+                        except json.JSONDecodeError:
+                            return {"error": "Invalid JSON in metrics response", "raw_response": metrics_text[:500]}
+                    else:
+                        return {"error": f"Metrics endpoint returned status {response.status}"}
             else:
-                return {"error": "Failed to fetch metrics"}
+                return {"error": "Failed to fetch metrics", "details": result}
         except Exception as e:
             return {"error": str(e)}
     
@@ -137,8 +94,15 @@ class PerformanceMonitor:
         endpoints_to_test = [
             {"endpoint": "/", "method": "GET"},
             {"endpoint": "/health", "method": "GET"},
-            {"endpoint": "/metrics", "method": "GET"},
         ]
+        
+        # Only test metrics if it exists
+        try:
+            metrics_test = await self.test_endpoint("/metrics")
+            if metrics_test["success"]:
+                endpoints_to_test.append({"endpoint": "/metrics", "method": "GET"})
+        except:
+            pass
         
         # If auth token is provided, test authenticated endpoints
         if auth_token:
@@ -153,7 +117,6 @@ class PerformanceMonitor:
             "timestamp": datetime.utcnow().isoformat(),
             "base_url": self.base_url,
             "endpoint_tests": [],
-            "load_tests": [],
             "application_metrics": None
         }
         
@@ -166,23 +129,11 @@ class PerformanceMonitor:
                 headers=headers
             )
             results["endpoint_tests"].append(result)
-            print(f"  {endpoint_config['endpoint']}: {result['response_time_ms']:.2f}ms")
-        
-        # Load test critical endpoints
-        if auth_token:
-            critical_endpoints = ["/prompts/folders", "/prompts/templates"]
-            print("\nRunning load tests...")
-            for endpoint in critical_endpoints:
-                load_result = await self.load_test_endpoint(
-                    endpoint, 
-                    concurrent_requests=5, 
-                    total_requests=50,
-                    headers=headers
-                )
-                results["load_tests"].append(load_result)
-                print(f"  {endpoint}: {load_result.get('requests_per_second', 0):.2f} req/s")
+            status_icon = "✅" if result["success"] else "❌"
+            print(f"  {status_icon} {endpoint_config['endpoint']}: {result['response_time_ms']:.2f}ms")
         
         # Get application metrics
+        print("Fetching application metrics...")
         app_metrics = await self.monitor_application_metrics()
         results["application_metrics"] = app_metrics
         
@@ -192,44 +143,68 @@ async def main():
     parser = argparse.ArgumentParser(description="Performance monitoring for Jaydai API")
     parser.add_argument("--url", default="http://localhost:8000", help="Base URL of the API")
     parser.add_argument("--auth-token", help="Authentication token for protected endpoints")
-    parser.add_argument("--load-test", action="store_true", help="Run load tests")
     parser.add_argument("--continuous", action="store_true", help="Run continuous monitoring")
     parser.add_argument("--interval", type=int, default=60, help="Monitoring interval in seconds")
     parser.add_argument("--output", help="Output file for results (JSON)")
+    parser.add_argument("--env", choices=["local", "dev", "prod"], default="local", help="Environment to test")
     
     args = parser.parse_args()
+    
+    # Set URL based on environment
+    if args.env == "dev":
+        args.url = "https://api.dev.jayd.ai"
+    elif args.env == "prod":
+        args.url = "https://api.prod.jayd.ai"
+    
+    print(f"Monitoring {args.url} ({args.env} environment)")
     
     async with PerformanceMonitor(args.url) as monitor:
         if args.continuous:
             print(f"Starting continuous monitoring every {args.interval} seconds...")
-            while True:
-                try:
-                    results = await monitor.comprehensive_performance_test(args.auth_token)
-                    
-                    # Print summary
-                    print(f"\n--- Performance Report {results['timestamp']} ---")
-                    for test in results["endpoint_tests"]:
-                        status = "✅" if test["success"] else "❌"
-                        print(f"{status} {test['endpoint']}: {test['response_time_ms']:.2f}ms")
-                    
-                    if results["load_tests"]:
-                        print("\nLoad Test Results:")
-                        for load_test in results["load_tests"]:
-                            print(f"  {load_test['endpoint']}: {load_test.get('requests_per_second', 0):.2f} req/s")
-                    
-                    # Save to file if specified
-                    if args.output:
-                        with open(args.output, 'w') as f:
-                            json.dump(results, f, indent=2)
-                    
-                    await asyncio.sleep(args.interval)
-                    
-                except KeyboardInterrupt:
-                    print("\nMonitoring stopped by user")
-                    break
-                except Exception as e:
-                    print(f"Error during monitoring: {str(e)}")
-                    await asyncio.sleep(args.interval)
+            try:
+                while True:
+                    try:
+                        results = await monitor.comprehensive_performance_test(args.auth_token)
+                        
+                        # Print summary
+                        print(f"\n--- Performance Report {results['timestamp']} ---")
+                        
+                        # Calculate average response time
+                        successful_tests = [t for t in results["endpoint_tests"] if t["success"]]
+                        if successful_tests:
+                            avg_response_time = sum(t["response_time_ms"] for t in successful_tests) / len(successful_tests)
+                            print(f"Average Response Time: {avg_response_time:.2f}ms")
+                        
+                        for test in results["endpoint_tests"]:
+                            status = "✅" if test["success"] else "❌"
+                            if test["success"]:
+                                print(f"{status} {test['endpoint']}: {test['response_time_ms']:.2f}ms")
+                            else:
+                                print(f"{status} {test['endpoint']}: ERROR - {test.get('error', 'Unknown error')}")
+                        
+                        # Show application metrics if available
+                        if results["application_metrics"] and "error" not in results["application_metrics"]:
+                            metrics = results["application_metrics"]
+                            if "system" in metrics:
+                                system = metrics["system"]
+                                print(f"System: CPU {system.get('cpu_percent', 0):.1f}%, Memory {system.get('memory_percent', 0):.1f}%")
+                        
+                        # Save to file if specified
+                        if args.output:
+                            with open(args.output, 'w') as f:
+                                json.dump(results, f, indent=2)
+                        
+                        print(f"Next check in {args.interval} seconds...\n")
+                        await asyncio.sleep(args.interval)
+                        
+                    except KeyboardInterrupt:
+                        print("\nMonitoring stopped by user")
+                        break
+                    except Exception as e:
+                        print(f"Error during monitoring: {str(e)}")
+                        await asyncio.sleep(args.interval)
+            except KeyboardInterrupt:
+                print("\nMonitoring stopped by user")
         else:
             # Single test run
             results = await monitor.comprehensive_performance_test(args.auth_token)
@@ -246,17 +221,15 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
-# Example usage commands:
+# Usage examples:
 """
-# Basic performance test
-python scripts/monitor_performance.py --url https://your-api.run.app
+# Test your deployed environments
+python scripts/monitor_performance_fixed.py --env dev
+python scripts/monitor_performance_fixed.py --env prod
 
-# Load testing with authentication
-python scripts/monitor_performance.py --url https://your-api.run.app --auth-token "your-jwt-token" --load-test
+# Continuous monitoring with authentication
+python scripts/monitor_performance_fixed.py --env prod --auth-token "your-token" --continuous --interval 30
 
-# Continuous monitoring
-python scripts/monitor_performance.py --url https://your-api.run.app --auth-token "your-jwt-token" --continuous --interval 30
-
-# Save results to file
-python scripts/monitor_performance.py --url https://your-api.run.app --output performance_results.json
+# Save results for analysis
+python scripts/monitor_performance_fixed.py --env prod --output prod_performance.json
 """

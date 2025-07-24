@@ -1,0 +1,39 @@
+# monitoring/prometheus.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Your FastAPI application
+  - job_name: 'jaydai-api'
+    static_configs:
+      - targets: ['jaydai-api:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # System metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Cloud Run metrics (if using Google Cloud)
+  - job_name: 'cloud-run-dev'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api.dev.jayd.ai']
+    scrape_interval: 30s
+
+  - job_name: 'cloud-run-prod'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api.prod.jayd.ai']
+    scrape_interval: 30s

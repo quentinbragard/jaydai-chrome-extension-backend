@@ -6,9 +6,12 @@ from utils import supabase_helpers
 from utils.prompts import process_template_for_response
 from utils.access_control import apply_access_conditions
 from utils.middleware.localization import extract_locale_from_request
+from utils.monitoring.prometheus_metrics import track_db_query, track_cache_operation
+
 from . import router, supabase
 
 @router.get("", response_model=APIResponse[List[TemplateResponse]])
+@track_db_query("prompt_templates", "select")
 async def get_templates(
     request: Request,
     type: Optional[str] = None,

@@ -16,7 +16,7 @@ hiredis==2.2.3  # Faster Redis client
 aioredis==2.0.1  # Async Redis client
 
 # HTTP and networking optimizations
-httpx[http2]==0.25.2  # HTTP/2 support
+#httpx[http2]==0.25.2  # HTTP/2 support
 urllib3==2.1.0
 
 # Data processing optimizations
@@ -30,7 +30,6 @@ structlog==23.2.0  # Structured logging
 
 # Security and validation
 python-jwt==4.0.0
-cryptography==41.0.8
 python-multipart==0.0.6
 
 # Development and testing (keep minimal for production)
