@@ -14,6 +14,7 @@ STRIPE_SECRET_KEY=<your-stripe-secret-key>
 STRIPE_WEBHOOK_SECRET=<your-stripe-webhook-secret>
 STRIPE_PLUS_MONTHLY_PRICE_ID=<your-stripe-monthly-price-id>
 STRIPE_PLUS_YEARLY_PRICE_ID=<your-stripe-yearly-price-id>
+SENTRY_DSN=<your-sentry-dsn>
 ```
 
 The Chrome extension's frontend also requires Stripe URLs that integrate with
@@ -34,3 +35,6 @@ https://<extension-id>.chromiumapp.org/stripe/success
 ```
 
 This HTTPS URL should then be provided to Stripe as the return URL.
+
+### Sentry Monitoring
+Set `SENTRY_DSN` in your `.env` to enable Sentry error and performance monitoring.

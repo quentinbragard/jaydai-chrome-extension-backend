@@ -9,7 +9,12 @@ from supabase import create_client, Client
 import os
 import dotenv
 import logging
-import sentry_sdk
+try:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+except ImportError:  # Sentry is optional for tests
+    sentry_sdk = None
 from utils.middleware import AccessControlMiddleware
 from utils.logging import StructuredLogging
 
@@ -17,15 +22,20 @@ dotenv.load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 
-sentry_sdk.init(
-    dsn="https://9536439a3ab8cc91748a9b3b04b1d441@o4509722413301760.ingest.de.sentry.io/4509722415726672",
-    # Add data like request headers and IP for users,
-    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
-    send_default_pii=True,
-    traces_sample_rate=1.0,
-)
+if sentry_sdk is not None:
+    dsn = os.getenv("SENTRY_DSN")
+    if dsn:
+        sentry_sdk.init(
+            dsn=dsn,
+            integrations=[FastApiIntegration()],
+            send_default_pii=True,
+            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "1.0")),
+        )
 
 app = FastAPI()
+
+if sentry_sdk is not None and sentry_sdk.Hub.current.client:
+    app.add_middleware(SentryAsgiMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
