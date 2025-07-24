@@ -7,6 +7,9 @@ from utils import supabase_helpers
 import dotenv
 import os
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 dotenv.load_dotenv()
 
@@ -37,7 +40,7 @@ class NotificationResponse(NotificationBase):
 @router.get("/")
 async def get_notifications(user_id: str = Depends(supabase_helpers.get_user_from_session_token)) -> List[NotificationResponse]:
     """Get all notifications for a user."""
-    print("Getting notifications for user:", user_id)
+    logger.info("Getting notifications for user: %s", user_id)
     try:
         # Properly handle the query to avoid timestamp issues
         response = supabase.table("notifications") \

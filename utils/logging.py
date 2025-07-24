@@ -2,7 +2,7 @@
 import logging
 import json
 import time
-from fastapi import FastAPI, Request, Response
+from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 # Configure structured logging
@@ -41,11 +41,9 @@ class StructuredLogging(BaseHTTPMiddleware):
             if hasattr(request.state, "auth_user"):
                 log_dict["user_id"] = request.state.auth_user
                 
-            # Print as JSON for Cloud Logging to parse properly
-            print(json.dumps(log_dict))
+            # Use logging so messages include metadata
+            logging.getLogger(__name__).info(json.dumps(log_dict))
             
         return response
 
-# Add this middleware to your FastAPI app
-app = FastAPI()
-app.add_middleware(StructuredLogging)
+# Middleware only, add it to your FastAPI app in main.py

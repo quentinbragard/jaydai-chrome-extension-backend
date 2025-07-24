@@ -8,21 +8,27 @@ import json
 from supabase import create_client, Client
 import os
 import dotenv
+import logging
 
 # ADD THIS IMPORT
 from utils.middleware import AccessControlMiddleware
+from utils.logging import StructuredLogging
 
 dotenv.load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
 
 app.add_middleware(
-    CORSMiddleware, 
+    CORSMiddleware,
     allow_origins=["https://jayd.ai", "https://www.jayd.ai", "chrome-extension://enfcjmbdbldomiobfndablekgdkmcipd", "https://chatgpt.com", "https://claude.ai", "https://chat.mistral.ai", "https://copilot.microsoft.com"], 
     allow_credentials=True, 
     allow_methods=["*"], 
     allow_headers=["*"]
 )
+
+app.add_middleware(StructuredLogging)
 
 # ADD THIS MIDDLEWARE REGISTRATION
 app.add_middleware(AccessControlMiddleware)
