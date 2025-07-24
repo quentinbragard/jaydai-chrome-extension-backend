@@ -40,7 +40,7 @@ async def create_checkout_session(
         
         
     is_prod = os.getenv("ENVIRONMENT") == "prod"
-    suffix = f"?session_id={{CHECKOUT_SESSION_ID}}"
+    suffix = f"?session_id={{CHECKOUT_SESSION_ID}}&user_id={user_id}"
     if auth_token:
         suffix += f"&auth_token={auth_token}"
     if redirect_url:
