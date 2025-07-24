@@ -32,7 +32,16 @@ def apply_access_conditions(query, supabase: Client, user_id: str):
     """Apply user access filters to a Supabase query."""
     conditions = get_access_conditions(supabase, user_id)
     if conditions:
-        query = query.or_(",".join(conditions))
+        # Some versions of the underlying postgrest client may not expose the
+        # ``or_`` helper on the query builder. To maintain backwards
+        # compatibility we manually add the ``or`` filter if the attribute is
+        # missing.
+        if hasattr(query, "or_"):
+            query = query.or_(",".join(conditions))
+        else:  # pragma: no cover - fallback for older clients
+            from postgrest.utils import sanitize_param
+            key = "or"
+            query.params = query.params.add(key, f"({','.join(map(sanitize_param, conditions))})")
     return query
 
 
