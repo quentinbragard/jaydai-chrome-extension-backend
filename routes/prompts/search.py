@@ -6,6 +6,9 @@ from utils import supabase_helpers
 from utils.middleware.localization import extract_locale_from_request
 from utils.access_control import get_user_metadata, apply_access_conditions
 from utils.prompts import process_template_for_response, process_folder_for_response
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create a separate router for search
 router = APIRouter(tags=["Search"])
@@ -89,60 +92,40 @@ async def search_templates_jsonb(
         # Get user metadata for access control
         user_metadata = get_user_metadata(supabase, user_id)
         
-        # Build access conditions
-        access_conditions = []
-        access_conditions.append(f"user_id = '{user_id}'")
-        
+        # Build access conditions using query builder
+        access_conditions = [f"user_id.eq.{user_id}"]
         if user_metadata.get("company_id"):
-            access_conditions.append(f"company_id = '{user_metadata['company_id']}'")
-        
-        if user_metadata.get("organization_ids"):
-            org_ids = "', '".join(str(oid) for oid in user_metadata["organization_ids"])
-            access_conditions.append(f"organization_id IN ('{org_ids}')")
-        
-        # Add global templates
-        access_conditions.append("(user_id IS NULL AND company_id IS NULL AND organization_id IS NULL)")
-        
-        access_where = " OR ".join(f"({condition})" for condition in access_conditions)
-        
-        # Use RPC for complex JSONB search
-        search_query = f"""
-        SELECT *
-        FROM prompt_templates 
-        WHERE ({access_where})
-        AND (
-            (title->>'{locale}' ILIKE '%{search_term}%') OR
-            (title->>'en' ILIKE '%{search_term}%') OR
-            (content->>'{locale}' ILIKE '%{search_term}%') OR
-            (content->>'en' ILIKE '%{search_term}%') OR
-            (description->>'{locale}' ILIKE '%{search_term}%') OR
-            (description->>'en' ILIKE '%{search_term}%')
-        )
-        ORDER BY created_at DESC
-        LIMIT {page_size} OFFSET {offset}
-        """
-        
-        # Count query
-        count_query = f"""
-        SELECT COUNT(*) as total
-        FROM prompt_templates 
-        WHERE ({access_where})
-        AND (
-            (title->>'{locale}' ILIKE '%{search_term}%') OR
-            (title->>'en' ILIKE '%{search_term}%') OR
-            (content->>'{locale}' ILIKE '%{search_term}%') OR
-            (content->>'en' ILIKE '%{search_term}%') OR
-            (description->>'{locale}' ILIKE '%{search_term}%') OR
-            (description->>'en' ILIKE '%{search_term}%')
-        )
-        """
-        
-        # Execute count query
-        count_response = supabase.rpc('execute_raw_sql', {'query': count_query}).execute()
-        total = count_response.data[0]['total'] if count_response.data else 0
-        
-        # Execute search query
-        search_response = supabase.rpc('execute_raw_sql', {'query': search_query}).execute()
+            access_conditions.append(f"company_id.eq.{user_metadata['company_id']}")
+        for oid in user_metadata.get("organization_ids", []) or []:
+            access_conditions.append(f"organization_id.eq.{oid}")
+        access_conditions.append("and(user_id.is.null,company_id.is.null,organization_id.is.null)")
+
+        search_like = f"%{search_term}%"
+        search_filters = [
+            f"title->>'{locale}'.ilike.{search_like}",
+            f"title->>'en'.ilike.{search_like}",
+            f"content->>'{locale}'.ilike.{search_like}",
+            f"content->>'en'.ilike.{search_like}",
+            f"description->>'{locale}'.ilike.{search_like}",
+            f"description->>'en'.ilike.{search_like}",
+        ]
+
+        # Execute count query using parameterized filters
+        count_query = supabase.table("prompt_templates").select("id", count="exact")
+        count_query = count_query.or_(",".join(access_conditions))
+        count_query = count_query.or_(",".join(search_filters))
+        count_response = count_query.execute()
+        total = getattr(count_response, "count", None)
+        if total is None:
+            total = len(count_response.data or [])
+
+        # Execute search query using parameterized filters
+        search_query = supabase.table("prompt_templates").select("*")
+        search_query = search_query.or_(",".join(access_conditions))
+        search_query = search_query.or_(",".join(search_filters))
+        search_query = search_query.order("created_at", desc=True)
+        search_query = search_query.range(offset, offset + page_size - 1)
+        search_response = search_query.execute()
         
         # Process results
         templates = []
@@ -163,7 +146,7 @@ async def search_templates_jsonb(
         }
         
     except Exception as e:
-        print(f"JSONB template search failed: {str(e)}")
+        logger.error("JSONB template search failed: %s", str(e))
         # Fallback to client-side filtering
         return await fallback_client_search_templates(supabase, user_id, search_term, locale, page_size, offset)
 
@@ -182,56 +165,38 @@ async def search_folders_jsonb(
         # Get user metadata for access control
         user_metadata = get_user_metadata(supabase, user_id)
         
-        # Build access conditions
-        access_conditions = []
-        access_conditions.append(f"user_id = '{user_id}'")
-        
+        # Build access conditions using query builder
+        access_conditions = [f"user_id.eq.{user_id}"]
         if user_metadata.get("company_id"):
-            access_conditions.append(f"company_id = '{user_metadata['company_id']}'")
-        
-        if user_metadata.get("organization_ids"):
-            org_ids = "', '".join(str(oid) for oid in user_metadata["organization_ids"])
-            access_conditions.append(f"organization_id IN ('{org_ids}')")
-        
-        # Add global folders
-        access_conditions.append("(user_id IS NULL AND company_id IS NULL AND organization_id IS NULL)")
-        
-        access_where = " OR ".join(f"({condition})" for condition in access_conditions)
-        
-        # Use RPC for complex JSONB search
-        search_query = f"""
-        SELECT *
-        FROM prompt_folders 
-        WHERE ({access_where})
-        AND (
-            (title->>'{locale}' ILIKE '%{search_term}%') OR
-            (title->>'en' ILIKE '%{search_term}%') OR
-            (description->>'{locale}' ILIKE '%{search_term}%') OR
-            (description->>'en' ILIKE '%{search_term}%')
-        )
-        ORDER BY created_at DESC
-        LIMIT {page_size} OFFSET {offset}
-        """
-        
-        # Count query
-        count_query = f"""
-        SELECT COUNT(*) as total
-        FROM prompt_folders 
-        WHERE ({access_where})
-        AND (
-            (title->>'{locale}' ILIKE '%{search_term}%') OR
-            (title->>'en' ILIKE '%{search_term}%') OR
-            (description->>'{locale}' ILIKE '%{search_term}%') OR
-            (description->>'en' ILIKE '%{search_term}%')
-        )
-        """
-        
-        # Execute count query
-        count_response = supabase.rpc('execute_raw_sql', {'query': count_query}).execute()
-        total = count_response.data[0]['total'] if count_response.data else 0
-        
-        # Execute search query
-        search_response = supabase.rpc('execute_raw_sql', {'query': search_query}).execute()
+            access_conditions.append(f"company_id.eq.{user_metadata['company_id']}")
+        for oid in user_metadata.get("organization_ids", []) or []:
+            access_conditions.append(f"organization_id.eq.{oid}")
+        access_conditions.append("and(user_id.is.null,company_id.is.null,organization_id.is.null)")
+
+        search_like = f"%{search_term}%"
+        search_filters = [
+            f"title->>'{locale}'.ilike.{search_like}",
+            f"title->>'en'.ilike.{search_like}",
+            f"description->>'{locale}'.ilike.{search_like}",
+            f"description->>'en'.ilike.{search_like}",
+        ]
+
+        # Execute count query using parameterized filters
+        count_query = supabase.table("prompt_folders").select("id", count="exact")
+        count_query = count_query.or_(",".join(access_conditions))
+        count_query = count_query.or_(",".join(search_filters))
+        count_response = count_query.execute()
+        total = getattr(count_response, "count", None)
+        if total is None:
+            total = len(count_response.data or [])
+
+        # Execute search query using parameterized filters
+        search_query = supabase.table("prompt_folders").select("*")
+        search_query = search_query.or_(",".join(access_conditions))
+        search_query = search_query.or_(",".join(search_filters))
+        search_query = search_query.order("created_at", desc=True)
+        search_query = search_query.range(offset, offset + page_size - 1)
+        search_response = search_query.execute()
         
         # Process results
         folders = []
@@ -252,7 +217,7 @@ async def search_folders_jsonb(
         }
         
     except Exception as e:
-        print(f"JSONB folder search failed: {str(e)}")
+        logger.error("JSONB folder search failed: %s", str(e))
         # Fallback to client-side filtering
         return await fallback_client_search_folders(supabase, user_id, search_term, locale, page_size, offset)
 
@@ -310,7 +275,7 @@ async def fallback_client_search_templates(
     """Fallback: fetch all accessible templates and filter client-side."""
     
     try:
-        print("Using fallback client-side template search")
+        logger.info("Using fallback client-side template search")
         
         # Get all accessible templates
         query = supabase.table("prompt_templates").select("*")
@@ -340,7 +305,7 @@ async def fallback_client_search_templates(
         }
         
     except Exception as e:
-        print(f"Fallback template search failed: {str(e)}")
+        logger.error("Fallback template search failed: %s", str(e))
         return {"items": [], "total": 0}
 
 
@@ -350,7 +315,7 @@ async def fallback_client_search_folders(
     """Fallback: fetch all accessible folders and filter client-side."""
     
     try:
-        print("Using fallback client-side folder search")
+        logger.info("Using fallback client-side folder search")
         
         # Get all accessible folders
         query = supabase.table("prompt_folders").select("*")
@@ -380,7 +345,7 @@ async def fallback_client_search_folders(
         }
         
     except Exception as e:
-        print(f"Fallback folder search failed: {str(e)}")
+        logger.error("Fallback folder search failed: %s", str(e))
         return {"items": [], "total": 0}
 
 
@@ -482,7 +447,7 @@ async def get_search_suggestions_fixed(
                     suggestions.add(title.strip())
         
         except Exception as e:
-            print(f"Template suggestions error: {str(e)}")
+            logger.error("Template suggestions error: %s", str(e))
         
         try:
             # Get folders
@@ -501,7 +466,7 @@ async def get_search_suggestions_fixed(
                     suggestions.add(title.strip())
         
         except Exception as e:
-            print(f"Folder suggestions error: {str(e)}")
+            logger.error("Folder suggestions error: %s", str(e))
         
         # Sort and limit suggestions
         suggestion_list = list(suggestions)

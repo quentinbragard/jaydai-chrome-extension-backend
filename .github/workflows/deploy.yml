@@ -136,6 +136,7 @@ jobs:
             echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
             echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
             echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_DEV }}" >> $GITHUB_ENV
+            echo "SENTRY_DSN=${{ secrets.SENTRY_DSN_DEV }}" >> $GITHUB_ENV
           else
             # Default to dev for other branches (like PRs)
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
@@ -147,6 +148,7 @@ jobs:
             echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
             echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_DEV }}" >> $GITHUB_ENV
             echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_DEV }}" >> $GITHUB_ENV
+            echo "SENTRY_DSN=${{ secrets.SENTRY_DSN_DEV }}" >> $GITHUB_ENV
           fi
           
       - name: Google Auth
@@ -192,6 +194,7 @@ jobs:
             STRIPE_PLUS_MONTHLY_PRICE_ID=${{ env.STRIPE_PLUS_MONTHLY_PRICE_ID }}
             STRIPE_PLUS_YEARLY_PRICE_ID=${{ env.STRIPE_PLUS_YEARLY_PRICE_ID }}
             STRIPE_PLUS_PRODUCT_ID=${{ env.STRIPE_PLUS_PRODUCT_ID }}
+            SENTRY_DSN=${{ env.SENTRY_DSN }}
 
       - name: Check Domain Verification
         if: env.CUSTOM_DOMAIN != ''
@@ -287,6 +290,7 @@ jobs:
           echo "STRIPE_PLUS_MONTHLY_PRICE_ID=${{ secrets.STRIPE_PLUS_MONTHLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
           echo "STRIPE_PLUS_YEARLY_PRICE_ID=${{ secrets.STRIPE_PLUS_YEARLY_PRICE_ID_PROD }}" >> $GITHUB_ENV
           echo "STRIPE_PLUS_PRODUCT_ID=${{ secrets.STRIPE_PLUS_PRODUCT_ID_PROD }}" >> $GITHUB_ENV
+          echo "SENTRY_DSN=${{ secrets.SENTRY_DSN_PROD }}" >> $GITHUB_ENV
 
       - name: Google Auth
         id: auth
@@ -326,6 +330,7 @@ jobs:
             STRIPE_PLUS_YEARLY_PRICE_ID=${{ env.STRIPE_PLUS_YEARLY_PRICE_ID }}
             STRIPE_PLUS_PRODUCT_ID=${{ env.STRIPE_PLUS_PRODUCT_ID }}
             VERSION=${{ env.VERSION }}
+            SENTRY_DSN=${{ env.SENTRY_DSN }}
 
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}

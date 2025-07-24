@@ -9,7 +9,10 @@ from starlette.responses import JSONResponse
 from utils.access_control import get_user_metadata, filter_accessible_items
 import json
 import os
+import logging
 from supabase import create_client
+
+logger = logging.getLogger(__name__)
 
 class AccessControlMiddleware(BaseHTTPMiddleware):
     """
@@ -60,7 +63,7 @@ class AccessControlMiddleware(BaseHTTPMiddleware):
                         return filtered_response
                 except Exception as e:
                     # Log error but don't break the response
-                    print(f"Access control middleware error: {str(e)}")
+                    logger.error("Access control middleware error: %s", str(e))
         
         return response
     
@@ -136,7 +139,7 @@ class AccessControlMiddleware(BaseHTTPMiddleware):
             )
             
         except Exception as e:
-            print(f"Error filtering response data: {str(e)}")
+            logger.error("Error filtering response data: %s", str(e))
             # Return original response on error
             return JSONResponse(
                 content=json.loads(body.decode()) if body else {},
