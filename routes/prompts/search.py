@@ -89,60 +89,40 @@ async def search_templates_jsonb(
         # Get user metadata for access control
         user_metadata = get_user_metadata(supabase, user_id)
         
-        # Build access conditions
-        access_conditions = []
-        access_conditions.append(f"user_id = '{user_id}'")
-        
+        # Build access conditions using query builder
+        access_conditions = [f"user_id.eq.{user_id}"]
         if user_metadata.get("company_id"):
-            access_conditions.append(f"company_id = '{user_metadata['company_id']}'")
-        
-        if user_metadata.get("organization_ids"):
-            org_ids = "', '".join(str(oid) for oid in user_metadata["organization_ids"])
-            access_conditions.append(f"organization_id IN ('{org_ids}')")
-        
-        # Add global templates
-        access_conditions.append("(user_id IS NULL AND company_id IS NULL AND organization_id IS NULL)")
-        
-        access_where = " OR ".join(f"({condition})" for condition in access_conditions)
-        
-        # Use RPC for complex JSONB search
-        search_query = f"""
-        SELECT *
-        FROM prompt_templates 
-        WHERE ({access_where})
-        AND (
-            (title->>'{locale}' ILIKE '%{search_term}%') OR
-            (title->>'en' ILIKE '%{search_term}%') OR
-            (content->>'{locale}' ILIKE '%{search_term}%') OR
-            (content->>'en' ILIKE '%{search_term}%') OR
-            (description->>'{locale}' ILIKE '%{search_term}%') OR
-            (description->>'en' ILIKE '%{search_term}%')
-        )
-        ORDER BY created_at DESC
-        LIMIT {page_size} OFFSET {offset}
-        """
-        
-        # Count query
-        count_query = f"""
-        SELECT COUNT(*) as total
-        FROM prompt_templates 
-        WHERE ({access_where})
-        AND (
-            (title->>'{locale}' ILIKE '%{search_term}%') OR
-            (title->>'en' ILIKE '%{search_term}%') OR
-            (content->>'{locale}' ILIKE '%{search_term}%') OR
-            (content->>'en' ILIKE '%{search_term}%') OR
-            (description->>'{locale}' ILIKE '%{search_term}%') OR
-            (description->>'en' ILIKE '%{search_term}%')
-        )
-        """
-        
-        # Execute count query
-        count_response = supabase.rpc('execute_raw_sql', {'query': count_query}).execute()
-        total = count_response.data[0]['total'] if count_response.data else 0
-        
-        # Execute search query
-        search_response = supabase.rpc('execute_raw_sql', {'query': search_query}).execute()
+            access_conditions.append(f"company_id.eq.{user_metadata['company_id']}")
+        for oid in user_metadata.get("organization_ids", []) or []:
+            access_conditions.append(f"organization_id.eq.{oid}")
+        access_conditions.append("and(user_id.is.null,company_id.is.null,organization_id.is.null)")
+
+        search_like = f"%{search_term}%"
+        search_filters = [
+            f"title->>'{locale}'.ilike.{search_like}",
+            f"title->>'en'.ilike.{search_like}",
+            f"content->>'{locale}'.ilike.{search_like}",
+            f"content->>'en'.ilike.{search_like}",
+            f"description->>'{locale}'.ilike.{search_like}",
+            f"description->>'en'.ilike.{search_like}",
+        ]
+
+        # Execute count query using parameterized filters
+        count_query = supabase.table("prompt_templates").select("id", count="exact")
+        count_query = count_query.or_(",".join(access_conditions))
+        count_query = count_query.or_(",".join(search_filters))
+        count_response = count_query.execute()
+        total = getattr(count_response, "count", None)
+        if total is None:
+            total = len(count_response.data or [])
+
+        # Execute search query using parameterized filters
+        search_query = supabase.table("prompt_templates").select("*")
+        search_query = search_query.or_(",".join(access_conditions))
+        search_query = search_query.or_(",".join(search_filters))
+        search_query = search_query.order("created_at", desc=True)
+        search_query = search_query.range(offset, offset + page_size - 1)
+        search_response = search_query.execute()
         
         # Process results
         templates = []
@@ -182,56 +162,38 @@ async def search_folders_jsonb(
         # Get user metadata for access control
         user_metadata = get_user_metadata(supabase, user_id)
         
-        # Build access conditions
-        access_conditions = []
-        access_conditions.append(f"user_id = '{user_id}'")
-        
+        # Build access conditions using query builder
+        access_conditions = [f"user_id.eq.{user_id}"]
         if user_metadata.get("company_id"):
-            access_conditions.append(f"company_id = '{user_metadata['company_id']}'")
-        
-        if user_metadata.get("organization_ids"):
-            org_ids = "', '".join(str(oid) for oid in user_metadata["organization_ids"])
-            access_conditions.append(f"organization_id IN ('{org_ids}')")
-        
-        # Add global folders
-        access_conditions.append("(user_id IS NULL AND company_id IS NULL AND organization_id IS NULL)")
-        
-        access_where = " OR ".join(f"({condition})" for condition in access_conditions)
-        
-        # Use RPC for complex JSONB search
-        search_query = f"""
-        SELECT *
-        FROM prompt_folders 
-        WHERE ({access_where})
-        AND (
-            (title->>'{locale}' ILIKE '%{search_term}%') OR
-            (title->>'en' ILIKE '%{search_term}%') OR
-            (description->>'{locale}' ILIKE '%{search_term}%') OR
-            (description->>'en' ILIKE '%{search_term}%')
-        )
-        ORDER BY created_at DESC
-        LIMIT {page_size} OFFSET {offset}
-        """
-        
-        # Count query
-        count_query = f"""
-        SELECT COUNT(*) as total
-        FROM prompt_folders 
-        WHERE ({access_where})
-        AND (
-            (title->>'{locale}' ILIKE '%{search_term}%') OR
-            (title->>'en' ILIKE '%{search_term}%') OR
-            (description->>'{locale}' ILIKE '%{search_term}%') OR
-            (description->>'en' ILIKE '%{search_term}%')
-        )
-        """
-        
-        # Execute count query
-        count_response = supabase.rpc('execute_raw_sql', {'query': count_query}).execute()
-        total = count_response.data[0]['total'] if count_response.data else 0
-        
-        # Execute search query
-        search_response = supabase.rpc('execute_raw_sql', {'query': search_query}).execute()
+            access_conditions.append(f"company_id.eq.{user_metadata['company_id']}")
+        for oid in user_metadata.get("organization_ids", []) or []:
+            access_conditions.append(f"organization_id.eq.{oid}")
+        access_conditions.append("and(user_id.is.null,company_id.is.null,organization_id.is.null)")
+
+        search_like = f"%{search_term}%"
+        search_filters = [
+            f"title->>'{locale}'.ilike.{search_like}",
+            f"title->>'en'.ilike.{search_like}",
+            f"description->>'{locale}'.ilike.{search_like}",
+            f"description->>'en'.ilike.{search_like}",
+        ]
+
+        # Execute count query using parameterized filters
+        count_query = supabase.table("prompt_folders").select("id", count="exact")
+        count_query = count_query.or_(",".join(access_conditions))
+        count_query = count_query.or_(",".join(search_filters))
+        count_response = count_query.execute()
+        total = getattr(count_response, "count", None)
+        if total is None:
+            total = len(count_response.data or [])
+
+        # Execute search query using parameterized filters
+        search_query = supabase.table("prompt_folders").select("*")
+        search_query = search_query.or_(",".join(access_conditions))
+        search_query = search_query.or_(",".join(search_filters))
+        search_query = search_query.order("created_at", desc=True)
+        search_query = search_query.range(offset, offset + page_size - 1)
+        search_response = search_query.execute()
         
         # Process results
         folders = []
