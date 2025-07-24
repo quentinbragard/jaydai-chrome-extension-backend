@@ -10,6 +10,7 @@ _API_KEY = os.getenv("AMPLITUDE_API_KEY")
 _client = Amplitude(_API_KEY) if _API_KEY and Amplitude else None
 logger = logging.getLogger(__name__)
 
+
 def track_event(user_id: str, event_type: str, event_properties: dict | None = None):
     """Send an event to Amplitude if configured."""
     if not _client:
