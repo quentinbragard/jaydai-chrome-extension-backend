@@ -103,14 +103,18 @@ async def fetch_folders_by_type(
             org_resp = await get_user_organizations(user_id)
             if not org_resp.success:
                 return org_resp
-            for org_id in org_resp.data:
-                org_query = supabase.table("prompt_folders").select("*") \
-                    .eq("type", folder_type) \
-                    .eq("organization_id", org_id)
-                    
+            org_ids = org_resp.data or []
+            if org_ids:
+                org_query = (
+                    supabase.table("prompt_folders")
+                    .select("*")
+                    .eq("type", folder_type)
+                    .in_("organization_id", org_ids)
+                )
+
                 if folder_ids:
                     org_query = org_query.in_("id", folder_ids)
-                    
+
                 org_response = org_query.execute()
                 if org_response.data:
                     folders.extend(org_response.data)
