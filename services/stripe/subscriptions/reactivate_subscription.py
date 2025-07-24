@@ -1,7 +1,7 @@
 import logging
 import stripe
 from supabase import Client
-from services.stripe.subscriptions import update_subscription_status
+from services.stripe.subscriptions.update_subscription_status import update_subscription_status
 
 logger = logging.getLogger(__name__)
 
