@@ -22,6 +22,7 @@ class TemplateBase(BaseModel):
     metadata: Optional[TemplateMetadata] = None
     description: Optional[Union[str, Dict[str, str]]] = None
     folder_id: Optional[int] = None
+    is_free: Optional[bool] = False
 
 class TemplateCreate(TemplateBase):
     type: str = "user"

@@ -32,7 +32,8 @@ def process_template_for_response(template_data: dict, locale: str = "en") -> di
         "organization_id": template_data.get("organization_id"),
         "company_id": template_data.get("company_id"),
         "folder": template_data.get("folder"),
-        "metadata": template_data.get("metadata")
+        "metadata": template_data.get("metadata"),
+        "is_free": template_data.get("is_free")
     }
 
     return processed
