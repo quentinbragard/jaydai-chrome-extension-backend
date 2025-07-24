@@ -15,6 +15,7 @@ STRIPE_WEBHOOK_SECRET=<your-stripe-webhook-secret>
 STRIPE_PLUS_MONTHLY_PRICE_ID=<your-stripe-monthly-price-id>
 STRIPE_PLUS_YEARLY_PRICE_ID=<your-stripe-yearly-price-id>
 SENTRY_DSN=<your-sentry-dsn>
+AMPLITUDE_API_KEY=<your-amplitude-api-key>
 ```
 
 The Chrome extension's frontend also requires Stripe URLs that integrate with
