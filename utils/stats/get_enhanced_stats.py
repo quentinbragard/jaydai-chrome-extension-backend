@@ -3,6 +3,17 @@ from datetime import datetime, timedelta
 import dotenv
 import os
 from supabase import create_client, Client
+from cachetools import TTLCache
+
+dotenv.load_dotenv()
+
+supabase: Client = create_client(
+    os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+)
+
+# Cache results for a short window to avoid recomputing heavy stats on every request
+STATS_CACHE_TTL = int(os.getenv("STATS_CACHE_TTL", "300"))  # default 5 minutes
+stats_cache: TTLCache = TTLCache(maxsize=256, ttl=STATS_CACHE_TTL)
 from utils.supabase_helpers import get_user_from_session_token
 from utils.stats.estimate_tokens import estimate_tokens
 from utils.stats.compute_usage_patterns import compute_usage_patterns
@@ -27,7 +38,10 @@ def energy_to_equivalent(wh: float) -> str:
         return "équivaut à quelques minutes d’ordinateur portable"
 
 async def get_enhanced_user_stats(user_id):
-    supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
+    # Return cached stats if available for this user
+    cached = stats_cache.get(user_id)
+    if cached is not None:
+        return cached
     """
     Enhanced analytics endpoint that provides comprehensive user stats and insights.
     Includes advanced metrics for AI interaction quality, user behavior patterns,
@@ -167,8 +181,8 @@ async def get_enhanced_user_stats(user_id):
             energy_usage=energy_usage_dict
         )
 
-        # Return comprehensive stats
-        return {
+        # Prepare comprehensive stats
+        result = {
             # Basic stats (compatible with original endpoint)
             "total_chats": total_chats,
             "recent_chats": recent_chats_count,
@@ -192,6 +206,10 @@ async def get_enhanced_user_stats(user_id):
                 "personalized_insights": insights
             }
         }
+
+        # Store result in cache for subsequent requests
+        stats_cache[user_id] = result
+        return result
 
     except Exception as e:
         print(f"Error getting enhanced user stats: {str(e)}")
