@@ -6,6 +6,9 @@ from utils import supabase_helpers
 from utils.middleware.localization import extract_locale_from_request
 from utils.access_control import get_user_metadata, apply_access_conditions
 from utils.prompts import process_template_for_response, process_folder_for_response
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create a separate router for search
 router = APIRouter(tags=["Search"])
@@ -163,7 +166,7 @@ async def search_templates_jsonb(
         }
         
     except Exception as e:
-        print(f"JSONB template search failed: {str(e)}")
+        logger.error("JSONB template search failed: %s", str(e))
         # Fallback to client-side filtering
         return await fallback_client_search_templates(supabase, user_id, search_term, locale, page_size, offset)
 
@@ -252,7 +255,7 @@ async def search_folders_jsonb(
         }
         
     except Exception as e:
-        print(f"JSONB folder search failed: {str(e)}")
+        logger.error("JSONB folder search failed: %s", str(e))
         # Fallback to client-side filtering
         return await fallback_client_search_folders(supabase, user_id, search_term, locale, page_size, offset)
 
@@ -310,7 +313,7 @@ async def fallback_client_search_templates(
     """Fallback: fetch all accessible templates and filter client-side."""
     
     try:
-        print("Using fallback client-side template search")
+        logger.info("Using fallback client-side template search")
         
         # Get all accessible templates
         query = supabase.table("prompt_templates").select("*")
@@ -340,7 +343,7 @@ async def fallback_client_search_templates(
         }
         
     except Exception as e:
-        print(f"Fallback template search failed: {str(e)}")
+        logger.error("Fallback template search failed: %s", str(e))
         return {"items": [], "total": 0}
 
 
@@ -350,7 +353,7 @@ async def fallback_client_search_folders(
     """Fallback: fetch all accessible folders and filter client-side."""
     
     try:
-        print("Using fallback client-side folder search")
+        logger.info("Using fallback client-side folder search")
         
         # Get all accessible folders
         query = supabase.table("prompt_folders").select("*")
@@ -380,7 +383,7 @@ async def fallback_client_search_folders(
         }
         
     except Exception as e:
-        print(f"Fallback folder search failed: {str(e)}")
+        logger.error("Fallback folder search failed: %s", str(e))
         return {"items": [], "total": 0}
 
 
@@ -482,7 +485,7 @@ async def get_search_suggestions_fixed(
                     suggestions.add(title.strip())
         
         except Exception as e:
-            print(f"Template suggestions error: {str(e)}")
+            logger.error("Template suggestions error: %s", str(e))
         
         try:
             # Get folders
@@ -501,7 +504,7 @@ async def get_search_suggestions_fixed(
                     suggestions.add(title.strip())
         
         except Exception as e:
-            print(f"Folder suggestions error: {str(e)}")
+            logger.error("Folder suggestions error: %s", str(e))
         
         # Sort and limit suggestions
         suggestion_list = list(suggestions)
