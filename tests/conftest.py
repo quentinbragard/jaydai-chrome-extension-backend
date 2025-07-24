@@ -38,6 +38,7 @@ def mock_supabase():
          patch("routes.prompts.templates.get_templates.supabase") as mock_get_templates_supabase, \
          patch("routes.prompts.blocks.helpers.supabase") as mock_blocks_helpers_supabase, \
          patch("routes.user.supabase") as mock_user_supabase, \
+         patch("utils.stats.get_enhanced_stats.supabase") as mock_get_enhanced_supabase, \
          patch("utils.supabase_helpers.supabase") as mock_helpers_supabase, \
          patch("utils.notification_service.supabase") as mock_notification_service_supabase, \
          patch("routes.prompts.templates.get_template_by_id.stripe_service.get_subscription_status") as mock_get_sub_status1, \
@@ -58,6 +59,7 @@ def mock_supabase():
             "get_templates": mock_get_templates_supabase,
             "blocks_helpers": mock_blocks_helpers_supabase,
             "user": mock_user_supabase,
+            "get_enhanced": mock_get_enhanced_supabase,
             "helpers": mock_helpers_supabase,
             "notification_service": mock_notification_service_supabase
         }
