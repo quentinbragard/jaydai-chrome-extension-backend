@@ -5,7 +5,6 @@ from supabase import Client
 
 from .record_webhook_event import record_webhook_event
 from .process_webhook_event import process_webhook_event
-from utils.amplitude import track_event
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,6 @@ async def handle_webhook_event(supabase: Client, event: Dict[str, Any]) -> bool:
     event_data = event.get("data", {})
 
     user_id = event_data.get("object", {}).get("metadata", {}).get("user_id")
-    track_event(user_id or "unknown", "stripe_webhook_event", {"event_type": event_type})
 
     existing = supabase.table("stripe_webhook_events").select("id, processed").eq("stripe_event_id", event_id).maybe_single().execute()
     if existing and existing.data and existing.data.get("processed"):

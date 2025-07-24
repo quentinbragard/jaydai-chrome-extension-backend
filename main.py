@@ -1,5 +1,6 @@
-# main.py - UPDATED with Share functionality
+# main.py - UPDATED with lifespan events instead of deprecated on_event
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth, save, stats, notifications, prompts, user, organizations, onboarding, stripe, share
@@ -17,10 +18,12 @@ except ImportError:  # Sentry is optional for tests
     sentry_sdk = None
 from utils.middleware import AccessControlMiddleware
 from utils.logging import StructuredLogging
+from utils.amplitude_init import init_amplitude
 
 dotenv.load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 if sentry_sdk is not None:
     dsn = os.getenv("SENTRY_DSN")
@@ -32,7 +35,52 @@ if sentry_sdk is not None:
             traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "1.0")),
         )
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Handle application lifespan events.
+    This replaces the deprecated @app.on_event decorators.
+    """
+    # Startup events
+    logger.info("Starting up Jaydai API...")
+    
+    # Initialize Amplitude
+    if not init_amplitude():
+        logger.warning("Amplitude initialization failed - analytics will not work")
+    else:
+        logger.info("Amplitude successfully initialized")
+    
+    # You can add other startup tasks here
+    # For example: database connections, cache warming, etc.
+    try:
+        # Test database connection
+        supabase_client = create_client(
+            os.getenv("SUPABASE_URL"), 
+            os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+        )
+        supabase_client.storage.list_buckets()
+        logger.info("Database connection verified")
+ 
+        
+    except Exception as e:
+        logger.error(f"Startup verification failed: {str(e)}")
+    
+    logger.info("Jaydai API startup completed successfully")
+    
+    # Application is running - yield control to FastAPI
+    yield
+    
+    # Shutdown events
+    logger.info("Shutting down Jaydai API...")
+    
+    
+    # Add any cleanup tasks here
+    # For example: close database connections, save state, etc.
+    
+    logger.info("Jaydai API shutdown completed")
+
+# Create FastAPI app with lifespan handler
+app = FastAPI(lifespan=lifespan)
 
 if sentry_sdk is not None and sentry_sdk.Hub.current.client:
     app.add_middleware(SentryAsgiMiddleware)
@@ -46,8 +94,6 @@ app.add_middleware(
 )
 
 app.add_middleware(StructuredLogging)
-
-# ADD THIS MIDDLEWARE REGISTRATION
 app.add_middleware(AccessControlMiddleware)
 
 # Include all routers
@@ -60,7 +106,6 @@ app.include_router(prompts.router)
 app.include_router(organizations.router, prefix="/organizations")
 app.include_router(onboarding.router, prefix="/onboarding")
 app.include_router(stripe.router)
-# ADD THIS LINE - Include Share router
 app.include_router(share.router)
 
 @app.get("/")
@@ -107,6 +152,19 @@ async def health_check():
             "error": str(e)
         }
         health["status"] = "degraded"
+    
+    # Check Amplitude connection (optional)
+    try:
+        from utils.amplitude import amplitude_service
+        if amplitude_service._client:
+            health["components"]["amplitude"] = {"status": "healthy"}
+        else:
+            health["components"]["amplitude"] = {"status": "not_configured"}
+    except Exception as e:
+        health["components"]["amplitude"] = {
+            "status": "unhealthy", 
+            "error": str(e)
+        }
     
     # Set appropriate status code based on overall health
     if health["status"] != "healthy":
