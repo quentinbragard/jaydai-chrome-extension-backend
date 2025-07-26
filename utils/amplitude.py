@@ -23,6 +23,20 @@ class AmplitudeService:
             logger.warning("Amplitude not configured - events will not be tracked")
         else:
             logger.info(f"Amplitude initialized for environment: {self._environment}")
+            
+    def _parse_timestamp(self, timestamp_str: Optional[str]) -> Optional[int]:
+        """Parse ISO timestamp string to milliseconds since epoch (Amplitude format)."""
+        if not timestamp_str:
+            return None
+            
+        try:
+            # Parse ISO format timestamp
+            dt = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+            # Convert to milliseconds since epoch (Amplitude expects this)
+            return int(dt.timestamp() * 1000)
+        except Exception as e:
+            logger.warning(f"Failed to parse timestamp '{timestamp_str}': {e}")
+            return None
 
     def track_event(self, user_id: str, event_type: str, event_properties: Optional[Dict[str, Any]] = None):
         """Send an event to Amplitude if configured."""
@@ -34,7 +48,7 @@ class AmplitudeService:
             properties = event_properties or {}
             properties.update({
                 "environment": self._environment,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": self._parse_timestamp(event_properties.get("timestamp")),
                 "source": "backend_api"
             })
 

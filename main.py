@@ -1,9 +1,9 @@
-# main.py - UPDATED with lifespan events instead of deprecated on_event
+# main.py - UPDATED with analytics route
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, save, stats, notifications, prompts, user, organizations, onboarding, stripe, share
+from routes import auth, save, stats, notifications, prompts, user, organizations, onboarding, stripe, share, analytics
 import time
 import json
 from supabase import create_client, Client
@@ -107,6 +107,7 @@ app.include_router(organizations.router, prefix="/organizations")
 app.include_router(onboarding.router, prefix="/onboarding")
 app.include_router(stripe.router)
 app.include_router(share.router)
+app.include_router(analytics.router)  # Add the new analytics router
 
 @app.get("/")
 async def root():
