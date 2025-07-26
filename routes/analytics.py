@@ -1,4 +1,4 @@
-# routes/analytics.py - New analytics route for Chrome extension events
+# routes/analytics.py - Updated with automatic IP-based location detection
 
 from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel, Field
@@ -7,6 +7,7 @@ from datetime import datetime
 import logging
 from utils.amplitude import amplitude_service
 from utils import supabase_helpers
+from utils.geolocation import get_location_from_request
 import json
 
 logger = logging.getLogger(__name__)
@@ -21,6 +22,16 @@ class AnalyticsEvent(BaseModel):
     session_id: Optional[str] = Field(None, description="Session ID")
     platform: Optional[str] = Field("chrome_extension", description="Platform identifier")
     extension_version: Optional[str] = Field(None, description="Extension version")
+    location: Optional[Dict[str, Any]] = Field(None, description="Location information")
+
+class LocationInfo(BaseModel):
+    country: Optional[str] = None
+    region: Optional[str] = None  
+    city: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    timezone: Optional[str] = None
+    ip: Optional[str] = None
 
 class AnalyticsBatch(BaseModel):
     events: List[AnalyticsEvent] = Field(..., description="List of events to track")
@@ -36,35 +47,49 @@ class AnalyticsResponse(BaseModel):
 async def track_event(
     event: AnalyticsEvent,
     request: Request,
-    user_id =Depends(supabase_helpers.get_user_from_session_token)
+    user_id = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """
-    Track a single analytics event.
-    Can be called with authentication (gets user_id from token) or without.
+    Track a single analytics event with proper session handling.
     """
     try:
+        # Use the user_id from the event if provided, otherwise from auth
+        final_user_id = event.user_id or user_id
+        
+        # If no user_id available, create an anonymous one based on session
+        if not final_user_id:
+            final_user_id = f"anonymous_{event.session_id or 'unknown'}"
        
-        # Enrich event properties with context
+        # Enrich event properties with context (but NOT session_id and timestamp)
         enhanced_properties = {
             **(event.event_properties or {}),
             "platform": event.platform or "chrome_extension",
             "extension_version": event.extension_version,
-            "session_id": event.session_id,
-            "timestamp": event.timestamp or datetime.utcnow().isoformat(),
             "source": "chrome_extension",
             "client_ip": str(request.client.host) if request.client else None,
             "user_agent": request.headers.get("user-agent"),
             "is_authenticated": user_id is not None
         }
 
-        # Track in Amplitude
+        # Get location from request IP (no additional permissions needed)
+        request_location = get_location_from_request(request)
+        print(f"Request location======================>>>: {request_location}")
+        
+        # Use client-provided location if available, otherwise use IP-based location
+        final_location = event.location or request_location
+        
+        # Track in Amplitude with session_id, timestamp, platform, and location as separate parameters
         amplitude_service.track_event(
-            user_id=user_id,
+            user_id=final_user_id,
             event_type=event.event_name,
-            event_properties=enhanced_properties
+            event_properties=enhanced_properties,
+            session_id=event.session_id,  # Pass session_id separately (will be converted to int)
+            timestamp=event.timestamp,    # Pass timestamp separately
+            platform=event.platform,      # Pass platform separately
+            location=final_location        # Pass location separately (IP-based if not provided)
         )
 
-        logger.info(f"Analytics event tracked: {event.event_name} for user {user_id}")
+        logger.info(f"Analytics event tracked: {event.event_name} for user {final_user_id} with session {event.session_id}")
 
         return AnalyticsResponse(
             success=True,
@@ -80,11 +105,10 @@ async def track_event(
 async def track_events_batch(
     batch: AnalyticsBatch,
     request: Request,
-    user_id =Depends(supabase_helpers.get_user_from_session_token)
+    user_id = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """
-    Track multiple analytics events in a batch.
-    More efficient for sending multiple events at once.
+    Track multiple analytics events in a batch with proper session handling.
     """
     try:
         processed_count = 0
@@ -92,17 +116,17 @@ async def track_events_batch(
         
         for idx, event in enumerate(batch.events):
             try:
-                if not user_id:
-                    user_id = f"anonymous_{request.client.host}_{event.session_id or idx}"
+                # Use event user_id, auth user_id, or create anonymous ID
+                final_user_id = event.user_id or user_id
+                if not final_user_id:
+                    final_user_id = f"anonymous_{event.session_id or idx}"
 
-                # Enrich event properties
+                # Enrich event properties (excluding session_id and timestamp)
                 enhanced_properties = {
                     **(event.event_properties or {}),
                     **(batch.user_context or {}),
                     "platform": event.platform or "chrome_extension",
                     "extension_version": event.extension_version,
-                    "session_id": event.session_id,
-                    "timestamp": event.timestamp or datetime.utcnow().isoformat(),
                     "source": "chrome_extension",
                     "client_ip": str(request.client.host) if request.client else None,
                     "user_agent": request.headers.get("user-agent"),
@@ -110,11 +134,19 @@ async def track_events_batch(
                     "batch_index": idx
                 }
 
-                # Track in Amplitude
+                # Get location from request IP for this event
+                event_location = event.location or get_location_from_request(request)
+                print(f"Event location======================>>>: {event_location}")
+
+                # Track in Amplitude with proper session handling
                 amplitude_service.track_event(
-                    user_id=user_id,
+                    user_id=final_user_id,
                     event_type=event.event_name,
-                    event_properties=enhanced_properties
+                    event_properties=enhanced_properties,
+                    session_id=event.session_id,  # Pass session_id separately (will be converted to int)
+                    timestamp=event.timestamp,    # Pass timestamp separately
+                    platform=event.platform,      # Pass platform separately
+                    location=event_location        # Pass location separately (IP-based if not provided)
                 )
 
                 processed_count += 1
@@ -141,7 +173,7 @@ async def track_events_batch(
 async def identify_user(
     user_properties: Dict[str, Any],
     request: Request,
-    user_id =Depends(supabase_helpers.get_user_from_session_token)
+    user_id = Depends(supabase_helpers.get_user_from_session_token)
 ):
     """
     Update user properties in analytics.
