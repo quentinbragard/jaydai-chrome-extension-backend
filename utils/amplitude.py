@@ -5,7 +5,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 
 try:
-    from amplitude import Amplitude, BaseEvent, Identify
+    from amplitude import Amplitude, BaseEvent, Identify, Revenue, EventOptions
 except ImportError:  # pragma: no cover - amplitude optional
     Amplitude = None
     BaseEvent = None
@@ -106,6 +106,10 @@ class AmplitudeService:
             )
             
             self._client.track(event)
+            revenue_obj = Revenue(price=amount,
+                      quantity=1,
+                      product_id=product_id)
+            self._client.revenue(revenue_obj, EventOptions(user_id=user_id))
             logger.debug(f"Tracked revenue event for user {user_id}: ${amount} {currency}")
             
         except Exception as e:
