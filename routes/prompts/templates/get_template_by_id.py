@@ -37,6 +37,7 @@ async def get_template_by_id(
             print(sub_status.status)
             print("==================================\n")
             if not (
+                template_data.get('type') != "user" or
                 sub_status.status in [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING] and
                 sub_status.planName == "plus"
             ):
