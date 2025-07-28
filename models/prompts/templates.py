@@ -48,3 +48,4 @@ class TemplateResponse(BaseModel):
     user_id: Optional[str] = None
     organization_id: Optional[str] = None
     company_id: Optional[str] = None
+    is_free: Optional[bool] = False
